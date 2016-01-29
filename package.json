@@ -1,0 +1,27 @@
+{
+  "name": "simplefs",
+  "version": "1.0.0",
+  "description": "A basic 'fs' object extension",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "node tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Psychopoulet/simplefs.git"
+  },
+  "keywords": [
+    "fs",
+    "directory", "dir",
+    "exists"
+  ],
+  "author": "Sébastien VIDAL",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Psychopoulet/simplefs/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "homepage": "https://github.com/Psychopoulet/simplefs#readme"
+}
