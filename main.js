@@ -1,7 +1,8 @@
 
 "use strict";
 
-const fs = require('fs');
+const 	fs = require('fs'),
+		path = require('path');
 
 fs.dirExists = function(dir) {
 
@@ -29,6 +30,29 @@ fs.fileExists = function(file) {
 		try {
 
 			if (fs.lstatSync(file).isFile()) {
+				bResult = true;
+			}
+
+		}
+		catch (e) {
+			bResult = false;
+		}
+
+	return bResult;
+
+};
+
+fs.mkdirp = function(dir) {
+
+	var bResult = false;
+
+		try {
+
+			if (fs.dirExists(dir)) {
+				bResult = true;
+			}
+			else if (fs.dirExists(path.dirname(dir)) || fs.mkdirp(path.dirname(dir))) {
+				fs.mkdirSync(dir, parseInt('0777', 8));
 				bResult = true;
 			}
 

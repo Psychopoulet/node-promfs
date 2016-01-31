@@ -2,7 +2,8 @@
 
 // deps
 
-	const fs = require('./main.js');
+	const 	fs = require('../main.js'),
+			path = require('path');
 
 // run
 
@@ -18,6 +19,12 @@
 		console.log(fs.dirExists('eivrjeoirvneornv'));
 		console.log("must be == true :");
 		console.log(fs.dirExists(__dirname));
+		console.log("must be == false :");
+		console.log(fs.dirExists(path.join(__dirname, 'testlvl1', 'testlvl2')));
+		console.log("must be == true :");
+		console.log(fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2')));
+		console.log("must be == true :");
+		console.log(fs.dirExists(path.join(__dirname, 'testlvl1', 'testlvl2')));
 		console.log("----------------");
 		console.log("");
 
