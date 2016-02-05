@@ -87,7 +87,7 @@ fs.rmdirp = function(dir) {
 					if(fs.dirExists(curPath)) {
 						fs.rmdirp(curPath);
 					}
-					else {
+					else if (fs.fileExists(curPath)) {
 						fs.unlinkSync(curPath);
 					}
 
