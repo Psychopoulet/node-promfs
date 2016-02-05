@@ -13,6 +13,7 @@ $ npm install simplefs
   * fs.fileExists
   * fs.dirExists
   * fs.mkdirp
+  * fs.rmdirp
 
 ## Examples
 
