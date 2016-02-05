@@ -1,8 +1,12 @@
 
 "use strict";
 
+// deps
+
 const 	fs = require('fs'),
 		path = require('path');
+
+// module
 
 fs.dirExists = function(dir) {
 
@@ -29,7 +33,7 @@ fs.fileExists = function(file) {
 
 		try {
 
-			if (fs.lstatSync(file).isFile()) {
+			if ('string' === typeof file && fs.lstatSync(file).isFile()) {
 				bResult = true;
 			}
 
@@ -54,6 +58,45 @@ fs.mkdirp = function(dir) {
 			else if (fs.dirExists(path.dirname(dir)) || fs.mkdirp(path.dirname(dir))) {
 				fs.mkdirSync(dir, parseInt('0777', 8));
 				bResult = true;
+			}
+
+		}
+		catch (e) {
+			bResult = false;
+		}
+
+	return bResult;
+
+};
+
+fs.rmdirp = function(dir) {
+
+	var bResult = false;
+
+		try {
+
+			if(!fs.dirExists(dir)) {
+				bResult = true;
+			}
+			else {
+
+				fs.readdirSync(dir).forEach(function(file) {
+
+					var curPath = path.join(dir, file);
+
+					if(fs.dirExists(curPath)) {
+						fs.rmdirp(curPath);
+					}
+					else if (fs.fileExists(curPath)) {
+						fs.unlinkSync(curPath);
+					}
+
+				});
+
+				fs.rmdirSync(dir);
+
+				bResult = true;
+
 			}
 
 		}

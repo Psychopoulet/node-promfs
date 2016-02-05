@@ -9,6 +9,8 @@
 
 	try {
 
+		var dirtest = path.join(__dirname, 'testlvl1', 'testlvl2');
+
 		console.log("");
 		console.log("----------------");
 		console.log("test dir");
@@ -20,11 +22,13 @@
 		console.log("must be == true :");
 		console.log(fs.dirExists(__dirname));
 		console.log("must be == false :");
-		console.log(fs.dirExists(path.join(__dirname, 'testlvl1', 'testlvl2')));
+		console.log(fs.dirExists(dirtest));
 		console.log("must be == true :");
-		console.log(fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2')));
+		console.log(fs.mkdirp(dirtest));
 		console.log("must be == true :");
-		console.log(fs.dirExists(path.join(__dirname, 'testlvl1', 'testlvl2')));
+		console.log(fs.dirExists(dirtest));
+		console.log("must be == true :");
+		console.log(fs.rmdirp(path.join(__dirname, 'testlvl1')));
 		console.log("----------------");
 		console.log("");
 
