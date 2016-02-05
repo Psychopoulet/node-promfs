@@ -20,9 +20,10 @@ $ npm install simplefs
 
 const fs = require('simplefs'), path = require('path');
 
-fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2')); // sync version
-fs.dirExists(__dirname);
-fs.fileExists(__filename);
+fs.dirExists(__dirname); // return true|false
+fs.fileExists(__filename); // return true|false
+fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2')); // sync version, return true|false
+fs.rmdirp(path.join(__dirname, 'testlvl1')); // sync version, return true|false
 
 ```
 
