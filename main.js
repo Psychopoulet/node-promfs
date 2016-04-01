@@ -10,7 +10,7 @@ const 	fs = require('fs'),
 
 fs.dirExists = function(dir) {
 
-	var bResult = false;
+	let bResult = false;
 
 		try {
 
@@ -29,7 +29,7 @@ fs.dirExists = function(dir) {
 
 fs.fileExists = function(file) {
 
-	var bResult = false;
+	let bResult = false;
 
 		try {
 
@@ -48,7 +48,7 @@ fs.fileExists = function(file) {
 
 fs.mkdirp = function(dir) {
 
-	var bResult = false;
+	let bResult = false;
 
 		try {
 
@@ -71,7 +71,7 @@ fs.mkdirp = function(dir) {
 
 fs.rmdirp = function(dir) {
 
-	var bResult = false;
+	let bResult = false;
 
 		try {
 
@@ -82,7 +82,7 @@ fs.rmdirp = function(dir) {
 
 				fs.readdirSync(dir).forEach(function(file) {
 
-					var curPath = path.join(dir, file);
+					let curPath = path.join(dir, file);
 
 					if(fs.dirExists(curPath)) {
 						fs.rmdirp(curPath);
