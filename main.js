@@ -3,8 +3,7 @@
 
 // deps
 
-const 	fs = require('fs'),
-		path = require('path');
+const fs = require('fs'), path = require('path');
 
 // module
 
@@ -46,66 +45,262 @@ fs.fileExists = function(file) {
 
 };
 
-fs.mkdirp = function(dir) {
+// mkdir
+	
+	// sync version
 
-	let bResult = false;
+	fs.mkdirp = function(dir) {
+
+		let bResult = false;
+
+			try {
+
+				if (fs.dirExists(dir)) {
+					bResult = true;
+				}
+				else if (fs.dirExists(path.dirname(dir)) || fs.mkdirp(path.dirname(dir))) {
+					fs.mkdirSync(dir, parseInt('0777', 8));
+					bResult = true;
+				}
+
+			}
+			catch (e) {
+				bResult = false;
+			}
+
+		return bResult;
+
+	};
+
+	// async version
+
+	fs.amkdirp = function(dir, callback) {
+
+		callback = ('function' === typeof callback) ? callback : function(){};
 
 		try {
 
 			if (fs.dirExists(dir)) {
-				bResult = true;
+				callback(null);
 			}
-			else if (fs.dirExists(path.dirname(dir)) || fs.mkdirp(path.dirname(dir))) {
-				fs.mkdirSync(dir, parseInt('0777', 8));
-				bResult = true;
+			else if (fs.dirExists(path.dirname(dir))) {
+
+				fs.mkdir(dir, parseInt('0777', 8), function(err) {
+
+					if (err) {
+						callback((err.message) ? err.message : err);
+					}
+					else {
+						callback(null);
+					}
+					
+				});
+
+			}
+			else {
+
+				fs.amkdirp(path.dirname(dir), function(err) {
+
+					if (err) {
+						callback((err.message) ? err.message : err);
+					}
+					else {
+
+						fs.mkdir(dir, parseInt('0777', 8), function(err) {
+
+							if (err) {
+								callback((err.message) ? err.message : err);
+							}
+							else {
+								callback(null);
+							}
+							
+						});
+
+					}
+					
+				});
+
 			}
 
 		}
 		catch (e) {
-			bResult = false;
+			callback((e.message) ? e.message : e);
 		}
 
-	return bResult;
+	};
 
-};
+	// promise version
 
-fs.rmdirp = function(dir) {
+	fs.pmkdirp = function(dir) {
 
-	let bResult = false;
+		return new Promise(function(resolve, reject) {
+
+			fs.amkdirp(dir, function(err) {
+
+				if (err) {
+					reject(err);
+				}
+				else {
+					resolve();
+				}
+
+			});
+
+		});
+
+	};
+
+// rmdir
+
+	// sync version
+
+	fs.rmdirp = function(dir) {
+
+		let bResult = false;
+
+			try {
+
+				if(!fs.dirExists(dir)) {
+					bResult = true;
+				}
+				else {
+
+					fs.readdirSync(dir).forEach(function(file) {
+
+						let curPath = path.join(dir, file);
+
+						if(fs.dirExists(curPath)) {
+							fs.rmdirp(curPath);
+						}
+						else if (fs.fileExists(curPath)) {
+							fs.unlinkSync(curPath);
+						}
+
+					});
+
+					fs.rmdirSync(dir);
+
+					bResult = true;
+
+				}
+
+			}
+			catch (e) {
+				bResult = false;
+			}
+
+		return bResult;
+
+	};
+
+	// async version
+
+	fs.armdirp = function(dir, callback) {
+
+		callback = ('function' === typeof callback) ? callback : function(){};
 
 		try {
 
 			if(!fs.dirExists(dir)) {
-				bResult = true;
+				callback(null);
 			}
 			else {
 
-				fs.readdirSync(dir).forEach(function(file) {
+				fs.readdir(dir, function(err, files) {
 
-					let curPath = path.join(dir, file);
-
-					if(fs.dirExists(curPath)) {
-						fs.rmdirp(curPath);
+					if (err) {
+						callback((err.message) ? err.message : err);
 					}
-					else if (fs.fileExists(curPath)) {
-						fs.unlinkSync(curPath);
+					else {
+
+						function removeContent(i) {
+
+							if (i >= files.length) {
+
+								fs.rmdir(dir, function(err) {
+
+									if (err) {
+										callback((err.message) ? err.message : err);
+									}
+									else {
+										callback(null);
+									}
+
+								});
+
+							}
+							else {
+
+								let curPath = path.join(dir, files[i]);
+
+								if (fs.dirExists(curPath)) {
+
+									fs.armdirp(curPath, function(err) {
+
+										if (err) {
+											callback((err.message) ? err.message : err);
+										}
+										else {
+											removeContent(i + 1);
+										}
+
+									});
+
+								}
+								else {
+
+									fs.unlink(curPath, function(err) {
+
+										if (err) {
+											callback((err.message) ? err.message : err);
+										}
+										else {
+											removeContent(i + 1);
+										}
+
+									});
+
+								}
+
+							}
+
+						}
+
+						removeContent(0);
+
 					}
 
 				});
-
-				fs.rmdirSync(dir);
-
-				bResult = true;
 
 			}
 
 		}
 		catch (e) {
-			bResult = false;
+			callback((e.message) ? e.message : e);
 		}
 
-	return bResult;
+	};
 
-};
+	// promise version
+
+	fs.prmdirp = function(dir) {
+
+		return new Promise(function(resolve, reject) {
+
+			fs.armdirp(dir, function(err) {
+
+				if (err) {
+					reject(err);
+				}
+				else {
+					resolve();
+				}
+
+			});
+
+		});
+
+	};
 
 module.exports = fs;
