@@ -212,27 +212,27 @@
 					console.log("pmkdirp");
 					console.log("must be == true :");
 
-					fs.pmkdirp(_dirtest).then(function() {
+					return fs.pmkdirp(_dirtest);
 
-						console.log(fs.dirExists(_dirtest));
+				}).then(function() {
 
-						console.log("");
-						console.log("prmdirp");
-						console.log("must be == false :");
+					console.log(fs.dirExists(_dirtest));
 
-						fs.prmdirp(path.join(__dirname, 'testlvl1')).then(function() {
+					console.log("");
+					console.log("prmdirp");
+					console.log("must be == false :");
 
-							console.log(fs.dirExists(_dirtest));
+					return fs.prmdirp(path.join(__dirname, 'testlvl1'));
 
-							console.log("");
-							console.log("----------------");
-							console.log("");
+				}).then(function() {
 
-							resolve();
+					console.log(fs.dirExists(_dirtest));
 
-						}).catch(reject);
+					console.log("");
+					console.log("----------------");
+					console.log("");
 
-					}).catch(reject);
+					resolve();
 
 				}).catch(reject);
 
@@ -248,23 +248,11 @@
 // run
 
 	testFileExists().then(function() {
-
-		testDirSync().then(function() {
-
-			testDirASync().then(function() {
-
-				testDirPromise().catch(function(err) {
-					console.log('tests interruption', err);
-				});
-
-			}).catch(function(err) {
-				console.log('tests interruption', err);
-			});
-
-		}).catch(function(err) {
-			console.log('tests interruption', err);
-		});
-
+		return testDirSync();
+	}).then(function() {
+		return testDirASync();
+	}).then(function() {
+		return testDirPromise();
 	}).catch(function(err) {
 		console.log('tests interruption', err);
 	});
