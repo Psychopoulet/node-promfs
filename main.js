@@ -5,45 +5,159 @@
 
 const fs = require('fs'), path = require('path');
 
-// module
+// dirExists
+	
+	// sync version
 
-fs.dirExists = function(dir) {
+	fs.dirExists = function(dir) {
 
-	let bResult = false;
+		let bResult = false;
+
+			try {
+
+				if ('string' === typeof dir && fs.lstatSync(dir).isDirectory()) {
+					bResult = true;
+				}
+
+			}
+			catch (e) {
+				bResult = false;
+			}
+
+		return bResult;
+
+	};
+
+	// async version
+
+	fs.adirExists = function(dir, callback) {
+
+		callback = ('function' === typeof callback) ? callback : function(){};
 
 		try {
 
-			if ('string' === typeof dir && fs.lstatSync(dir).isDirectory()) {
-				bResult = true;
+			if ('string' !== typeof dir) {
+				callback("'dir' is not a string");
+			}
+			else {
+
+				fs.lstat(dir, function(err, stats) {
+
+					if (err) {
+						callback(null, false);
+					}
+					else {
+						callback(null, stats.isDirectory());
+					}
+					
+				})
+
 			}
 
 		}
 		catch (e) {
-			bResult = false;
+			callback((e.message) ? e.message : e);
 		}
 
-	return bResult;
+	};
 
-};
+	// promise version
 
-fs.fileExists = function(file) {
+	fs.pdirExists = function(dir) {
 
-	let bResult = false;
+		return new Promise(function(resolve, reject) {
+
+			fs.adirExists(dir, function(err, exists) {
+
+				if (err) {
+					reject(err);
+				}
+				else {
+					resolve(exists);
+				}
+
+			});
+
+		});
+
+	};
+
+// fileExists
+	
+	// sync version
+
+	fs.fileExists = function(file) {
+
+		let bResult = false;
+
+			try {
+
+				if ('string' === typeof file && fs.lstatSync(file).isFile()) {
+					bResult = true;
+				}
+
+			}
+			catch (e) {
+				bResult = false;
+			}
+
+		return bResult;
+
+	};
+
+	// async version
+
+	fs.adfileExists = function(file, callback) {
+
+		callback = ('function' === typeof callback) ? callback : function(){};
 
 		try {
 
-			if ('string' === typeof file && fs.lstatSync(file).isFile()) {
-				bResult = true;
+			if ('string' !== typeof file) {
+				callback("'file' is not a string");
+			}
+			else {
+
+				fs.lstat(file, function(err, stats) {
+
+					if (err) {
+						callback(null, false);
+					}
+					else {
+						callback(null, stats.isFile());
+					}
+					
+				})
+
 			}
 
 		}
 		catch (e) {
-			bResult = false;
+			callback((e.message) ? e.message : e);
 		}
 
-	return bResult;
+	};
 
-};
+	// promise version
+
+	fs.pfileExists = function(file) {
+
+		return new Promise(function(resolve, reject) {
+
+			fs.adfileExists(file, function(err, exists) {
+
+				if (err) {
+					reject(err);
+				}
+				else {
+					resolve(exists);
+				}
+
+			});
+
+		});
+
+	};
 
 // mkdir
 	
@@ -80,48 +194,41 @@ fs.fileExists = function(file) {
 
 		try {
 
-			if (fs.dirExists(dir)) {
-				callback(null);
-			}
-			else if (fs.dirExists(path.dirname(dir))) {
+			fs.adirExists(dir, function(err, exists) {
 
-				fs.mkdir(dir, parseInt('0777', 8), function(err) {
+				if (err) {
+					callback(err);
+				}
+				else if (exists) {
+					callback(null);
+				}
+				else {
 
-					if (err) {
-						callback((err.message) ? err.message : err);
-					}
-					else {
-						callback(null);
-					}
-					
-				});
+					fs.amkdirp(path.dirname(dir), function(err) {
 
-			}
-			else {
+						if (err) {
+							callback(err);
+						}
+						else {
 
-				fs.amkdirp(path.dirname(dir), function(err) {
+							fs.mkdir(dir, parseInt('0777', 8), function(err) {
 
-					if (err) {
-						callback((err.message) ? err.message : err);
-					}
-					else {
+								if (err) {
+									callback((err.message) ? err.message : err);
+								}
+								else {
+									callback(null);
+								}
+								
+							});
 
-						fs.mkdir(dir, parseInt('0777', 8), function(err) {
+						}
+						
+					});
 
-							if (err) {
-								callback((err.message) ? err.message : err);
-							}
-							else {
-								callback(null);
-							}
-							
-						});
+				}
 
-					}
-					
-				});
-
-			}
+			});
 
 		}
 		catch (e) {
@@ -202,47 +309,34 @@ fs.fileExists = function(file) {
 
 		try {
 
-			if(!fs.dirExists(dir)) {
-				callback(null);
-			}
-			else {
+			fs.adirExists(dir, function(err, exists) {
 
-				fs.readdir(dir, function(err, files) {
+				if (err) {
+					callback(err);
+				}
+				else if (!exists) {
+					callback(null);
+				}
+				else {
 
-					if (err) {
-						callback((err.message) ? err.message : err);
-					}
-					else {
+					fs.readdir(dir, function(err, files) {
 
-						function removeContent(i) {
+						if (err) {
+							callback((err.message) ? err.message : err);
+						}
+						else {
 
-							if (i >= files.length) {
+							function removeContent(i) {
 
-								fs.rmdir(dir, function(err) {
+								if (i >= files.length) {
 
-									if (err) {
-										callback((err.message) ? err.message : err);
-									}
-									else {
-										callback(null);
-									}
-
-								});
-
-							}
-							else {
-
-								let curPath = path.join(dir, files[i]);
-
-								if (fs.dirExists(curPath)) {
-
-									fs.armdirp(curPath, function(err) {
+									fs.rmdir(dir, function(err) {
 
 										if (err) {
 											callback((err.message) ? err.message : err);
 										}
 										else {
-											removeContent(i + 1);
+											callback(null);
 										}
 
 									});
@@ -250,13 +344,40 @@ fs.fileExists = function(file) {
 								}
 								else {
 
-									fs.unlink(curPath, function(err) {
+									let curPath = path.join(dir, files[i]);
+
+									fs.adirExists(curPath, function(err, exists) {
 
 										if (err) {
-											callback((err.message) ? err.message : err);
+											callback(err);
+										}
+										else if (exists) {
+
+											fs.armdirp(curPath, function(err) {
+
+												if (err) {
+													callback(err);
+												}
+												else {
+													removeContent(i + 1);
+												}
+
+											});
+
 										}
 										else {
-											removeContent(i + 1);
+											
+											fs.unlink(curPath, function(err) {
+
+												if (err) {
+													callback((err.message) ? err.message : err);
+												}
+												else {
+													removeContent(i + 1);
+												}
+
+											});
+
 										}
 
 									});
@@ -265,15 +386,15 @@ fs.fileExists = function(file) {
 
 							}
 
+							removeContent(0);
+
 						}
 
-						removeContent(0);
+					});
 
-					}
+				}
 
-				});
-
-			}
+			});
 
 		}
 		catch (e) {
