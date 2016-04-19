@@ -92,7 +92,7 @@ const fs = require('fs'), path = require('path');
 
 	// async version
 
-	fs.adfileExists = function(file, callback) {
+	fs.afileExists = function(file, callback) {
 
 		callback = ('function' === typeof callback) ? callback : function(){};
 
@@ -122,7 +122,7 @@ const fs = require('fs'), path = require('path');
 
 		return new Promise(function(resolve, reject) {
 
-			fs.adfileExists(file, function(err, exists) {
+			fs.afileExists(file, function(err, exists) {
 
 				if (err) {
 					reject(err);

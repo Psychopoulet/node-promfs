@@ -28,10 +28,10 @@
 				console.log("must be == true :", fs.fileExists(__filename));
 
 				console.log("");
-				console.log("adfileExists");
+				console.log("afileExists");
 				console.log("must be == true :");
 
-				fs.adfileExists(__filename, function(err, exists) {
+				fs.afileExists(__filename, function(err, exists) {
 
 					if (err) {
 						reject(err);
