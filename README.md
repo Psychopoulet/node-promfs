@@ -23,9 +23,11 @@ fs.dirExists(__dirname); // return true|false
 fs.fileExists(__filename); // return true|false
 
 // recursively create a directory (sync version, return true|false)
+// use fs.dirExists
 fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'));
 
 // recursively delete a directory (sync version, return true|false)
+// use fs.dirExists
 fs.rmdirp(path.join(__dirname, 'testlvl1'));
 
 ```
@@ -33,6 +35,20 @@ fs.rmdirp(path.join(__dirname, 'testlvl1'));
 ```js
 
 const fs = require('simplefs'), path = require('path');
+
+fs.adirExists(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err, exists) { // async version of dirExists
+
+	if (err) {
+		console.log(err);
+	}
+	else if (exists) {
+		console.log('already exists');
+	}
+	else {
+		console.log('does not exist');
+	}
+
+}); // exists for afileExists
 
 fs.amkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err) { // async version of mkdirp
 
@@ -61,6 +77,19 @@ fs.amkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err) { // asyn
 ```js
 
 const fs = require('simplefs'), path = require('path');
+
+fs.pdirExists(path.join(__dirname, 'testlvl1', 'testlvl2')).then(function(err, exists) { // promise version of dirExists
+
+	if (exists) {
+		console.log('already exists');
+	}
+	else {
+		console.log('does not exist');
+	}
+
+}).catch(function(err) {
+	console.log(err);
+}); // exists for pfileExists
 
 fs.pmkdirp(path.join(__dirname, 'testlvl1', 'testlvl2')).then(function() { // promise version of mkdirp
 

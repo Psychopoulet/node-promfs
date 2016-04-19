@@ -7,7 +7,7 @@
 
 // private
 
-	var _dirtest = path.join(__dirname, 'testlvl1', 'testlvl2');
+	var _dirtest = path.join(__dirname, 'testlvl1', 'testlvl2', 'testlvl3', 'testlvl4');
 
 // tests
 
@@ -28,10 +28,37 @@
 				console.log("must be == true :", fs.fileExists(__filename));
 
 				console.log("");
-				console.log("----------------");
-				console.log("");
+				console.log("adfileExists");
+				console.log("must be == true :");
 
-				resolve();
+				fs.adfileExists(__filename, function(err, exists) {
+
+					if (err) {
+						reject(err);
+					}
+					else {
+
+						console.log(exists);
+
+						console.log("");
+						console.log("pfileExists");
+						console.log("must be == true :");
+
+						fs.pfileExists(__filename).then(function(exists) {
+
+							console.log(exists);
+
+							console.log("");
+							console.log("----------------");
+							console.log("");
+
+							resolve();
+
+						}).catch(reject);
+
+					}
+
+				});
 
 			}
 			catch(e) {
@@ -97,23 +124,23 @@
 				console.log("----------------");
 				console.log("");
 
-				console.log("amkdirp");
+				console.log("adirExists");
 				console.log("must be == true :");
 
-				fs.amkdirp(_dirtest, function(err) {
+				fs.adirExists(__dirname, function(err, exists) {
 
 					if (err) {
-						reject(err);
+						console.log(err);
 					}
 					else {
 
-						console.log(fs.dirExists(_dirtest));
+						console.log(exists);
 
 						console.log("");
-						console.log("armdirp");
-						console.log("must be == false :");
+						console.log("amkdirp");
+						console.log("must be == true :");
 
-						fs.armdirp(path.join(__dirname, 'testlvl1'), function(err) {
+						fs.amkdirp(_dirtest, function(err) {
 
 							if (err) {
 								reject(err);
@@ -123,19 +150,36 @@
 								console.log(fs.dirExists(_dirtest));
 
 								console.log("");
-								console.log("----------------");
-								console.log("");
+								console.log("armdirp");
+								console.log("must be == false :");
 
-								resolve();
+								fs.armdirp(path.join(__dirname, 'testlvl1'), function(err) {
+
+									if (err) {
+										reject(err);
+									}
+									else {
+
+										console.log(fs.dirExists(_dirtest));
+
+										console.log("");
+										console.log("----------------");
+										console.log("");
+
+										resolve();
+
+									}
+
+								});
 
 							}
 
 						});
-
+		
 					}
 
 				});
-		
+
 			}
 			catch(e) {
 				reject((e.message) ? e.message : e);
@@ -157,26 +201,36 @@
 				console.log("----------------");
 				console.log("");
 
-				console.log("pmkdirp");
+				console.log("pdirExists");
 				console.log("must be == true :");
 
-				fs.pmkdirp(_dirtest).then(function() {
+				fs.pdirExists(__dirname).then(function(exists) {
 
-					console.log(fs.dirExists(_dirtest));
+					console.log(exists);
 
 					console.log("");
-					console.log("prmdirp");
-					console.log("must be == false :");
+					console.log("pmkdirp");
+					console.log("must be == true :");
 
-					fs.prmdirp(path.join(__dirname, 'testlvl1')).then(function() {
+					fs.pmkdirp(_dirtest).then(function() {
 
 						console.log(fs.dirExists(_dirtest));
 
 						console.log("");
-						console.log("----------------");
-						console.log("");
+						console.log("prmdirp");
+						console.log("must be == false :");
 
-						resolve();
+						fs.prmdirp(path.join(__dirname, 'testlvl1')).then(function() {
+
+							console.log(fs.dirExists(_dirtest));
+
+							console.log("");
+							console.log("----------------");
+							console.log("");
+
+							resolve();
+
+						}).catch(reject);
 
 					}).catch(reject);
 
