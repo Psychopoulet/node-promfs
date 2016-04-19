@@ -36,7 +36,8 @@ fs.rmdirp(path.join(__dirname, 'testlvl1'));
 
 const fs = require('simplefs'), path = require('path');
 
-fs.adirExists(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err, exists) { // async version of dirExists
+// async version of dirExists
+fs.adirExists(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err, exists) {
 
 	if (err) {
 		console.log(err);
@@ -50,14 +51,18 @@ fs.adirExists(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err, exists
 
 }); // exists for afileExists
 
-fs.amkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err) { // async version of mkdirp
+// async version of mkdirp
+// use fs.adirExists
+fs.amkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err) {
 
 	if (err) {
 		console.log(err);
 	}
 	else {
 		
-		fs.armdirp(path.join(__dirname, 'testlvl1'), function(err) { // async version of rmdirp
+		// async version of rmdirp
+		// use fs.adirExists
+		fs.armdirp(path.join(__dirname, 'testlvl1'), function(err) {
 
 			if (err) {
 				console.log(err);
@@ -78,7 +83,8 @@ fs.amkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err) { // asyn
 
 const fs = require('simplefs'), path = require('path');
 
-fs.pdirExists(path.join(__dirname, 'testlvl1', 'testlvl2')).then(function(err, exists) { // promise version of dirExists
+// promise version of dirExists
+fs.pdirExists(path.join(__dirname, 'testlvl1', 'testlvl2')).then(function(err, exists) {
 
 	if (exists) {
 		console.log('already exists');
@@ -91,9 +97,13 @@ fs.pdirExists(path.join(__dirname, 'testlvl1', 'testlvl2')).then(function(err, e
 	console.log(err);
 }); // exists for pfileExists
 
-fs.pmkdirp(path.join(__dirname, 'testlvl1', 'testlvl2')).then(function() { // promise version of mkdirp
+// promise version of mkdirp
+// use fs.adirExists
+fs.pmkdirp(path.join(__dirname, 'testlvl1', 'testlvl2')).then(function() {
 
-	fs.prmdirp(path.join(__dirname, 'testlvl1')).then(function() { // promise version of rmdirp
+	// promise version of rmdirp
+	// use fs.adirExists
+	fs.prmdirp(path.join(__dirname, 'testlvl1')).then(function() {
 
 		console.log('ok');
 
