@@ -14,11 +14,7 @@ const fs = require('fs'), path = require('path');
 		let bResult = false;
 
 			try {
-
-				if ('string' === typeof dir && fs.lstatSync(dir).isDirectory()) {
-					bResult = true;
-				}
-
+				bResult = ('string' === typeof dir && fs.lstatSync(dir).isDirectory());
 			}
 			catch (e) {
 				bResult = false;
@@ -42,15 +38,8 @@ const fs = require('fs'), path = require('path');
 			else {
 
 				fs.lstat(dir, function(err, stats) {
-
-					if (err) {
-						callback(null, false);
-					}
-					else {
-						callback(null, stats.isDirectory());
-					}
-					
-				})
+					callback(null, (!err && stats && stats.isDirectory()));
+				});
 
 			}
 
@@ -91,11 +80,7 @@ const fs = require('fs'), path = require('path');
 		let bResult = false;
 
 			try {
-
-				if ('string' === typeof file && fs.lstatSync(file).isFile()) {
-					bResult = true;
-				}
-
+				bResult = ('string' === typeof file && fs.lstatSync(file).isFile());
 			}
 			catch (e) {
 				bResult = false;
@@ -119,15 +104,8 @@ const fs = require('fs'), path = require('path');
 			else {
 
 				fs.lstat(file, function(err, stats) {
-
-					if (err) {
-						callback(null, false);
-					}
-					else {
-						callback(null, stats.isFile());
-					}
-					
-				})
+					callback(null, (!err && stats && stats.isFile()));
+				});
 
 			}
 

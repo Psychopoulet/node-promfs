@@ -1,6 +1,6 @@
 {
   "name": "simplefs",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A basic 'fs' object extension",
   "main": "main.js",
   "scripts": {
