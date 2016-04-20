@@ -396,8 +396,102 @@
 							console.log("must be == 'test test test' :");
 
 							fs.concatFilesProm([ _filetest, _filetest, _filetest ], ' ').then(function(content) {
+
 								console.log(content);
+
+								fs.unlinkProm(_filetest).then(function() {
+
+									console.log("");
+									console.log("----------------");
+									console.log("");
+
+									resolve();
+
+								}).catch(reject);
+
+							}).catch(reject);
+
+						}
+
+					});
+
+				}).catch(reject);
+
+			}
+			catch(e) {
+				reject((e.message) ? e.message : e);
+			}
+
+		});
+
+	}
+
+	function testFileCopy() {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				let target = path.join(__dirname, 'test2.txt');
+
+				console.log("");
+				console.log("----------------");
+				console.log("test file copy");
+				console.log("----------------");
+				console.log("");
+
+				console.log("writeFileProm");
+				console.log("must be == true :");
+
+				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
+
+					console.log(fs.isFileSync(_filetest));
+
+					console.log("");
+					console.log("copySync");
+
+					fs.copySync(_filetest, target);
+
+					console.log("must be == true :", fs.isFileSync(target));
+					console.log("must be == 'test' :", fs.readFileSync(target, 'utf8'));
+
+					fs.unlinkSync(target);
+
+					console.log("");
+					console.log("copy");
+					console.log("must be == true :");
+
+					fs.copy(_filetest, target, function(err) {
+
+						if (err) {
+							reject(err);
+						}
+						else {
+
+							console.log(fs.isFileSync(target));
+							console.log("must be == 'test' :", fs.readFileSync(target, 'utf8'));
+
+							console.log("");
+							console.log("copyProm");
+							console.log("must be == true :");
+
+							fs.copyProm(_filetest, target).then(function() {
+
+								console.log(fs.isFileSync(target));
+								console.log("must be == 'test' :", fs.readFileSync(target, 'utf8'));
+
+								return fs.unlinkProm(_filetest);
+
+							}).then(function() {
+								return fs.unlinkProm(target);
+							}).then(function() {
+
+								console.log("");
+								console.log("----------------");
+								console.log("");
+
 								resolve();
+								
 							}).catch(reject);
 
 						}
@@ -435,6 +529,8 @@
 		return testFileWritePromise();
 	}).then(function() {
 		return testFileConcat();
+	}).then(function() {
+		return testFileCopy();
 	})
 
 	// clean

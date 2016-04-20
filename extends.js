@@ -360,7 +360,7 @@ const path = require('path'), fs = require('fs');
 								fs.readFile(files[i], function(err, filecontent) {
 
 									if (err) {
-										callback(err);
+										callback((err.message) ? err.message : err);
 									}
 									else {
 										content += filecontent + separator;
@@ -378,6 +378,100 @@ const path = require('path'), fs = require('fs');
 				}
 
 				readContent(0);
+
+			}
+
+		}
+		catch (e) {
+			callback((e.message) ? e.message : e);
+		}
+
+	};
+
+// copy
+
+	// sync version
+
+	fs.copySync = function(origin, target) {
+
+		if ('string' !== typeof origin) {
+			throw "This is not a string"
+		}
+		else if ('string' !== typeof target) {
+			throw "This is not a string"
+		}
+
+		if (fs.isFileSync(target)) {
+			fs.unlinkSync(target);
+		}
+
+		fs.writeFileSync(target, fs.readFileSync(origin));
+
+		return true;
+
+	};
+
+	// async version
+
+	function _copy(origin, target, callback) {
+
+		fs.readFile(origin, function(err, content) {
+
+			if (err) {
+				callback((err.message) ? err.message : err);
+			}
+			else {
+
+				fs.writeFile(target, content, function() {
+					callback(null);
+				});
+
+			}
+
+		});
+
+	}
+
+	fs.copy = function(origin, target, callback) {
+
+		if (!callback) {
+			callback = ('function' === typeof separator) ? separator : function(){};
+		}
+
+		try {
+
+			if ('string' !== typeof origin) {
+				callback("This is not a string");
+			}
+			else if ('string' !== typeof target) {
+				callback("This is not a string");
+			}
+			else {
+
+				fs.isFile(target, function(err, exists) {
+
+					if (err) {
+						callback(err);
+					}
+					else if (!exists) {
+						_copy(origin, target, callback);
+					}
+					else {
+
+						fs.unlink(target, function(err) {
+
+							if (err) {
+								callback((err.message) ? err.message : err);
+							}
+							else {
+								_copy(origin, target, callback);
+							}
+
+						});
+
+					}
+
+				})
 
 			}
 

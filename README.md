@@ -44,6 +44,9 @@ fs.rmdirpSync(path.join(__dirname, 'testlvl1')); // return true|false
 // (array files [, string separator = ''])
 fs.concatFilesSync([ file1, file2, file3 ], "\n"); // return true|false
 
+// copy file
+fs.copySync(origin, target); // return true|false
+
 ```
 
 ```js
@@ -52,20 +55,23 @@ fs.concatFilesSync([ file1, file2, file3 ], "\n"); // return true|false
 
 const fs = require('simplefs'), path = require('path');
 
-fs.isFile(__filename, callback); // callback(string err, bool exists)
-fs.isDirectory(__dirname, callback); // callback(string err, bool exists)
+fs.isFile(__filename, callback); // callback(null|string err, bool exists)
+fs.isDirectory(__dirname, callback); // callback(null|string err, bool exists)
 
 // recursively create a directory
 // check if the directory already exists before, so you don't have to do it
-fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), callback); // callback(string err)
+fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), callback); // callback(null|string err)
 
 // recursively delete a directory
 // check if the directory doesn't exist before, so you don't have to do it
-fs.rmdirp(path.join(__dirname, 'testlvl1'), callback); // callback(string err)
+fs.rmdirp(path.join(__dirname, 'testlvl1'), callback); // callback(null|string err)
 
 // concate files content
 // (array files [, string separator = ''], callback)
-fs.concatFiles([ file1, file2, file3 ], "\n", callback); // callback(string err)
+fs.concatFiles([ file1, file2, file3 ], "\n", callback); // callback(null|string err, string content)
+
+// copy file
+fs.copySync(origin, target, callback); // callback(null|string err)
 
 ```
 
@@ -90,7 +96,11 @@ fs.rmdirpProm(path.join(__dirname, 'testlvl1')); // return a Promise instance
 // (array files [, string separator = ''])
 fs.concatFilesProm([ file1, file2, file3 ], "\n"); // return a Promise instance
 
+// copy file
+fs.copyProm(origin, target); // return a Promise instance
+
 // and some classical others...
+// fs.writeFileProm
 // fs.appendFileProm
 // fs.readFileProm
 // fs.unlinkProm
