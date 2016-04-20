@@ -15,7 +15,8 @@
     "fs", "file system",
     "directory", "dir",
     "exists", "create", "remove", "delete",
-    "synchrone", "asynchrone"
+    "synchrone", "asynchrone", "promise",
+    "mkdirp", "rmdirp", "copy", "moove", "concat"
   ],
   "author": "Sébastien VIDAL",
   "license": "ISC",

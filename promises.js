@@ -165,6 +165,32 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 	};
 
+	fs.mooveProm = function(origin, target) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.moove(origin, target, function(err) {
+
+					if (err) {
+						reject(err);
+					}
+					else {
+						resolve();
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
 	// classical
 
 	fs.writeFileProm = function(file, message, options) {

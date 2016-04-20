@@ -7,8 +7,9 @@
 
 // private
 
-	var _dirtest = path.join(__dirname, 'testlvl1', 'testlvl2', 'testlvl3', 'testlvl4');
-	var _filetest = path.join(__dirname, 'test.txt');
+	var _dirtest = path.join(__dirname, 'testlvl1', 'testlvl2', 'testlvl3', 'testlvl4'),
+		_filetest = path.join(__dirname, 'test.txt'),
+		_filetest2 = path.join(__dirname, 'test2.txt');
 
 // tests
 
@@ -38,7 +39,6 @@
 
 				console.log("");
 				console.log("isFile");
-				console.log("must be == true :");
 
 				fs.isFile(__filename, function(err, exists) {
 
@@ -47,15 +47,14 @@
 					}
 					else {
 
-						console.log(exists);
+						console.log("must be == true :", exists);
 
 						console.log("");
 						console.log("isFileProm");
-						console.log("must be == true :");
 
 						fs.isFileProm(__filename).then(function(exists) {
 
-							console.log(exists);
+							console.log("must be == true :", exists);
 
 							console.log("");
 							console.log("----------------");
@@ -105,7 +104,6 @@
 
 				console.log("");
 				console.log("isDirectory");
-				console.log("must be == true :");
 
 				fs.isDirectory(__dirname, function(err, exists) {
 
@@ -114,15 +112,14 @@
 					}
 					else {
 
-						console.log(exists);
+						console.log("must be == true :", exists);
 
 						console.log("");
 						console.log("isDirectoryProm");
-						console.log("must be == true :");
 
 						fs.isDirectoryProm(__dirname).then(function(exists) {
 
-							console.log(exists);
+							console.log("must be == true :", exists);
 
 							console.log("");
 							console.log("----------------");
@@ -194,9 +191,7 @@
 				console.log("----------------");
 				console.log("");
 
-				console.log("");
 				console.log("mkdirp");
-				console.log("must be == true :");
 
 				fs.mkdirp(_dirtest, function(err) {
 
@@ -205,11 +200,10 @@
 					}
 					else {
 
-						console.log(fs.isDirectorySync(_dirtest));
+						console.log("must be == true :", fs.isDirectorySync(_dirtest));
 
 						console.log("");
 						console.log("rmdirp");
-						console.log("must be == false :");
 
 						fs.rmdirp(path.join(__dirname, 'testlvl1'), function(err) {
 
@@ -218,7 +212,7 @@
 							}
 							else {
 
-								console.log(fs.isDirectorySync(_dirtest));
+								console.log("must be == false :", fs.isDirectorySync(_dirtest));
 
 								console.log("");
 								console.log("----------------");
@@ -256,21 +250,19 @@
 				console.log("");
 
 				console.log("mkdirpProm");
-				console.log("must be == true :");
 
 				fs.mkdirpProm(_dirtest).then(function() {
 
-					console.log(fs.isDirectorySync(_dirtest));
+					console.log("must be == true :", fs.isDirectorySync(_dirtest));
 
 					console.log("");
 					console.log("rmdirpProm");
-					console.log("must be == false :");
 
 					return fs.rmdirpProm(path.join(__dirname, 'testlvl1'));
 
 				}).then(function() {
 
-					console.log(fs.isDirectorySync(_dirtest));
+					console.log("must be == false :", fs.isDirectorySync(_dirtest));
 
 					console.log("");
 					console.log("----------------");
@@ -302,41 +294,37 @@
 				console.log("");
 
 				console.log("writeFileProm");
-				console.log("must be == true :");
 
 				fs.writeFileProm(_filetest, '', 'utf8').then(function() {
 
-					console.log(fs.isFileSync(_filetest));
+					console.log("must be == true :", fs.isFileSync(_filetest));
 
 					console.log("");
 					console.log("appendFileProm");
-					console.log("must be == true :");
 
 					return fs.appendFileProm(_filetest, 'test', 'utf8');
 
 				}).then(function() {
 
-					console.log(true);
+					console.log("must be == true :", true);
 
 					console.log("");
 					console.log("readFileProm");
-					console.log("must be == 'test' :");
 
 					return fs.readFileProm(_filetest, 'utf8');
 
 				}).then(function(content) {
 
-					console.log(content);
+					console.log("must be == 'test' :", content);
 
 					console.log("");
 					console.log("unlinkProm");
-					console.log("must be == false :");
 
 					return fs.unlinkProm(_filetest);
 
 				}).then(function() {
 
-					console.log(fs.isFileSync(_filetest));
+					console.log("must be == false :", fs.isFileSync(_filetest));
 
 					console.log("");
 					console.log("----------------");
@@ -368,11 +356,10 @@
 				console.log("");
 
 				console.log("writeFileProm");
-				console.log("must be == true :");
 
 				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
 
-					console.log(fs.isFileSync(_filetest));
+					console.log("must be == true :", fs.isFileSync(_filetest));
 
 					console.log("");
 					console.log("concatFilesSync");
@@ -380,7 +367,6 @@
 
 					console.log("");
 					console.log("concatFiles");
-					console.log("must be == 'test test test' :");
 
 					fs.concatFiles([ _filetest, _filetest, _filetest ], ' ', function(err, content) {
 
@@ -389,15 +375,14 @@
 						}
 						else {
 
-							console.log(content);
+							console.log("must be == 'test test test' :", content);
 
 							console.log("");
 							console.log("concatFilesProm");
-							console.log("must be == 'test test test' :");
 
 							fs.concatFilesProm([ _filetest, _filetest, _filetest ], ' ').then(function(content) {
 
-								console.log(content);
+								console.log("must be == 'test test test' :", content);
 
 								fs.unlinkProm(_filetest).then(function() {
 
@@ -432,8 +417,6 @@
 
 			try {
 
-				let target = path.join(__dirname, 'test2.txt');
-
 				console.log("");
 				console.log("----------------");
 				console.log("test file copy");
@@ -441,49 +424,129 @@
 				console.log("");
 
 				console.log("writeFileProm");
-				console.log("must be == true :");
 
 				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
 
-					console.log(fs.isFileSync(_filetest));
+					console.log("must be == true :", fs.isFileSync(_filetest));
 
 					console.log("");
 					console.log("copySync");
 
-					fs.copySync(_filetest, target);
+					fs.copySync(_filetest, _filetest2);
 
-					console.log("must be == true :", fs.isFileSync(target));
-					console.log("must be == 'test' :", fs.readFileSync(target, 'utf8'));
+					console.log("must be == true :", fs.isFileSync(_filetest2));
+					console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
 
-					fs.unlinkSync(target);
+					fs.unlinkSync(_filetest2);
 
 					console.log("");
 					console.log("copy");
-					console.log("must be == true :");
 
-					fs.copy(_filetest, target, function(err) {
+					fs.copy(_filetest, _filetest2, function(err) {
 
 						if (err) {
 							reject(err);
 						}
 						else {
 
-							console.log(fs.isFileSync(target));
-							console.log("must be == 'test' :", fs.readFileSync(target, 'utf8'));
+							console.log("must be == true :", fs.isFileSync(_filetest2));
+							console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
 
 							console.log("");
 							console.log("copyProm");
-							console.log("must be == true :");
 
-							fs.copyProm(_filetest, target).then(function() {
+							fs.copyProm(_filetest, _filetest2).then(function() {
 
-								console.log(fs.isFileSync(target));
-								console.log("must be == 'test' :", fs.readFileSync(target, 'utf8'));
+								console.log("must be == true :", fs.isFileSync(_filetest2));
+								console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
 
 								return fs.unlinkProm(_filetest);
 
 							}).then(function() {
-								return fs.unlinkProm(target);
+								return fs.unlinkProm(_filetest2);
+							}).then(function() {
+
+								console.log("");
+								console.log("----------------");
+								console.log("");
+
+								resolve();
+								
+							}).catch(reject);
+
+						}
+
+					});
+
+				}).catch(reject);
+
+			}
+			catch(e) {
+				reject((e.message) ? e.message : e);
+			}
+
+		});
+
+	}
+
+	function testFileMoove() {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				console.log("");
+				console.log("----------------");
+				console.log("test file moove");
+				console.log("----------------");
+				console.log("");
+
+				console.log("writeFileProm");
+
+				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
+
+					console.log("must be == true :", fs.isFileSync(_filetest));
+
+					console.log("");
+					console.log("mooveSync");
+
+					fs.mooveSync(_filetest, _filetest2);
+
+					console.log("must be == false :", fs.isFileSync(_filetest));
+					console.log("must be == true :", fs.isFileSync(_filetest2));
+					console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
+
+					fs.mooveSync(_filetest2, _filetest);
+
+					console.log("");
+					console.log("moove");
+
+					fs.moove(_filetest, _filetest2, function(err) {
+
+						if (err) {
+							reject(err);
+						}
+						else {
+
+							console.log("must be == false :", fs.isFileSync(_filetest));
+							console.log("must be == true :", fs.isFileSync(_filetest2));
+							console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
+
+							fs.mooveSync(_filetest2, _filetest);
+
+							console.log("");
+							console.log("mooveProm");
+
+							fs.mooveProm(_filetest, _filetest2).then(function() {
+
+								console.log("must be == false :", fs.isFileSync(_filetest));
+								console.log("must be == true :", fs.isFileSync(_filetest2));
+								console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
+
+								return fs.unlinkProm(_filetest);
+
+							}).then(function() {
+								return fs.unlinkProm(_filetest2);
 							}).then(function() {
 
 								console.log("");
@@ -513,11 +576,15 @@
 
 	// clean
 	fs.unlinkProm(_filetest).then(function() {
+		return fs.unlinkProm(_filetest2);
+	}).then(function() {
 		return fs.rmdirpProm(_dirtest);
 	})
 
 	// tests
 	.then(function() {
+		return testFileExists();
+	}).then(function() {
 		return testDirExists();
 	}).then(function() {
 		return testDirWriteSync();
@@ -531,11 +598,15 @@
 		return testFileConcat();
 	}).then(function() {
 		return testFileCopy();
+	}).then(function() {
+		return testFileMoove();
 	})
 
 	// clean
 	.then(function() {
 		return fs.unlinkProm(_filetest);
+	}).then(function() {
+		return fs.unlinkProm(_filetest2);
 	}).then(function() {
 		return fs.rmdirpProm(_dirtest);
 	})

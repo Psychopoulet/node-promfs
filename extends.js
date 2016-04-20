@@ -422,8 +422,15 @@ const path = require('path'), fs = require('fs');
 			}
 			else {
 
-				fs.writeFile(target, content, function() {
-					callback(null);
+				fs.writeFile(target, content, function(err) {
+
+					if (err) {
+						callback((err.message) ? err.message : err);
+					}
+					else {
+						callback(null);
+					}
+
 				});
 
 			}
@@ -434,9 +441,7 @@ const path = require('path'), fs = require('fs');
 
 	fs.copy = function(origin, target, callback) {
 
-		if (!callback) {
-			callback = ('function' === typeof separator) ? separator : function(){};
-		}
+		callback = ('function' === typeof callback) ? callback : function(){};
 
 		try {
 
@@ -471,7 +476,7 @@ const path = require('path'), fs = require('fs');
 
 					}
 
-				})
+				});
 
 			}
 
@@ -479,6 +484,44 @@ const path = require('path'), fs = require('fs');
 		catch (e) {
 			callback((e.message) ? e.message : e);
 		}
+
+	};
+
+// moove
+
+	// sync version
+
+	fs.mooveSync = function(origin, target) {
+		return (fs.copySync(origin, target) && fs.unlinkSync(origin));
+	};
+
+	// async version
+
+	fs.moove = function(origin, target, callback) {
+
+		callback = ('function' === typeof callback) ? callback : function(){};
+
+		fs.copy(origin, target, function(err) {
+
+			if (err) {
+				callback(err);
+			}
+			else {
+
+				fs.unlink(origin, function(err) {
+
+					if (err) {
+						callback((err.message) ? err.message : err);
+					}
+					else {
+						callback(null);
+					}
+
+				});
+
+			}
+
+		});
 
 	};
 
