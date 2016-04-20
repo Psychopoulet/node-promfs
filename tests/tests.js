@@ -7,7 +7,9 @@
 
 // private
 
-	var _dirtest = path.join(__dirname, 'testlvl1', 'testlvl2', 'testlvl3', 'testlvl4');
+	var _dirtest = path.join(__dirname, 'testlvl1', 'testlvl2', 'testlvl3', 'testlvl4'),
+		_filetest = path.join(__dirname, 'test.txt'),
+		_filetest2 = path.join(__dirname, 'test2.txt');
 
 // tests
 
@@ -19,34 +21,40 @@
 
 				console.log("");
 				console.log("----------------");
-				console.log("tests fileExists");
+				console.log("tests file exists");
 				console.log("----------------");
 				console.log("");
 
-				console.log("must be == false :", fs.fileExists(false));
-				console.log("must be == false :", fs.fileExists('eivrjeoirvneornv'));
-				console.log("must be == true :", fs.fileExists(__filename));
+				console.log("isFileSync");
+				console.log("must be == false :", fs.isFileSync('eivrjeoirvneornv'));
+				console.log("must be == true :", fs.isFileSync(__filename));
+
+				console.log("must be == 'This is not a string' :");
+				try {
+					fs.isFileSync(false);
+				}
+				catch(e) {
+					console.log((e.message) ? e.message : e);
+				}
 
 				console.log("");
-				console.log("afileExists");
-				console.log("must be == true :");
+				console.log("isFile");
 
-				fs.afileExists(__filename, function(err, exists) {
+				fs.isFile(__filename, function(err, exists) {
 
 					if (err) {
 						reject(err);
 					}
 					else {
 
-						console.log(exists);
+						console.log("must be == true :", exists);
 
 						console.log("");
-						console.log("pfileExists");
-						console.log("must be == true :");
+						console.log("isFileProm");
 
-						fs.pfileExists(__filename).then(function(exists) {
+						fs.isFileProm(__filename).then(function(exists) {
 
-							console.log(exists);
+							console.log("must be == true :", exists);
 
 							console.log("");
 							console.log("----------------");
@@ -69,7 +77,7 @@
 
 	}
 
-	function testDirSync() {
+	function testDirExists() {
 
 		return new Promise(function(resolve, reject) {
 
@@ -77,25 +85,84 @@
 
 				console.log("");
 				console.log("----------------");
-				console.log("test dir sync");
+				console.log("tests dir exists");
 				console.log("----------------");
 				console.log("");
 
-				console.log("dirExists");
-				console.log("must be == false :", fs.dirExists(false));
-				console.log("must be == false :", fs.dirExists('eivrjeoirvneornv'));
-				console.log("must be == true :", fs.dirExists(__dirname));
-				console.log("must be == false :", fs.dirExists(_dirtest));
+				console.log("isDirectorySync");
+				console.log("must be == false :", fs.isDirectorySync('eivrjeoirvneornv'));
+				console.log("must be == true :", fs.isDirectorySync(__dirname));
+				console.log("must be == false :", fs.isDirectorySync(_dirtest));
+
+				console.log("must be == 'This is not a string' :");
+				try {
+					fs.isDirectorySync(false);
+				}
+				catch(e) {
+					console.log((e.message) ? e.message : e);
+				}
 
 				console.log("");
-				console.log("mkdirp");
-				console.log("must be == true :", fs.mkdirp(_dirtest));
-				console.log("must be == true :", fs.dirExists(_dirtest));
+				console.log("isDirectory");
+
+				fs.isDirectory(__dirname, function(err, exists) {
+
+					if (err) {
+						reject(err);
+					}
+					else {
+
+						console.log("must be == true :", exists);
+
+						console.log("");
+						console.log("isDirectoryProm");
+
+						fs.isDirectoryProm(__dirname).then(function(exists) {
+
+							console.log("must be == true :", exists);
+
+							console.log("");
+							console.log("----------------");
+							console.log("");
+
+							resolve();
+
+						}).catch(reject);
+
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject((e.message) ? e.message : e);
+			}
+
+		});
+
+	}
+
+	function testDirWriteSync() {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
 
 				console.log("");
-				console.log("rmdirp");
-				console.log("must be == true :", fs.rmdirp(path.join(__dirname, 'testlvl1')));
-				console.log("must be == false :", fs.dirExists(_dirtest));
+				console.log("----------------");
+				console.log("test dir write sync");
+				console.log("----------------");
+				console.log("");
+
+				console.log("");
+				console.log("mkdirpSync");
+				console.log("must be == true :", fs.mkdirpSync(_dirtest));
+				console.log("must be == true :", fs.isDirectorySync(_dirtest));
+
+				console.log("");
+				console.log("rmdirpSync");
+				console.log("must be == true :", fs.rmdirpSync(path.join(__dirname, 'testlvl1')));
+				console.log("must be == false :", fs.isDirectorySync(_dirtest));
 
 				console.log("");
 				console.log("----------------");
@@ -112,7 +179,7 @@
 
 	}
 
-	function testDirASync() {
+	function testDirWriteASync() {
 
 		return new Promise(function(resolve, reject) {
 
@@ -120,62 +187,43 @@
 
 				console.log("");
 				console.log("----------------");
-				console.log("test dir async");
+				console.log("test dir write async");
 				console.log("----------------");
 				console.log("");
 
-				console.log("adirExists");
-				console.log("must be == true :");
+				console.log("mkdirp");
 
-				fs.adirExists(__dirname, function(err, exists) {
+				fs.mkdirp(_dirtest, function(err) {
 
 					if (err) {
-						console.log(err);
+						reject(err);
 					}
 					else {
 
-						console.log(exists);
+						console.log("must be == true :", fs.isDirectorySync(_dirtest));
 
 						console.log("");
-						console.log("amkdirp");
-						console.log("must be == true :");
+						console.log("rmdirp");
 
-						fs.amkdirp(_dirtest, function(err) {
+						fs.rmdirp(path.join(__dirname, 'testlvl1'), function(err) {
 
 							if (err) {
 								reject(err);
 							}
 							else {
 
-								console.log(fs.dirExists(_dirtest));
+								console.log("must be == false :", fs.isDirectorySync(_dirtest));
 
 								console.log("");
-								console.log("armdirp");
-								console.log("must be == false :");
+								console.log("----------------");
+								console.log("");
 
-								fs.armdirp(path.join(__dirname, 'testlvl1'), function(err) {
-
-									if (err) {
-										reject(err);
-									}
-									else {
-
-										console.log(fs.dirExists(_dirtest));
-
-										console.log("");
-										console.log("----------------");
-										console.log("");
-
-										resolve();
-
-									}
-
-								});
+								resolve();
 
 							}
 
 						});
-		
+
 					}
 
 				});
@@ -189,7 +237,7 @@
 
 	}
 
-	function testDirPromise() {
+	function testDirWritePromise() {
 
 		return new Promise(function(resolve, reject) {
 
@@ -197,36 +245,24 @@
 
 				console.log("");
 				console.log("----------------");
-				console.log("test dir promise");
+				console.log("test dir write promise");
 				console.log("----------------");
 				console.log("");
 
-				console.log("pdirExists");
-				console.log("must be == true :");
+				console.log("mkdirpProm");
 
-				fs.pdirExists(__dirname).then(function(exists) {
+				fs.mkdirpProm(_dirtest).then(function() {
 
-					console.log(exists);
+					console.log("must be == true :", fs.isDirectorySync(_dirtest));
 
 					console.log("");
-					console.log("pmkdirp");
-					console.log("must be == true :");
+					console.log("rmdirpProm");
 
-					return fs.pmkdirp(_dirtest);
+					return fs.rmdirpProm(path.join(__dirname, 'testlvl1'));
 
 				}).then(function() {
 
-					console.log(fs.dirExists(_dirtest));
-
-					console.log("");
-					console.log("prmdirp");
-					console.log("must be == false :");
-
-					return fs.prmdirp(path.join(__dirname, 'testlvl1'));
-
-				}).then(function() {
-
-					console.log(fs.dirExists(_dirtest));
+					console.log("must be == false :", fs.isDirectorySync(_dirtest));
 
 					console.log("");
 					console.log("----------------");
@@ -245,14 +281,251 @@
 
 	}
 
+	function testFileWritePromise() {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				console.log("");
+				console.log("----------------");
+				console.log("test file write promise");
+				console.log("----------------");
+				console.log("");
+
+				console.log("writeFileProm");
+
+				fs.writeFileProm(_filetest, '', 'utf8').then(function() {
+
+					console.log("must be == true :", fs.isFileSync(_filetest));
+
+					console.log("");
+					console.log("appendFileProm");
+
+					return fs.appendFileProm(_filetest, 'test', 'utf8');
+
+				}).then(function() {
+
+					console.log("must be == true :", true);
+
+					console.log("");
+					console.log("readFileProm");
+
+					return fs.readFileProm(_filetest, 'utf8');
+
+				}).then(function(content) {
+
+					console.log("must be == 'test' :", content);
+
+					console.log("");
+					console.log("unlinkProm");
+
+					return fs.unlinkProm(_filetest);
+
+				}).then(function() {
+
+					console.log("must be == false :", fs.isFileSync(_filetest));
+
+					console.log("");
+					console.log("----------------");
+					console.log("");
+
+					resolve();
+
+				}).catch(reject);
+
+			}
+			catch(e) {
+				reject((e.message) ? e.message : e);
+			}
+
+		});
+
+	}
+
+	function testFileConcat() {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				console.log("");
+				console.log("----------------");
+				console.log("test file concat");
+				console.log("----------------");
+				console.log("");
+
+				console.log("writeFileProm");
+
+				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
+
+					console.log("must be == true :", fs.isFileSync(_filetest));
+
+					console.log("");
+					console.log("concatFilesSync");
+					console.log("must be == 'test test test' :", fs.concatFilesSync([ _filetest, _filetest, _filetest ], 'utf8', ' '));
+
+					console.log("");
+					console.log("concatFiles");
+
+					fs.concatFiles([ _filetest, _filetest, _filetest ], 'utf8', ' ', function(err, content) {
+
+						if (err) {
+							reject(err);
+						}
+						else {
+
+							console.log("must be == 'test test test' :", content);
+
+							console.log("");
+							console.log("concatFilesProm");
+
+							fs.concatFilesProm([ _filetest, _filetest, _filetest ], 'utf8', ' ').then(function(content) {
+
+								console.log("must be == 'test test test' :", content);
+
+								fs.unlinkProm(_filetest).then(function() {
+
+									console.log("");
+									console.log("----------------");
+									console.log("");
+
+									resolve();
+
+								}).catch(reject);
+
+							}).catch(reject);
+
+						}
+
+					});
+
+				}).catch(reject);
+
+			}
+			catch(e) {
+				reject((e.message) ? e.message : e);
+			}
+
+		});
+
+	}
+
+	function testFileCopy() {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				console.log("");
+				console.log("----------------");
+				console.log("test file copy");
+				console.log("----------------");
+				console.log("");
+
+				console.log("writeFileProm");
+
+				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
+
+					console.log("must be == true :", fs.isFileSync(_filetest));
+
+					console.log("");
+					console.log("copySync");
+
+					fs.copySync(_filetest, _filetest2);
+
+					console.log("must be == true :", fs.isFileSync(_filetest2));
+					console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
+
+					fs.unlinkSync(_filetest2);
+
+					console.log("");
+					console.log("copy");
+
+					fs.copy(_filetest, _filetest2, function(err) {
+
+						if (err) {
+							reject(err);
+						}
+						else {
+
+							console.log("must be == true :", fs.isFileSync(_filetest2));
+							console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
+
+							console.log("");
+							console.log("copyProm");
+
+							fs.copyProm(_filetest, _filetest2).then(function() {
+
+								console.log("must be == true :", fs.isFileSync(_filetest2));
+								console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
+
+								return fs.unlinkProm(_filetest);
+
+							}).then(function() {
+								return fs.unlinkProm(_filetest2);
+							}).then(function() {
+
+								console.log("");
+								console.log("----------------");
+								console.log("");
+
+								resolve();
+								
+							}).catch(reject);
+
+						}
+
+					});
+
+				}).catch(reject);
+
+			}
+			catch(e) {
+				reject((e.message) ? e.message : e);
+			}
+
+		});
+
+	}
+
 // run
 
-	testFileExists().then(function() {
-		return testDirSync();
+	// clean
+	fs.unlinkProm(_filetest).then(function() {
+		return fs.unlinkProm(_filetest2);
 	}).then(function() {
-		return testDirASync();
+		return fs.rmdirpProm(_dirtest);
+	})
+
+	// tests
+	.then(function() {
+		return testFileExists();
 	}).then(function() {
-		return testDirPromise();
-	}).catch(function(err) {
+		return testDirExists();
+	}).then(function() {
+		return testDirWriteSync();
+	}).then(function() {
+		return testDirWriteASync();
+	}).then(function() {
+		return testDirWritePromise();
+	}).then(function() {
+		return testFileWritePromise();
+	}).then(function() {
+		return testFileConcat();
+	}).then(function() {
+		return testFileCopy();
+	})
+
+	// clean
+	.then(function() {
+		return fs.unlinkProm(_filetest);
+	}).then(function() {
+		return fs.unlinkProm(_filetest2);
+	}).then(function() {
+		return fs.rmdirpProm(_dirtest);
+	})
+
+	.catch(function(err) {
 		console.log('tests interruption', err);
 	});
