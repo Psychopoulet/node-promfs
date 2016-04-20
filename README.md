@@ -71,7 +71,7 @@ fs.rmdirp(path.join(__dirname, 'testlvl1'), callback); // callback(null|string e
 fs.concatFiles([ file1, file2, file3 ], 'utf8', "\n", callback); // callback(null|string err, string content)
 
 // copy file
-fs.copySync(origin, target, callback); // callback(null|string err)
+fs.copy(origin, target, callback); // callback(null|string err)
 
 ```
 
