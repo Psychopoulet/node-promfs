@@ -113,32 +113,6 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 	};
 
-	fs.mooveProm = function(origin, target) {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				fs.moove(origin, target, function(err) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-						resolve();
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject(((e.message) ? e.message : e));
-			}
-
-		});
-
-	};
-
 	fs.mkdirpProm = function(dir) {
 
 		return new Promise(function(resolve, reject) {
@@ -297,6 +271,110 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 	};
 
+	fs.closeProm = function(fd) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.close(fd, function(err) {
+
+					if (err) {
+						reject((err.message) ? err.message : err);
+					}
+					else {
+						resolve();
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.linkProm = function(srcpath, dstpath) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.link(srcpath, dstpath, function(err) {
+
+					if (err) {
+						reject((err.message) ? err.message : err);
+					}
+					else {
+						resolve();
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.mkdirProm = function(path, mode) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.mkdir(path, (mode) ? mode : null, function(err) {
+
+					if (err) {
+						reject((err.message) ? err.message : err);
+					}
+					else {
+						resolve();
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.openProm = function(path, flags, mode) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.open(path, flags, (mode) ? mode : null, function(err, fd) {
+
+					if (err) {
+						reject((err.message) ? err.message : err);
+					}
+					else {
+						resolve(fd);
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
 	fs.readFileProm = function(file, options) {
 
 		return new Promise(function(resolve, reject) {
@@ -310,6 +388,32 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 					}
 					else {
 						resolve(data);
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.renameProm = function(oldPath, newPath) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.rename(oldPath, newPath, function(err) {
+
+					if (err) {
+						reject((err.message) ? err.message : err);
+					}
+					else {
+						resolve();
 					}
 
 				});

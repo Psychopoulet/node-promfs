@@ -106,7 +106,12 @@ fs.copyProm(origin, target); // return a Promise instance
 // fs.appendFileProm
 // fs.chmodProm
 // fs.chownProm
+// fs.closeProm
+// fs.linkProm
+// fs.mkdirProm
+// fs.openProm
 // fs.readFileProm
+// fs.renameProm
 // fs.unlinkProm
 // fs.writeFileProm
 

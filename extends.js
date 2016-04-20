@@ -496,42 +496,4 @@ const path = require('path'), fs = require('fs');
 
 	};
 
-// moove
-
-	// sync version
-
-	fs.mooveSync = function(origin, target) {
-		return (fs.copySync(origin, target) && fs.unlinkSync(origin));
-	};
-
-	// async version
-
-	fs.moove = function(origin, target, callback) {
-
-		callback = ('function' === typeof callback) ? callback : function(){};
-
-		fs.copy(origin, target, function(err) {
-
-			if (err) {
-				callback(err);
-			}
-			else {
-
-				fs.unlink(origin, function(err) {
-
-					if (err) {
-						callback((err.message) ? err.message : err);
-					}
-					else {
-						callback(null);
-					}
-
-				});
-
-			}
-
-		});
-
-	};
-
 module.exports = fs;

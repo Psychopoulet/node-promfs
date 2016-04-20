@@ -489,89 +489,6 @@
 
 	}
 
-	function testFileMoove() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test file moove");
-				console.log("----------------");
-				console.log("");
-
-				console.log("writeFileProm");
-
-				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
-
-					console.log("must be == true :", fs.isFileSync(_filetest));
-
-					console.log("");
-					console.log("mooveSync");
-
-					fs.mooveSync(_filetest, _filetest2);
-
-					console.log("must be == false :", fs.isFileSync(_filetest));
-					console.log("must be == true :", fs.isFileSync(_filetest2));
-					console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
-
-					fs.mooveSync(_filetest2, _filetest);
-
-					console.log("");
-					console.log("moove");
-
-					fs.moove(_filetest, _filetest2, function(err) {
-
-						if (err) {
-							reject(err);
-						}
-						else {
-
-							console.log("must be == false :", fs.isFileSync(_filetest));
-							console.log("must be == true :", fs.isFileSync(_filetest2));
-							console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
-
-							fs.mooveSync(_filetest2, _filetest);
-
-							console.log("");
-							console.log("mooveProm");
-
-							fs.mooveProm(_filetest, _filetest2).then(function() {
-
-								console.log("must be == false :", fs.isFileSync(_filetest));
-								console.log("must be == true :", fs.isFileSync(_filetest2));
-								console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
-
-								return fs.unlinkProm(_filetest);
-
-							}).then(function() {
-								return fs.unlinkProm(_filetest2);
-							}).then(function() {
-
-								console.log("");
-								console.log("----------------");
-								console.log("");
-
-								resolve();
-								
-							}).catch(reject);
-
-						}
-
-					});
-
-				}).catch(reject);
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
 // run
 
 	// clean
@@ -598,8 +515,6 @@
 		return testFileConcat();
 	}).then(function() {
 		return testFileCopy();
-	}).then(function() {
-		return testFileMoove();
 	})
 
 	// clean
