@@ -301,12 +301,13 @@ const path = require('path'), fs = require('fs');
 
 	// sync version
 
-	fs.concatFilesSync = function(files, separator) {
+	fs.concatFilesSync = function(files, encoding, separator) {
 
 		if ('object' !== typeof files || !(files instanceof Array)) {
 			throw "This is not an array"
 		}
 
+		encoding = ('string' === typeof encoding) ? encoding : null;
 		separator = ('string' === typeof separator) ? separator : '';
 
 		let content = '';
@@ -314,7 +315,7 @@ const path = require('path'), fs = require('fs');
 			files.forEach(function(file) {
 
 				if (fs.isFileSync(file)) {
-					content += fs.readFileSync(file) + separator;
+					content += fs.readFileSync(file, encoding) + separator;
 				}
 
 			});
@@ -325,13 +326,21 @@ const path = require('path'), fs = require('fs');
 
 	// async version
 
-	fs.concatFiles = function(files, separator, callback) {
+	fs.concatFiles = function(files, encoding, separator, callback) {
 
 		if (!callback) {
-			callback = ('function' === typeof separator) ? separator : function(){};
+
+			if (!separator) {
+				callback = ('function' === typeof encoding) ? encoding : function(){};
+			}
+			else {
+				callback = ('function' === typeof separator) ? separator : function(){};
+			}
+			
 		}
 
 		callback = ('function' === typeof callback) ? callback : function(){};
+		encoding = ('string' === typeof encoding) ? encoding : 'utf8';
 		separator = ('string' === typeof separator) ? separator : '';
 
 		try {
@@ -357,7 +366,7 @@ const path = require('path'), fs = require('fs');
 							}
 							else if (exists) {
 
-								fs.readFile(files[i], function(err, filecontent) {
+								fs.readFile(files[i], encoding, function(err, filecontent) {
 
 									if (err) {
 										callback((err.message) ? err.message : err);

@@ -113,13 +113,13 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 	};
 
-	fs.concatFilesProm = function(files, separator) {
+	fs.concatFilesProm = function(files, encoding, separator) {
 
 		return new Promise(function(resolve, reject) {
 
 			try {
 
-				fs.concatFiles(files, (separator) ? separator : null, function(err, content) {
+				fs.concatFiles(files, (encoding) ? encoding : null, (separator) ? separator : null, function(err, content) {
 
 					if (err) {
 						reject(err);

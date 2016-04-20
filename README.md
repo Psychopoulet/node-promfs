@@ -41,8 +41,8 @@ fs.mkdirpSync(path.join(__dirname, 'testlvl1', 'testlvl2')); // return true|fals
 fs.rmdirpSync(path.join(__dirname, 'testlvl1')); // return true|false
 
 // concate files content
-// (array files [, string separator = ''])
-fs.concatFilesSync([ file1, file2, file3 ], "\n"); // return true|false
+// (array files [, string encoding = 'utf8'] [, string separator = ''])
+fs.concatFilesSync([ file1, file2, file3 ], 'utf8', "\n"); // return true|false
 
 // copy file
 fs.copySync(origin, target); // return true|false
@@ -67,8 +67,8 @@ fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), callback); // callback(n
 fs.rmdirp(path.join(__dirname, 'testlvl1'), callback); // callback(null|string err)
 
 // concate files content
-// (array files [, string separator = ''], callback)
-fs.concatFiles([ file1, file2, file3 ], "\n", callback); // callback(null|string err, string content)
+// (array files [, string encoding = 'utf8'] [, string separator = ''], callback)
+fs.concatFiles([ file1, file2, file3 ], 'utf8', "\n", callback); // callback(null|string err, string content)
 
 // copy file
 fs.copySync(origin, target, callback); // callback(null|string err)
@@ -93,8 +93,8 @@ fs.mkdirpProm(path.join(__dirname, 'testlvl1', 'testlvl2')); // return a Promise
 fs.rmdirpProm(path.join(__dirname, 'testlvl1')); // return a Promise instance
 
 // concate files content
-// (array files [, string separator = ''])
-fs.concatFilesProm([ file1, file2, file3 ], "\n"); // return a Promise instance
+// (array files [, string encoding = 'utf8'] [, string separator = ''])
+fs.concatFilesProm([ file1, file2, file3 ], 'utf8', "\n"); // return a Promise instance
 
 // copy file
 fs.copyProm(origin, target); // return a Promise instance

@@ -363,12 +363,12 @@
 
 					console.log("");
 					console.log("concatFilesSync");
-					console.log("must be == 'test test test' :", fs.concatFilesSync([ _filetest, _filetest, _filetest ], ' '));
+					console.log("must be == 'test test test' :", fs.concatFilesSync([ _filetest, _filetest, _filetest ], 'utf8', ' '));
 
 					console.log("");
 					console.log("concatFiles");
 
-					fs.concatFiles([ _filetest, _filetest, _filetest ], ' ', function(err, content) {
+					fs.concatFiles([ _filetest, _filetest, _filetest ], 'utf8', ' ', function(err, content) {
 
 						if (err) {
 							reject(err);
@@ -380,7 +380,7 @@
 							console.log("");
 							console.log("concatFilesProm");
 
-							fs.concatFilesProm([ _filetest, _filetest, _filetest ], ' ').then(function(content) {
+							fs.concatFilesProm([ _filetest, _filetest, _filetest ], 'utf8', ' ').then(function(content) {
 
 								console.log("must be == 'test test test' :", content);
 
