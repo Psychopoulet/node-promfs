@@ -8,112 +8,81 @@ A basic 'fs' object extension
 $ npm install simplefs
 ```
 
+## Notes
+
+Be carefull ! To be more stable and logicaly "fs compatible", this new version does no longer work like the previous.
+
 ## Features
 
-  * checks for file & directory existence
-  * create & delete directories recursively, with synchrone & asynchone versions
+  * checks for file & directory existence, with synchrone & asynchrone versions
+  * create & delete directories recursively, with synchrone & asynchrone versions
+  * concat files content in a string, with synchrone & asynchrone versions
+  * move and copy files, with synchrone & asynchrone versions
+
+  * ... and add promise wrappers for some asynchrone functions (more will come later)
 
 ## Examples
 
 ```js
 
+// sync
+
 const fs = require('simplefs'), path = require('path');
 
-fs.dirExists(__dirname); // return true|false
-fs.fileExists(__filename); // return true|false
+fs.isFileSync(__filename); // return true|false
+fs.isDirectorySync(__dirname); // return true|false
 
-// recursively create a directory (sync version, return true|false)
-// use fs.dirExists
-fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'));
+// recursively create a directory
+// check if the directory already exists before, so you don't have to do it
+fs.mkdirpSync(path.join(__dirname, 'testlvl1', 'testlvl2')); // return true|false
 
-// recursively delete a directory (sync version, return true|false)
-// use fs.dirExists
-fs.rmdirp(path.join(__dirname, 'testlvl1'));
+// recursively delete a directory
+// check if the directory doesn't exist before, so you don't have to do it
+fs.rmdirpSync(path.join(__dirname, 'testlvl1')); // return true|false
 
 ```
 
 ```js
 
+// async
+
 const fs = require('simplefs'), path = require('path');
 
-// async version of dirExists
-fs.adirExists(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err, exists) {
+fs.isFile(__filename, callback); // callback(string err, bool exists)
+fs.isDirectory(__dirname, callback); // callback(string err, bool exists)
 
-	if (err) {
-		console.log(err);
-	}
-	else if (exists) {
-		console.log('already exists');
-	}
-	else {
-		console.log('does not exist');
-	}
+// recursively create a directory
+// check if the directory already exists before, so you don't have to do it
+fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), callback); // callback(string err)
 
-}); // exists for afileExists
-
-// async version of mkdirp
-// use fs.adirExists
-fs.amkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), function(err) {
-
-	if (err) {
-		console.log(err);
-	}
-	else {
-		
-		// async version of rmdirp
-		// use fs.adirExists
-		fs.armdirp(path.join(__dirname, 'testlvl1'), function(err) {
-
-			if (err) {
-				console.log(err);
-			}
-			else {
-				console.log('ok');
-			}
-
-		});
-
-	}
-
-});
+// recursively delete a directory
+// check if the directory doesn't exist before, so you don't have to do it
+fs.rmdirp(path.join(__dirname, 'testlvl1'), callback); // callback(string err)
 
 ```
 
 ```js
 
+// promise
+
 const fs = require('simplefs'), path = require('path');
 
-// promise version of dirExists
-fs.pdirExists(path.join(__dirname, 'testlvl1', 'testlvl2')).then(function(err, exists) {
+fs.isFileProm(__filename); // return a Promise instance
+fs.isDirectoryProm(__dirname); // return a Promise instance
 
-	if (exists) {
-		console.log('already exists');
-	}
-	else {
-		console.log('does not exist');
-	}
+// recursively create a directory
+// check if the directory already exists before, so you don't have to do it
+fs.mkdirpProm(path.join(__dirname, 'testlvl1', 'testlvl2')); // return a Promise instance
 
-}).catch(function(err) {
-	console.log(err);
-}); // exists for pfileExists
+// recursively delete a directory
+// check if the directory doesn't exist before, so you don't have to do it
+fs.rmdirpProm(path.join(__dirname, 'testlvl1')); // return a Promise instance
 
-// promise version of mkdirp
-// use fs.adirExists
-fs.pmkdirp(path.join(__dirname, 'testlvl1', 'testlvl2')).then(function() {
 
-	// promise version of rmdirp
-	// use fs.adirExists
-	fs.prmdirp(path.join(__dirname, 'testlvl1')).then(function() {
-
-		console.log('ok');
-
-	}).catch(function(err) {
-		console.log(err);
-	});
-
-}).catch(function(err) {
-	console.log(err);
-});
+// and some classical others...
+// fs.appendFileProm
+// fs.readFileProm
+// fs.unlinkProm
 
 ```
 
