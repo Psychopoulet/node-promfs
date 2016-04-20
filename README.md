@@ -10,7 +10,7 @@ $ npm install simplefs
 
 ## Notes
 
-Be carefull ! To be more stable and logicaly "fs compatible", this new version does no longer work like the previous.
+Be carefull ! To be more stable and logicaly "fs compatible", this new version 2.*.* does no longer work like the previous 1.*.*
 
 ## Features
 
@@ -100,10 +100,15 @@ fs.concatFilesProm([ file1, file2, file3 ], 'utf8', "\n"); // return a Promise i
 fs.copyProm(origin, target); // return a Promise instance
 
 // and some classical others...
-// fs.writeFileProm
+// using same presentation (ex: fs.appendFileProm(file, data [, options]))
+
+// fs.accessProm
 // fs.appendFileProm
+// fs.chmodProm
+// fs.chownProm
 // fs.readFileProm
 // fs.unlinkProm
+// fs.writeFileProm
 
 ```
 

@@ -9,23 +9,49 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 	// simplefs
 
-	fs.isFileProm = function(file) {
+	fs.concatFilesProm = function(files, encoding, separator) {
 
 		return new Promise(function(resolve, reject) {
 
 			try {
 
-				fs.isFile(file, function(err, exists) {
+				fs.concatFiles(files, (encoding) ? encoding : null, (separator) ? separator : null, function(err, content) {
 
 					if (err) {
 						reject(err);
 					}
 					else {
-						resolve(exists);
+						resolve(content);
 					}
 
 				});
-	
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.copyProm = function(origin, target) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.copy(origin, target, function(err) {
+
+					if (err) {
+						reject(err);
+					}
+					else {
+						resolve();
+					}
+
+				});
+
 			}
 			catch(e) {
 				reject(((e.message) ? e.message : e));
@@ -52,6 +78,58 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 				});
 		
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.isFileProm = function(file) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.isFile(file, function(err, exists) {
+
+					if (err) {
+						reject(err);
+					}
+					else {
+						resolve(exists);
+					}
+
+				});
+	
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.mooveProm = function(origin, target) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.moove(origin, target, function(err) {
+
+					if (err) {
+						reject(err);
+					}
+					else {
+						resolve();
+					}
+
+				});
+
 			}
 			catch(e) {
 				reject(((e.message) ? e.message : e));
@@ -113,93 +191,15 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 	};
 
-	fs.concatFilesProm = function(files, encoding, separator) {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				fs.concatFiles(files, (encoding) ? encoding : null, (separator) ? separator : null, function(err, content) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-						resolve(content);
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject(((e.message) ? e.message : e));
-			}
-
-		});
-
-	};
-
-	fs.copyProm = function(origin, target) {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				fs.copy(origin, target, function(err) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-						resolve();
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject(((e.message) ? e.message : e));
-			}
-
-		});
-
-	};
-
-	fs.mooveProm = function(origin, target) {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				fs.moove(origin, target, function(err) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-						resolve();
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject(((e.message) ? e.message : e));
-			}
-
-		});
-
-	};
-
 	// classical
 
-	fs.writeFileProm = function(file, message, options) {
+	fs.accessProm = function(file, mode) {
 
 		return new Promise(function(resolve, reject) {
 
 			try {
 
-				fs.writeFile(file, message, (options) ? options : null, function(err) {
+				fs.access(file, (mode) ? mode : null, function(err) {
 
 					if (err) {
 						reject((err.message) ? err.message : err);
@@ -226,6 +226,58 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 			try {
 
 				fs.appendFile(file, message, (options) ? options : null, function(err) {
+
+					if (err) {
+						reject((err.message) ? err.message : err);
+					}
+					else {
+						resolve();
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.chmodProm = function(path, mode) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.chmod(path, mode, function(err) {
+
+					if (err) {
+						reject((err.message) ? err.message : err);
+					}
+					else {
+						resolve();
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.chownProm = function(path, uid, gid) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.chown(path, uid, gid, function(err) {
 
 					if (err) {
 						reject((err.message) ? err.message : err);
@@ -298,6 +350,32 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 						});
 
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
+	fs.writeFileProm = function(file, message, options) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.writeFile(file, message, (options) ? options : null, function(err) {
+
+					if (err) {
+						reject((err.message) ? err.message : err);
+					}
+					else {
+						resolve();
 					}
 
 				});
