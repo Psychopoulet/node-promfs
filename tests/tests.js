@@ -355,12 +355,74 @@
 
 	}
 
+	function testFileConcat() {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				console.log("");
+				console.log("----------------");
+				console.log("test file concat");
+				console.log("----------------");
+				console.log("");
+
+				console.log("writeFileProm");
+				console.log("must be == true :");
+
+				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
+
+					console.log(fs.isFileSync(_filetest));
+
+					console.log("");
+					console.log("concatFilesSync");
+					console.log("must be == 'test test test' :", fs.concatFilesSync([ _filetest, _filetest, _filetest ], ' '));
+
+					console.log("");
+					console.log("concatFiles");
+					console.log("must be == 'test test test' :");
+
+					fs.concatFiles([ _filetest, _filetest, _filetest ], ' ', function(err, content) {
+
+						if (err) {
+							reject(err);
+						}
+						else {
+
+							console.log(content);
+
+							console.log("");
+							console.log("concatFilesProm");
+							console.log("must be == 'test test test' :");
+
+							fs.concatFilesProm([ _filetest, _filetest, _filetest ], ' ').then(function(content) {
+								console.log(content);
+								resolve();
+							}).catch(reject);
+
+						}
+
+					});
+
+				}).catch(reject);
+
+			}
+			catch(e) {
+				reject((e.message) ? e.message : e);
+			}
+
+		});
+
+	}
+
 // run
 
+	// clean
 	fs.unlinkProm(_filetest).then(function() {
 		return fs.rmdirpProm(_dirtest);
 	})
 
+	// tests
 	.then(function() {
 		return testDirExists();
 	}).then(function() {
@@ -371,8 +433,11 @@
 		return testDirWritePromise();
 	}).then(function() {
 		return testFileWritePromise();
+	}).then(function() {
+		return testFileConcat();
 	})
 
+	// clean
 	.then(function() {
 		return fs.unlinkProm(_filetest);
 	}).then(function() {

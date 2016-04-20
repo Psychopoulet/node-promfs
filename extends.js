@@ -297,18 +297,95 @@ const path = require('path'), fs = require('fs');
 
 	};
 
-/*// concat
+// concatFiles
 
 	// sync version
 
-	fs.concatFilesSync = function(files) {
+	fs.concatFilesSync = function(files, separator) {
+
+		if ('object' !== typeof files || !(files instanceof Array)) {
+			throw "This is not an array"
+		}
+
+		separator = ('string' === typeof separator) ? separator : '';
+
+		let content = '';
+
+			files.forEach(function(file) {
+
+				if (fs.isFileSync(file)) {
+					content += fs.readFileSync(file) + separator;
+				}
+
+			});
+
+		return content;
 
 	};
 
 	// async version
 
-	fs.concatFile = function(files) {
+	fs.concatFiles = function(files, separator, callback) {
 
-	};*/
+		if (!callback) {
+			callback = ('function' === typeof separator) ? separator : function(){};
+		}
+
+		callback = ('function' === typeof callback) ? callback : function(){};
+		separator = ('string' === typeof separator) ? separator : '';
+
+		try {
+
+			if ('object' !== typeof files || !(files instanceof Array)) {
+				callback("This is not an array");
+			}
+			else {
+
+				let content = '';
+
+				function readContent(i) {
+
+					if (i >= files.length) {
+						callback(null, content);
+					}
+					else {
+
+						fs.isFile(files[i], function(err, exists) {
+
+							if (err) {
+								callback(err);
+							}
+							else if (exists) {
+
+								fs.readFile(files[i], function(err, filecontent) {
+
+									if (err) {
+										callback(err);
+									}
+									else {
+										content += filecontent + separator;
+										readContent(i + 1);
+									}
+
+								});
+
+							}
+
+						});
+
+					}
+
+				}
+
+				readContent(0);
+
+			}
+
+		}
+		catch (e) {
+			callback((e.message) ? e.message : e);
+		}
+
+	};
 
 module.exports = fs;

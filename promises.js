@@ -111,6 +111,32 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 	};
 
+	fs.concatFilesProm = function(files, separator) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.concatFiles(files, (separator) ? separator : null, function(err, content) {
+
+					if (err) {
+						reject(err);
+					}
+					else {
+						resolve(content);
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
 	fs.writeFileProm = function(file, message, options) {
 
 		return new Promise(function(resolve, reject) {
@@ -228,69 +254,5 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 		});
 
 	};
-
-	/*if (!fs.pconcat) {
-
-		fs.pconcat = function(files) {
-
-			return new Promise(function(resolve, reject) {
-
-				try {
-
-					if ('object' !== typeof files || !(files instanceof Array)) {
-						reject('This is not an array');
-					}
-					else {
-
-						let i = files.length, ok = true;
-
-						files.forEach(function (file) {
-
-							if (ok) {
-
-								fs.pfileExists(file).then(function(exists) {
-
-									if (exists) {
-
-										fs.preadFile(p_sFile, 'utf8').then(function (data) {
-
-											i--;
-
-											sResult += data + "\r\n";
-
-											if (0 === i) {
-												resolve(sResult);
-											}
-
-										}).catch(function(err) {
-											ok = false; reject(err);
-										});
-
-									}
-									else if (0 === i) {
-										i--;
-										resolve(sResult);
-									}
-
-								}).catch(function(err) {
-									ok = false; reject(err);
-								});
-								
-							}
-
-						});
-
-					}
-
-				}
-				catch(e) {
-					reject(((e.message) ? e.message : e));
-				}
-
-			});
-
-		};
-
-	}*/
 
 module.exports = fs;

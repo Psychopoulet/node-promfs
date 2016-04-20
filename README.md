@@ -40,6 +40,10 @@ fs.mkdirpSync(path.join(__dirname, 'testlvl1', 'testlvl2')); // return true|fals
 // check if the directory doesn't exist before, so you don't have to do it
 fs.rmdirpSync(path.join(__dirname, 'testlvl1')); // return true|false
 
+// concate files content
+// (array files [, string separator = ''])
+fs.concatFilesSync([ file1, file2, file3 ], "\n"); // return true|false
+
 ```
 
 ```js
@@ -58,6 +62,10 @@ fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), callback); // callback(s
 // recursively delete a directory
 // check if the directory doesn't exist before, so you don't have to do it
 fs.rmdirp(path.join(__dirname, 'testlvl1'), callback); // callback(string err)
+
+// concate files content
+// (array files [, string separator = ''], callback)
+fs.concatFiles([ file1, file2, file3 ], "\n", callback); // callback(string err)
 
 ```
 
@@ -78,6 +86,9 @@ fs.mkdirpProm(path.join(__dirname, 'testlvl1', 'testlvl2')); // return a Promise
 // check if the directory doesn't exist before, so you don't have to do it
 fs.rmdirpProm(path.join(__dirname, 'testlvl1')); // return a Promise instance
 
+// concate files content
+// (array files [, string separator = ''])
+fs.concatFilesProm([ file1, file2, file3 ], "\n"); // return a Promise instance
 
 // and some classical others...
 // fs.appendFileProm
