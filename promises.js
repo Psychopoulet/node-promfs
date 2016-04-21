@@ -381,7 +381,7 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 			try {
 
-				fs.readdir(dir, (options) ? options : null, function(err, files) {
+				fs.readdir(dir, function(err, files) {
 
 					if (err) {
 						reject((err.message) ? err.message : err);
