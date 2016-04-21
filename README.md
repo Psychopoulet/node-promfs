@@ -110,6 +110,7 @@ fs.copyProm(origin, target); // return a Promise instance
 // fs.linkProm
 // fs.mkdirProm
 // fs.openProm
+// fs.readdirProm
 // fs.readFileProm
 // fs.renameProm
 // fs.unlinkProm
