@@ -375,6 +375,32 @@ const fs = require(require('path').join(__dirname, 'extends.js'));
 
 	};
 
+	fs.readdirProm = function(dir, options) {
+
+		return new Promise(function(resolve, reject) {
+
+			try {
+
+				fs.readdir(dir, (options) ? options : null, function(err, files) {
+
+					if (err) {
+						reject((err.message) ? err.message : err);
+					}
+					else {
+						resolve(files);
+					}
+
+				});
+
+			}
+			catch(e) {
+				reject(((e.message) ? e.message : e));
+			}
+
+		});
+
+	};
+
 	fs.readFileProm = function(file, options) {
 
 		return new Promise(function(resolve, reject) {
