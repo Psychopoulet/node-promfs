@@ -154,7 +154,6 @@
 				console.log("----------------");
 				console.log("");
 
-				console.log("");
 				console.log("mkdirpSync");
 				console.log("must be == true :", fs.mkdirpSync(_dirtest));
 				console.log("must be == true :", fs.isDirectorySync(_dirtest));

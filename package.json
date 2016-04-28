@@ -1,6 +1,6 @@
 {
   "name": "simplefs",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "A 'fs' object extension",
   "main": "main.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "directory", "dir",
     "exists", "create", "remove", "delete",
     "synchrone", "asynchrone", "promise",
-    "mkdirp", "rmdirp", "copy", "moove", "concat"
+    "mkdirp", "rmdirp", "copy", "concat"
   ],
   "author": "Sébastien VIDAL",
   "license": "ISC",

@@ -17,9 +17,9 @@ Be carefull ! To be more stable and logicaly "fs compatible", this new version 2
   * checks for file & directory existence, with synchrone & asynchrone versions
   * create & delete directories recursively, with synchrone & asynchrone versions
   * concat files content in a string, with synchrone & asynchrone versions
-  * move and copy files, with synchrone & asynchrone versions
+  * copy files, with synchrone & asynchrone versions
 
-  * ... and add promise wrappers for some asynchrone functions (more will come later)
+  * ... and add promise wrappers for asynchrone functions
 
 ## Examples
 
@@ -33,11 +33,11 @@ fs.isFileSync(__filename); // return true|false
 fs.isDirectorySync(__dirname); // return true|false
 
 // recursively create a directory
-// check if the directory already exists before, so you don't have to do it
+// check if the directory already exists before creation, so you don't have to do it
 fs.mkdirpSync(path.join(__dirname, 'testlvl1', 'testlvl2')); // return true|false
 
 // recursively delete a directory
-// check if the directory doesn't exist before, so you don't have to do it
+// check if the directory doesn't exist before removing, so you don't have to do it
 fs.rmdirpSync(path.join(__dirname, 'testlvl1')); // return true|false
 
 // concate files content
@@ -59,11 +59,11 @@ fs.isFile(__filename, callback); // callback(null|string err, bool exists)
 fs.isDirectory(__dirname, callback); // callback(null|string err, bool exists)
 
 // recursively create a directory
-// check if the directory already exists before, so you don't have to do it
+// check if the directory already exists before creation, so you don't have to do it
 fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), callback); // callback(null|string err)
 
 // recursively delete a directory
-// check if the directory doesn't exist before, so you don't have to do it
+// check if the directory doesn't exist before removing, so you don't have to do it
 fs.rmdirp(path.join(__dirname, 'testlvl1'), callback); // callback(null|string err)
 
 // concate files content
@@ -85,11 +85,11 @@ fs.isFileProm(__filename); // return a Promise instance
 fs.isDirectoryProm(__dirname); // return a Promise instance
 
 // recursively create a directory
-// check if the directory already exists before, so you don't have to do it
+// check if the directory already exists before creation, so you don't have to do it
 fs.mkdirpProm(path.join(__dirname, 'testlvl1', 'testlvl2')); // return a Promise instance
 
 // recursively delete a directory
-// check if the directory doesn't exist before, so you don't have to do it
+// check if the directory doesn't exist before removing, so you don't have to do it
 fs.rmdirpProm(path.join(__dirname, 'testlvl1')); // return a Promise instance
 
 // concate files content
@@ -107,13 +107,29 @@ fs.copyProm(origin, target); // return a Promise instance
 // fs.chmodProm
 // fs.chownProm
 // fs.closeProm
+// fs.fchmodProm
+// fs.fchownProm
+// fs.fdatasyncProm
+// fs.fstatProm
+// fs.fsyncProm
+// fs.ftruncateProm
+// fs.futimesProm
 // fs.linkProm
-// fs.mkdirProm
+// fs.lstatProm
+// fs.mkdirProm -> check if the directory already exists before creation, so you don't have to do it
+// fs.mkdtempProm
 // fs.openProm
+// fs.readProm
 // fs.readdirProm
 // fs.readFileProm
+// fs.realpathProm
 // fs.renameProm
-// fs.unlinkProm
+// fs.rmdirProm -> check if the directory doesn't exist before removing, so you don't have to do it
+// fs.statProm
+// fs.truncateProm
+// fs.unlinkProm -> check if the file doesn't exist before removing, so you don't have to do it
+// fs.utimesProm
+// fs.writeProm
 // fs.writeFileProm
 
 ```
