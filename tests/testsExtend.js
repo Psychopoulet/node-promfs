@@ -16,175 +16,415 @@
 
 describe('isFile', function() {
 
-	describe('isFileSync', function() {
+	describe('sync', function() {
 
-		it('should check type value', function(){
-			assert.throws(function() { fs.isFileSync(false) }, Error, "check type value does not throw an error");
+		it('should check type value', function() {
+			assert.throws(function() { fs.isFileSync(false); }, Error, "check type value does not throw an error");
 		});
 
-		it('should check content value', function(){
-			assert.throws(function() { fs.isFileSync('') }, Error, "check content value does not throw an error");
-			assert.doesNotThrow(function() { fs.isFileSync('test') }, Error, "check content value does not throw an error");
+		it('should check empty content value', function() {
+			assert.throws(function() { fs.isFileSync(''); }, Error, "check empty content value does not throw an error");
 		});
 
-		it('should check file existance', function(){
+		it('should check real content value', function() {
+			assert.doesNotThrow(function() { fs.isFileSync('test'); }, Error, "check real content value throw an error");
+		});
+
+		it('should check false file existance', function() {
 			assert.strictEqual(false, fs.isFileSync(path.join(__dirname, 'eivrjeoirvneornv')), "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing file");
+		});
+
+		it('should check real file existance', function() {
 			assert.strictEqual(true, fs.isFileSync(__filename), "'" + __filename + "' is not an existing file");
 		});
 
 	});
 
-	describe('isFile', function() {
+	describe('async', function() {
 
 		it('should check type value', function(done) {
 
-			fs.isFile(false, function(err, exists) {
+			fs.isFile(false, function(err) {
+				assert.notStrictEqual(null, err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+			
+			fs.isFile('', function(err) {
+				assert.notStrictEqual(null, err, "check empty content value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check real content value', function(done) {
+			
+			fs.isFile('test', function(err) {
+				assert.strictEqual(null, err, "check real content value generate an error");
+				done();
+			});
+
+		});
+
+		it('should check false file existance', function(done) {
+
+			fs.isFile(path.join(__dirname, 'eivrjeoirvneornv'), function(err, exists) {
+				assert.strictEqual(false, exists, "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing file");
+				done();
+			});
+
+		});
+
+		it('should check real file existance', function(done) {
+
+			fs.isFile(__filename, function(err, exists) {
+				assert.strictEqual(true, exists, "'" + __filename + "' is not an existing file");
+				done();
+			});
+
+		});
+
+	});
+
+	describe('promise', function(){
+
+		it('should check type value', function(done) {
+
+			fs.isFileProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
 				assert.strictEqual('string', typeof err, "check type value does not generate an error");
 				done();
 			});
 
 		});
 
-		it('should check content value', function() {
+		it('should check empty content value', function(done) {
 			
+			fs.isFileProm('').then(function() {
+				assert(false, "check empty content value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check empty content value does not generate an error");
+				done();
+			});
+
 		});
 
-		/*it('should check content value', function(){
-			assert.throws(function() { fs.isFileSync('') }, Error, "check content value does not throw an error");
-			assert.doesNotThrow(function() { fs.isFileSync('test') }, Error, "check content value does not throw an error");
+		it('should check real content value', function(done) {
+			
+			fs.isFileProm('test').then(done).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check real content value does not generate an error");
+				done();
+			});
+
 		});
 
-		it('should check file existance', function(){
-			assert.strictEqual(false, fs.isFileSync(path.join(__dirname, 'eivrjeoirvneornv')), "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing file");
-			assert.strictEqual(true, fs.isFileSync(__filename), "'" + __filename + "' is not an existing file");
-		});*/
+		it('should check false file existance', function(done) {
+
+			fs.isFileProm(path.join(__dirname, 'eivrjeoirvneornv')).then(function(exists) {
+				assert.strictEqual(false, exists, "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing file");
+				done();
+			}).catch(done);
+
+		});
+
+		it('should check real file existance', function(done) {
+
+			fs.isFileProm(__filename).then(function(exists) {
+				assert.strictEqual(true, exists, "'" + __filename + "' is not an existing file");
+				done();
+			}).catch(done);
+
+		});
 
 	});
 
-	describe('isFileProm', function(){
+});
+
+describe('isDirectory', function() {
+
+	describe('sync', function() {
+
+		it('should check type value', function() {
+			assert.throws(function() { fs.isDirectorySync(false); }, Error, "check type value does not throw an error");
+		});
+
+		it('should check empty content value', function() {
+			assert.throws(function() { fs.isDirectorySync(''); }, Error, "check empty content value does not throw an error");
+		});
+
+		it('should check real content value', function() {
+			assert.doesNotThrow(function() { fs.isDirectorySync('test'); }, Error, "check real content value throw an error");
+		});
+
+		it('should check false directory existance', function() {
+			assert.strictEqual(false, fs.isDirectorySync(path.join(__dirname, 'eivrjeoirvneornv')), "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing directory");
+		});
+
+		it('should check real directory existance', function() {
+			assert.strictEqual(true, fs.isDirectorySync(__dirname), "'" + __dirname + "' is not an existing directory");
+		});
+
+	});
+
+	describe('async', function() {
+
+		it('should check type value', function(done) {
+
+			fs.isDirectory(false, function(err) {
+				assert.notStrictEqual(null, err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+			
+			fs.isDirectory('', function(err) {
+				assert.notStrictEqual(null, err, "check empty content value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check real content value', function(done) {
+			
+			fs.isDirectory('test', function(err) {
+				assert.strictEqual(null, err, "check real content value generate an error");
+				done();
+			});
+
+		});
+
+		it('should check false directory existance', function(done) {
+
+			fs.isDirectory(path.join(__dirname, 'eivrjeoirvneornv'), function(err, exists) {
+				assert.strictEqual(false, exists, "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing directory");
+				done();
+			});
+
+		});
+
+		it('should check real directory existance', function(done) {
+
+			fs.isDirectory(__dirname, function(err, exists) {
+				assert.strictEqual(true, exists, "'" + __dirname + "' is not an existing directory");
+				done();
+			});
+
+		});
+
+	});
+
+	describe('promise', function(){
+
+		it('should check type value', function(done) {
+
+			fs.isDirectoryProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+			
+			fs.isDirectoryProm('').then(function() {
+				assert(false, "check empty content value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check empty content value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check real content value', function(done) {
+			
+			fs.isDirectoryProm('test').then(done).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check real content value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check false directory existance', function(done) {
+
+			fs.isDirectoryProm(path.join(__dirname, 'eivrjeoirvneornv')).then(function(exists) {
+				assert.strictEqual(false, exists, "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing directory");
+				done();
+			}).catch(done);
+
+		});
+
+		it('should check real directory existance', function(done) {
+
+			fs.isDirectoryProm(__dirname).then(function(exists) {
+				assert.strictEqual(true, exists, "'" + __dirname + "' is not an existing directory");
+				done();
+			}).catch(done);
+
+		});
+
+	});
+
+});
+
+describe('mkdirp', function() {
+
+	describe('sync', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function() {
+			assert.throws(function() { fs.mkdirpSync(false); }, Error, "check type value does not throw an error");
+		});
+
+		it('should check empty content value', function() {
+			assert.throws(function() { fs.mkdirpSync(''); }, Error, "check empty content value does not throw an error");
+		});
+
+		it('should create real existing directory', function() {
+			assert.strictEqual(true, fs.mkdirpSync(__dirname), "'" + __dirname + "' cannot be created");
+		});
+
+		it('should create real new directory', function() {
+			assert.strictEqual(true, fs.mkdirpSync(_dirtest), "'" + _dirtest + "' cannot be created");
+		});
+
+		it('should detect created directory', function() {
+			assert.strictEqual(true, fs.isDirectorySync(_dirtest), "'" + _dirtest + "' was not created");
+		});
+
+	});
+
+	describe('async', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.mkdirp(false, function(err) {
+				assert.notStrictEqual(null, err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+			
+			fs.mkdirp('', function(err) {
+				assert.notStrictEqual(null, err, "check empty content value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should create real existing directory', function(done) {
+
+			fs.mkdirp(__dirname, function(err) {
+				assert.strictEqual(null, err, "'" + __dirname + "' cannot be created");
+				done();
+			});
+
+		});
+
+		it('should create real new directory', function(done) {
+			
+			fs.mkdirp(_dirtest, function(err) {
+				assert.strictEqual(null, err, "'" + _dirtest + "' cannot be created");
+				done();
+			});
+
+		});
+
+		it('should detect created directory', function() {
+			assert.strictEqual(true, fs.isDirectorySync(_dirtest), "'" + _dirtest + "' was not created");
+		});
+
+	});
+
+	describe('promise', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.mkdirpProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+			
+			fs.mkdirpProm('').then(function() {
+				assert(false, "check empty content value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check empty content value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should create real existing directory', function(done) {
+
+			fs.mkdirpProm(__dirname).then(done).catch(function() {
+				assert(false, "'" + __dirname + "' cannot be created");
+				done();
+			}).catch(done);
+
+		});
+
+		it('should create real new directory', function(done) {
+			
+			fs.mkdirpProm(_dirtest).then(done).catch(function() {
+				assert(false, "'" + _dirtest + "' cannot be created");
+				done();
+			}).catch(done);
+
+		});
+
+		it('should detect created directory', function() {
+			assert.strictEqual(true, fs.isDirectorySync(_dirtest), "'" + _dirtest + "' was not created");
+		});
 
 	});
 
 });
 
 /*
-
-	function testFileExists() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("tests file exists");
-				console.log("----------------");
-				console.log("");
-
-				console.log("");
-				console.log("isFile");
-
-				fs.isFile(__filename, function(err, exists) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-
-						console.log("must be == true :", exists);
-
-						console.log("");
-						console.log("isFileProm");
-
-						fs.isFileProm(__filename).then(function(exists) {
-
-							console.log("must be == true :", exists);
-
-							console.log("");
-							console.log("----------------");
-							console.log("");
-
-							resolve();
-
-						}).catch(reject);
-
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
-	function testDirExists() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("tests dir exists");
-				console.log("----------------");
-				console.log("");
-
-				console.log("isDirectorySync");
-				console.log("must be == false :", fs.isDirectorySync('eivrjeoirvneornv'));
-				console.log("must be == true :", fs.isDirectorySync(__dirname));
-				console.log("must be == false :", fs.isDirectorySync(_dirtest));
-
-				console.log("must be == 'This is not a string' :");
-				try {
-					fs.isDirectorySync(false);
-				}
-				catch(e) {
-					console.log((e.message) ? e.message : e);
-				}
-
-				console.log("");
-				console.log("isDirectory");
-
-				fs.isDirectory(__dirname, function(err, exists) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-
-						console.log("must be == true :", exists);
-
-						console.log("");
-						console.log("isDirectoryProm");
-
-						fs.isDirectoryProm(__dirname).then(function(exists) {
-
-							console.log("must be == true :", exists);
-
-							console.log("");
-							console.log("----------------");
-							console.log("");
-
-							resolve();
-
-						}).catch(reject);
-
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
 
 	function testDirWriteSync() {
 
@@ -197,10 +437,6 @@ describe('isFile', function() {
 				console.log("test dir write sync");
 				console.log("----------------");
 				console.log("");
-
-				console.log("mkdirpSync");
-				console.log("must be == true :", fs.mkdirpSync(_dirtest));
-				console.log("must be == true :", fs.isDirectorySync(_dirtest));
 
 				console.log("");
 				console.log("rmdirpSync");
@@ -234,38 +470,23 @@ describe('isFile', function() {
 				console.log("----------------");
 				console.log("");
 
-				console.log("mkdirp");
+				console.log("");
+				console.log("rmdirp");
 
-				fs.mkdirp(_dirtest, function(err) {
+				fs.rmdirp(path.join(__dirname, 'testlvl1'), function(err) {
 
 					if (err) {
 						reject(err);
 					}
 					else {
 
-						console.log("must be == true :", fs.isDirectorySync(_dirtest));
+						console.log("must be == false :", fs.isDirectorySync(_dirtest));
 
 						console.log("");
-						console.log("rmdirp");
+						console.log("----------------");
+						console.log("");
 
-						fs.rmdirp(path.join(__dirname, 'testlvl1'), function(err) {
-
-							if (err) {
-								reject(err);
-							}
-							else {
-
-								console.log("must be == false :", fs.isDirectorySync(_dirtest));
-
-								console.log("");
-								console.log("----------------");
-								console.log("");
-
-								resolve();
-
-							}
-
-						});
+						resolve();
 
 					}
 
@@ -292,18 +513,7 @@ describe('isFile', function() {
 				console.log("----------------");
 				console.log("");
 
-				console.log("mkdirpProm");
-
-				fs.mkdirpProm(_dirtest).then(function() {
-
-					console.log("must be == true :", fs.isDirectorySync(_dirtest));
-
-					console.log("");
-					console.log("rmdirpProm");
-
-					return fs.rmdirpProm(path.join(__dirname, 'testlvl1'));
-
-				}).then(function() {
+				fs.rmdirpProm(path.join(__dirname, 'testlvl1')).then(function() {
 
 					console.log("must be == false :", fs.isDirectorySync(_dirtest));
 
@@ -543,10 +753,6 @@ describe('isFile', function() {
 
 	// tests
 	.then(function() {
-		return testFileExists();
-	}).then(function() {
-		return testDirExists();
-	}).then(function() {
 		return testDirWriteSync();
 	}).then(function() {
 		return testDirWriteASync();

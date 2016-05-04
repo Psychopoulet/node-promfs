@@ -49,9 +49,18 @@ const path = require('path'), fs = require('fs');
 			}
 			else {
 
-				fs.stat(file, function(err, stats) {
-					callback(null, (!err && stats && stats.isFile()));
-				});
+				file = file.trim();
+
+				if ('' == file) {
+					callback("'file' is empty");
+				}
+				else {
+
+					fs.stat(file, function(err, stats) {
+						callback(null, (!err && stats && stats.isFile()));
+					});
+
+				}
 
 			}
 
@@ -71,12 +80,24 @@ const path = require('path'), fs = require('fs');
 		if ('string' !== typeof dir) {
 			throw new Error("This is not a string");
 		}
+		else {
 
-		try {
-			return (fs.statSync(dir).isDirectory());
-		}
-		catch (e) {
-			return false;
+			dir = dir.trim();
+
+			if ('' == dir) {
+				throw new Error("'dir' is empty");
+			}
+			else {
+
+				try {
+					return (fs.lstatSync(dir).isDirectory());
+				}
+				catch (e) {
+					return false;
+				}
+				
+			}
+
 		}
 
 	};
@@ -94,9 +115,18 @@ const path = require('path'), fs = require('fs');
 			}
 			else {
 
-				fs.stat(dir, function(err, stats) {
-					callback(null, (!err && stats && stats.isDirectory()));
-				});
+				dir = dir.trim();
+				
+				if ('' == dir) {
+					callback("'dir' is empty");
+				}
+				else {
+
+					fs.stat(dir, function(err, stats) {
+						callback(null, (!err && stats && stats.isDirectory()));
+					});
+
+				}
 
 			}
 

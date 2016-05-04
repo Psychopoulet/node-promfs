@@ -1,17 +1,6 @@
 "use strict";
 
-
-describe('Multiplication', function() {
-
-    it('should work', function(){
-
-    });
-    
-});
-
 return;
-
-
 
 // deps
 
