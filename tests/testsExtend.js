@@ -280,14 +280,16 @@ describe('isDirectory', function() {
 
 describe('mkdirp', function() {
 
+	let dirBase = path.join(__dirname, 'testlvl1');
+
 	describe('sync', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'after' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'after' function throw an error");
 		});
 
 		it('should check type value', function() {
@@ -315,11 +317,11 @@ describe('mkdirp', function() {
 	describe('async', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'after' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'after' function throw an error");
 		});
 
 		it('should check type value', function(done) {
@@ -367,11 +369,11 @@ describe('mkdirp', function() {
 	describe('promise', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(path.join(__dirname, 'testlvl1')); }, Error, "'after' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'after' function throw an error");
 		});
 
 		it('should check type value', function(done) {
@@ -702,5 +704,5 @@ describe('copy', function() {
 	.catch(function(err) {
 		console.log('tests interruption', err);
 	});
-	
+
 */
