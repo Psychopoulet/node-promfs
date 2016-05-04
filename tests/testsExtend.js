@@ -3,7 +3,8 @@
 // deps
 
 	const 	fs = require('../main.js'),
-			path = require('path');
+			path = require('path'),
+			assert = require('assert');
 
 // private
 
@@ -12,6 +13,31 @@
 		_filetest2 = path.join(__dirname, 'test2.txt');
 
 // tests
+
+describe('isFile', function() {
+
+	it('isFileSync', function(){
+
+		assert.throws(function() { fs.isFileSync(false) }, Error, "check type value does not throw an error");
+		assert.throws(function() { fs.isFileSync('') }, Error, "check content value does not throw an error");
+		assert.doesNotThrow(function() { fs.isFileSync('test') }, Error, "check content value does not throw an error");
+
+		assert.strictEqual(false, fs.isFileSync(path.join(__dirname, 'eivrjeoirvneornv')), "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing file");
+		assert.strictEqual(true, fs.isFileSync(__filename), "'" + __filename + "' is not an existing file");
+
+	});
+
+	it('isFile', function(){
+
+	});
+
+	it('isFileProm', function(){
+
+	});
+
+});
+
+/*
 
 	function testFileExists() {
 
@@ -24,18 +50,6 @@
 				console.log("tests file exists");
 				console.log("----------------");
 				console.log("");
-
-				console.log("isFileSync");
-				console.log("must be == false :", fs.isFileSync('eivrjeoirvneornv'));
-				console.log("must be == true :", fs.isFileSync(__filename));
-
-				console.log("must be == 'This is not a string' :");
-				try {
-					fs.isFileSync(false);
-				}
-				catch(e) {
-					console.log((e.message) ? e.message : e);
-				}
 
 				console.log("");
 				console.log("isFile");
@@ -528,3 +542,4 @@
 	.catch(function(err) {
 		console.log('tests interruption', err);
 	});
+*/

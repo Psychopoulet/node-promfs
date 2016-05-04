@@ -12,14 +12,26 @@ const path = require('path'), fs = require('fs');
 	fs.isFileSync = function(file) {
 
 		if ('string' !== typeof file) {
-			throw "This is not a string"
+			throw new Error("This is not a string");
 		}
+		else {
 
-		try {
-			return (fs.lstatSync(file).isFile());
-		}
-		catch (e) {
-			return false;
+			file = file.trim();
+
+			if ('' == file) {
+				throw new Error("'file' is empty");
+			}
+			else {
+
+				try {
+					return (fs.lstatSync(file).isFile());
+				}
+				catch (e) {
+					return false;
+				}
+				
+			}
+
 		}
 
 	};
@@ -57,7 +69,7 @@ const path = require('path'), fs = require('fs');
 	fs.isDirectorySync = function(dir) {
 
 		if ('string' !== typeof dir) {
-			throw "This is not a string"
+			throw new Error("This is not a string");
 		}
 
 		try {
@@ -304,7 +316,7 @@ const path = require('path'), fs = require('fs');
 	fs.concatFilesSync = function(files, encoding, separator) {
 
 		if ('object' !== typeof files || !(files instanceof Array)) {
-			throw "This is not an array"
+			throw new Error("This is not an array");
 		}
 
 		encoding = ('string' === typeof encoding) ? encoding : null;
@@ -404,10 +416,10 @@ const path = require('path'), fs = require('fs');
 	fs.copySync = function(origin, target) {
 
 		if ('string' !== typeof origin) {
-			throw "This is not a string"
+			throw new Error("'origin' is not a string");
 		}
 		else if ('string' !== typeof target) {
-			throw "This is not a string"
+			throw new Error("'target' is not a string");
 		}
 
 		if (fs.isFileSync(target)) {
