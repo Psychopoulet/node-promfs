@@ -16,22 +16,52 @@
 
 describe('isFile', function() {
 
-	it('isFileSync', function(){
+	describe('isFileSync', function() {
 
-		assert.throws(function() { fs.isFileSync(false) }, Error, "check type value does not throw an error");
-		assert.throws(function() { fs.isFileSync('') }, Error, "check content value does not throw an error");
-		assert.doesNotThrow(function() { fs.isFileSync('test') }, Error, "check content value does not throw an error");
+		it('should check type value', function(){
+			assert.throws(function() { fs.isFileSync(false) }, Error, "check type value does not throw an error");
+		});
 
-		assert.strictEqual(false, fs.isFileSync(path.join(__dirname, 'eivrjeoirvneornv')), "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing file");
-		assert.strictEqual(true, fs.isFileSync(__filename), "'" + __filename + "' is not an existing file");
+		it('should check content value', function(){
+			assert.throws(function() { fs.isFileSync('') }, Error, "check content value does not throw an error");
+			assert.doesNotThrow(function() { fs.isFileSync('test') }, Error, "check content value does not throw an error");
+		});
+
+		it('should check file existance', function(){
+			assert.strictEqual(false, fs.isFileSync(path.join(__dirname, 'eivrjeoirvneornv')), "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing file");
+			assert.strictEqual(true, fs.isFileSync(__filename), "'" + __filename + "' is not an existing file");
+		});
 
 	});
 
-	it('isFile', function(){
+	describe('isFile', function() {
+
+		it('should check type value', function(done) {
+
+			fs.isFile(false, function(err, exists) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check content value', function() {
+			
+		});
+
+		/*it('should check content value', function(){
+			assert.throws(function() { fs.isFileSync('') }, Error, "check content value does not throw an error");
+			assert.doesNotThrow(function() { fs.isFileSync('test') }, Error, "check content value does not throw an error");
+		});
+
+		it('should check file existance', function(){
+			assert.strictEqual(false, fs.isFileSync(path.join(__dirname, 'eivrjeoirvneornv')), "'" + path.join(__dirname, 'eivrjeoirvneornv') + "' is an existing file");
+			assert.strictEqual(true, fs.isFileSync(__filename), "'" + __filename + "' is not an existing file");
+		});*/
 
 	});
 
-	it('isFileProm', function(){
+	describe('isFileProm', function(){
 
 	});
 
