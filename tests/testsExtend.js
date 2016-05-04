@@ -424,115 +424,55 @@ describe('mkdirp', function() {
 
 });
 
+describe('rmdirp', function() {
+
+	describe('sync', function() {
+
+	});
+
+	describe('async', function() {
+
+	});
+
+	describe('promise', function() {
+
+	});
+
+});
+
+describe('concatFiles', function() {
+
+	describe('sync', function() {
+
+	});
+
+	describe('async', function() {
+
+	});
+
+	describe('promise', function() {
+
+	});
+
+});
+
+describe('copy', function() {
+
+	describe('sync', function() {
+
+	});
+
+	describe('async', function() {
+
+	});
+
+	describe('promise', function() {
+
+	});
+
+});
+
 /*
-
-	function testDirWriteSync() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test dir write sync");
-				console.log("----------------");
-				console.log("");
-
-				console.log("");
-				console.log("rmdirpSync");
-				console.log("must be == true :", fs.rmdirpSync(path.join(__dirname, 'testlvl1')));
-				console.log("must be == false :", fs.isDirectorySync(_dirtest));
-
-				console.log("");
-				console.log("----------------");
-				console.log("");
-
-				resolve();
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
-	function testDirWriteASync() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test dir write async");
-				console.log("----------------");
-				console.log("");
-
-				console.log("");
-				console.log("rmdirp");
-
-				fs.rmdirp(path.join(__dirname, 'testlvl1'), function(err) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-
-						console.log("must be == false :", fs.isDirectorySync(_dirtest));
-
-						console.log("");
-						console.log("----------------");
-						console.log("");
-
-						resolve();
-
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
-	function testDirWritePromise() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test dir write promise");
-				console.log("----------------");
-				console.log("");
-
-				fs.rmdirpProm(path.join(__dirname, 'testlvl1')).then(function() {
-
-					console.log("must be == false :", fs.isDirectorySync(_dirtest));
-
-					console.log("");
-					console.log("----------------");
-					console.log("");
-
-					resolve();
-
-				}).catch(reject);
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
 
 	function testFileWritePromise() {
 
@@ -744,23 +684,7 @@ describe('mkdirp', function() {
 
 // run
 
-	// clean
-	fs.unlinkProm(_filetest).then(function() {
-		return fs.unlinkProm(_filetest2);
-	}).then(function() {
-		return fs.rmdirpProm(_dirtest);
-	})
-
-	// tests
-	.then(function() {
-		return testDirWriteSync();
-	}).then(function() {
-		return testDirWriteASync();
-	}).then(function() {
-		return testDirWritePromise();
-	}).then(function() {
-		return testFileWritePromise();
-	}).then(function() {
+	testFileWritePromise().then(function() {
 		return testFileConcat();
 	}).then(function() {
 		return testFileCopy();
@@ -778,4 +702,5 @@ describe('mkdirp', function() {
 	.catch(function(err) {
 		console.log('tests interruption', err);
 	});
+	
 */
