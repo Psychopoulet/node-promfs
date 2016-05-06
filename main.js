@@ -16,7 +16,7 @@
 		'access', 'appendFile', 'chmod', 'chown', 'close',
 		'fchmod', 'fchown', 'fdatasync', 'fstat', 'fsync', 'ftruncate', 'futimes',
 		'link', 'lstat', 'mkdtemp', 'open',
-		'read', 'readdir', 'readFile',
+		'readdir', 'readFile',
 		'realpath', 'rename', 'stat', 'truncate', 'utimes',
 		'write', 'writeFile'
 
