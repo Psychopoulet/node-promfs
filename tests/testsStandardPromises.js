@@ -270,12 +270,7 @@ describe('others', function() {
 		});
 
 		it('should check normal running', function(done) {
-
-			fs.accessProm(__filename, fs.F_OK).then(done).catch(function(err) {
-				assert(false, "check normal running generate an error");
-				done();
-			});
-
+			fs.accessProm(__filename, fs.F_OK).then(done).catch(done);
 		});
 
 	});
@@ -315,10 +310,7 @@ describe('others', function() {
 			fs.appendFileProm(_filetest, 'test', 'utf8').then(function() {
 				assert.strictEqual('test', fs.readFileSync(_filetest, 'utf8'), "test file content cannot be appended");
 				done();
-			}).catch(function(err) {
-				assert(false, "check normal running generate an error");
-				done();
-			});
+			}).catch(done);
 
 		});
 
@@ -327,7 +319,7 @@ describe('others', function() {
 	describe('chmodProm', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test', 'utf8'); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
@@ -359,12 +351,7 @@ describe('others', function() {
 		});
 
 		it('should check normal running', function(done) {
-
-			fs.chmodProm(_filetest, 755).then(done).catch(function(err) {
-				assert(false, "check normal running generate an error");
-				done();
-			});
-
+			fs.chmodProm(_filetest, 755).then(done).catch(done);
 		});
 
 	});
@@ -372,7 +359,7 @@ describe('others', function() {
 	describe('chownProm', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test', 'utf8'); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
@@ -404,12 +391,7 @@ describe('others', function() {
 		});
 
 		it('should check normal running', function(done) {
-
-			fs.chownProm(_filetest, 0, 0).then(done).catch(function(err) {
-				assert(false, "check normal running generate an error");
-				done();
-			});
-
+			fs.chownProm(_filetest, 0, 0).then(done).catch(done);
 		});
 
 	});
@@ -445,10 +427,7 @@ describe('others', function() {
 			fs.readdirProm(__dirname).then(function(content) {
 				assert.strictEqual('object', typeof content, "check normal running does not generate array");
 				done();
-			}).catch(function(err) {
-				assert(false, "check normal running generate an error");
-				done();
-			});
+			}).catch(done);
 
 		});
 
@@ -457,7 +436,7 @@ describe('others', function() {
 	describe('readFileProm', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test', 'utf8'); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
@@ -493,10 +472,7 @@ describe('others', function() {
 			fs.readFileProm(_filetest, 'utf8').then(function(content) {
 				assert.strictEqual('test', content, "check normal running does not generate content");
 				done();
-			}).catch(function(err) {
-				assert(false, "check normal running generate an error");
-				done();
-			});
+			}).catch(done);
 
 		});
 
@@ -533,10 +509,7 @@ describe('others', function() {
 			fs.realpathProm(__filename).then(function(content) {
 				assert.strictEqual(__filename, content, "check normal running does not generate real path");
 				done();
-			}).catch(function(err) {
-				assert(false, "check normal running generate an error");
-				done();
-			});
+			}).catch(done);
 
 		});
 
@@ -545,7 +518,7 @@ describe('others', function() {
 	describe('renameProm', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test', 'utf8'); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
@@ -595,11 +568,129 @@ describe('others', function() {
 		});
 
 		it('should check normal running', function(done) {
+			fs.renameProm(_filetest, _filetest2).then(done).catch(done);
+		});
 
-			fs.renameProm(_filetest, _filetest2).then(done).catch(function(err) {
-				assert(false, "check normal running generate an error");
+	});
+
+	describe('statProm', function() {
+
+		it('should check type value', function(done) {
+
+			fs.statProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
 				done();
 			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.statProm('').then(function() {
+				assert(false, "check empty content does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.statProm(__filename).then(function(data) {
+				assert.strictEqual('object', typeof data, "check normal running does not generate object");
+				done();
+			}).catch(done);
+
+		});
+
+	});
+
+	describe('truncateProm', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test', 'utf8'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.truncateProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.truncateProm('').then(function() {
+				assert(false, "check empty content does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.truncateProm(_filetest, 2).then(function() {
+				assert.strictEqual('te', fs.readFileSync(_filetest, 'utf8'), "check type value does not generate an error");
+				done();
+			}).catch(done);
+
+		});
+
+	});
+
+	describe('writeFileProm', function() {
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.writeFileProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.writeFileProm('').then(function() {
+				assert(false, "check empty content does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
+				assert.strictEqual('test', fs.readFileSync(_filetest, 'utf8'), "normal running does not write in file");
+				done();
+			}).catch(done);
 
 		});
 
@@ -609,11 +700,6 @@ describe('others', function() {
 	// linkProm
 	// lstatProm
 	// mkdtempProm
-	// renameProm
-	// statProm
-	// truncateProm
 	// utimesProm
-	// writeProm
-	// writeFileProm
 
 });
