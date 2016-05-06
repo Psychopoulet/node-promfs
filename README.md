@@ -107,30 +107,31 @@ fs.copyProm(origin, target); // return a Promise instance
 // fs.chmodProm
 // fs.chownProm
 // fs.closeProm
-// fs.fchmodProm
-// fs.fchownProm
-// fs.fdatasyncProm
-// fs.fstatProm
-// fs.fsyncProm
-// fs.ftruncateProm
-// fs.futimesProm
-// fs.linkProm
-// fs.lstatProm
+// fs.fchmodProm  -> test not created yet
+// fs.fchownProm  -> test not created yet
+// fs.fdatasyncProm  -> test not created yet
+// fs.fstatProm  -> test not created yet
+// fs.fsyncProm  -> test not created yet
+// fs.ftruncateProm  -> test not created yet
+// fs.futimesProm  -> test not created yet
+
+// fs.linkProm  -> test not created yet
+// fs.lstatProm  -> test not created yet
 // fs.mkdirProm -> check if the directory already exists before creation, so you don't have to do it
-// fs.mkdtempProm
+// fs.mkdtempProm  -> test not created yet
 // fs.openProm
-// fs.readProm
-// fs.readdirProm
-// fs.readFileProm
-// fs.realpathProm
-// fs.renameProm
+// fs.readProm  -> test not created yet
+// fs.readdirProm  -> test not created yet
+// fs.readFileProm  -> test not created yet
+// fs.realpathProm  -> test not created yet
+// fs.renameProm  -> test not created yet
 // fs.rmdirProm -> check if the directory doesn't exist before removing, so you don't have to do it
-// fs.statProm
-// fs.truncateProm
+// fs.statProm  -> test not created yet
+// fs.truncateProm  -> test not created yet
 // fs.unlinkProm -> check if the file doesn't exist before removing, so you don't have to do it
-// fs.utimesProm
-// fs.writeProm
-// fs.writeFileProm
+// fs.utimesProm  -> test not created yet
+// fs.writeProm  -> test not created yet
+// fs.writeFileProm  -> test not created yet
 
 ```
 
