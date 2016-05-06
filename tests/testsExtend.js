@@ -634,96 +634,132 @@ describe('copy', function() {
 
 	describe('sync', function() {
 
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest2); }, Error, "'after' function throw an error");
+		});
+
+		it("should check types values", function() {
+			assert.throws(function() { fs.copySync(false); }, Error, "check 'origin' type value does not throw an error");
+			assert.throws(function() { fs.copySync('test', false); }, Error, "check 'target' type value does not throw an error");
+		});
+
+		it('should check inexistant origin', function() {
+			assert.throws(function() { fs.copySync('rgvservseqrvserv', _filetest); }, "wrong 'origin' file does not throw an error");
+		});
+
+		it('should copy test files', function() {
+			assert.strictEqual(true, fs.copySync(_filetest, _filetest2), "test file cannot be copied");
+		});
+
 	});
 
 	describe('async', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest2); }, Error, "'after' function throw an error");
+		});
+
+		it("should check types values", function(done) {
+
+			fs.copy(false, false, function(err) {
+
+				assert.notStrictEqual(null, err, "check type value does not generate an error");
+				
+				fs.copy('test', false, function(err) {
+					assert.notStrictEqual(null, err, "check type value does not generate an error");
+					done();
+				});
+
+			});
+
+		});
+
+		it('should check inexistant origin', function(done) {
+
+			fs.copy('rgvservseqrvserv', _filetest, function(err) {
+				assert.notStrictEqual(null, err, "wrong 'origin' file does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should copy test files', function(done) {
+
+			fs.copy(_filetest, _filetest2, function(err) {
+				assert.strictEqual(null, err, "test file cannot be copied");
+				assert.strictEqual('test', fs.readFileSync(_filetest2, 'utf8'), "test file content cannot be copied");
+				done();
+			});
+
+		});
 
 	});
 
 	describe('promise', function() {
 
-	});
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
 
-});
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest2); }, Error, "'after' function throw an error");
+		});
 
-/*
+		it("should check types values", function(done) {
 
-	function testFileCopy() {
+			fs.copyProm(false, false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
 
-		return new Promise(function(resolve, reject) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
 
-			try {
+				fs.copyProm('test', false).then(function() {
+					assert(false, "check type value does not generate an error");
+					done();
+				}).catch(function(err) {
+					assert.strictEqual('string', typeof err, "check type value does not generate an error");
+					done();
+				});
 
-				console.log("");
-				console.log("----------------");
-				console.log("test file copy");
-				console.log("----------------");
-				console.log("");
-
-				console.log("writeFileProm");
-
-				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
-
-					console.log("must be == true :", fs.isFileSync(_filetest));
-
-					console.log("");
-					console.log("copySync");
-
-					fs.copySync(_filetest, _filetest2);
-
-					console.log("must be == true :", fs.isFileSync(_filetest2));
-					console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
-
-					fs.unlinkSync(_filetest2);
-
-					console.log("");
-					console.log("copy");
-
-					fs.copy(_filetest, _filetest2, function(err) {
-
-						if (err) {
-							reject(err);
-						}
-						else {
-
-							console.log("must be == true :", fs.isFileSync(_filetest2));
-							console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
-
-							console.log("");
-							console.log("copyProm");
-
-							fs.copyProm(_filetest, _filetest2).then(function() {
-
-								console.log("must be == true :", fs.isFileSync(_filetest2));
-								console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
-
-								return fs.unlinkProm(_filetest);
-
-							}).then(function() {
-								return fs.unlinkProm(_filetest2);
-							}).then(function() {
-
-								console.log("");
-								console.log("----------------");
-								console.log("");
-
-								resolve();
-								
-							}).catch(reject);
-
-						}
-
-					});
-
-				}).catch(reject);
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
+			});
 
 		});
 
-	}
+		it('should check inexistant origin', function(done) {
 
-*/
+			fs.copyProm('rgvservseqrvserv', _filetest).then(function() {
+				assert(false, "wrong 'origin' file does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "wrong 'origin' file does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should copy test files', function(done) {
+
+			fs.copyProm(_filetest, _filetest2).then(function() {
+
+				assert.strictEqual('test', fs.readFileSync(_filetest2, 'utf8'), "test file content cannot be copied");
+				done();
+
+			}).catch(done);
+
+		});
+
+	});
+
+});
