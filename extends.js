@@ -354,10 +354,10 @@ const path = require('path'), fs = require('fs');
 
 		let content = '';
 
-			files.forEach(function(file) {
+			files.forEach(function(file, key) {
 
 				if (fs.isFileSync(file)) {
-					content += fs.readFileSync(file, encoding) + separator;
+					content += (0 < key) ? separator + fs.readFileSync(file, encoding) : fs.readFileSync(file, encoding);
 				}
 
 			});
@@ -414,7 +414,7 @@ const path = require('path'), fs = require('fs');
 										callback((err.message) ? err.message : err);
 									}
 									else {
-										content += filecontent + separator;
+										content += (0 < i) ? separator + filecontent : filecontent;
 										readContent(i + 1);
 									}
 
