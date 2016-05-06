@@ -38,7 +38,7 @@ describe('rewrited', function() {
 		it('should check empty content value', function(done) {
 
 			fs.mkdirProm('').then(function() {
-				assert(false, "check type value does not generate an error");
+				assert(false, "check empty content does not generate an error");
 				done();
 			}).catch(function(err) {
 				assert.strictEqual('string', typeof err, "check type value does not generate an error");
@@ -82,7 +82,7 @@ describe('rewrited', function() {
 		it('should check empty content value', function(done) {
 
 			fs.rmdirProm('').then(function() {
-				assert(false, "check type value does not generate an error");
+				assert(false, "check empty content does not generate an error");
 				done();
 			}).catch(function(err) {
 				assert.strictEqual('string', typeof err, "check type value does not generate an error");
@@ -94,7 +94,7 @@ describe('rewrited', function() {
 		it('should check normal running', function(done) {
 
 			fs.rmdirProm(_dirtestBase).then(function() {
-				assert.strictEqual(false, fs.isDirectorySync(_dirtestBase), "test directory cannot be created");
+				assert.strictEqual(false, fs.isDirectorySync(_dirtestBase), "test directory cannot be deleted");
 				done();
 			}).catch(function(err) {
 				assert(false, "check normal running generate an error");
@@ -126,7 +126,7 @@ describe('rewrited', function() {
 		it('should check empty content value', function(done) {
 
 			fs.unlinkProm('').then(function() {
-				assert(false, "check type value does not generate an error");
+				assert(false, "check empty content does not generate an error");
 				done();
 			}).catch(function(err) {
 				assert.strictEqual('string', typeof err, "check type value does not generate an error");
@@ -138,7 +138,7 @@ describe('rewrited', function() {
 		it('should check normal running', function(done) {
 
 			fs.unlinkProm(_filetest).then(function() {
-				assert.strictEqual(false, fs.isFileSync(_filetest), "test directory cannot be created");
+				assert.strictEqual(false, fs.isFileSync(_filetest), "test file cannot be deleted");
 				done();
 			}).catch(function(err) {
 				assert(false, "check normal running generate an error");
@@ -174,7 +174,7 @@ describe('stream', function() {
 		it('should check empty content value', function(done) {
 
 			fs.openProm('').then(function() {
-				assert(false, "check type value does not generate an error");
+				assert(false, "check empty content does not generate an error");
 				done();
 			}).catch(function(err) {
 				assert.strictEqual('string', typeof err, "check type value does not generate an error");
@@ -186,7 +186,7 @@ describe('stream', function() {
 		it('should check normal running', function(done) {
 
 			fs.openProm(_filetest, 'a', 755).then(function(fd) {
-				fs.closeSync(fd);
+				assert.doesNotThrow(function() { fs.closeSync(fd); }, "test file cannot be closed");
 				done();
 			}).catch(function(err) {
 				assert(false, "check normal running generate an error");
@@ -218,7 +218,7 @@ describe('stream', function() {
 		it('should check empty content value', function(done) {
 
 			fs.closeProm('').then(function() {
-				assert(false, "check type value does not generate an error");
+				assert(false, "check empty content does not generate an error");
 				done();
 			}).catch(function(err) {
 				assert.strictEqual('string', typeof err, "check type value does not generate an error");
@@ -301,7 +301,7 @@ describe('others', function() {
 		it('should check empty content value', function(done) {
 
 			fs.appendFileProm('').then(function() {
-				assert(false, "check type value does not generate an error");
+				assert(false, "check empty content does not generate an error");
 				done();
 			}).catch(function(err) {
 				assert.strictEqual('string', typeof err, "check type value does not generate an error");
@@ -349,7 +349,7 @@ describe('others', function() {
 		it('should check empty content value', function(done) {
 
 			fs.chmodProm('').then(function() {
-				assert(false, "check type value does not generate an error");
+				assert(false, "check empty content does not generate an error");
 				done();
 			}).catch(function(err) {
 				assert.strictEqual('string', typeof err, "check type value does not generate an error");
@@ -394,7 +394,7 @@ describe('others', function() {
 		it('should check empty content value', function(done) {
 
 			fs.chownProm('').then(function() {
-				assert(false, "check type value does not generate an error");
+				assert(false, "check empty content does not generate an error");
 				done();
 			}).catch(function(err) {
 				assert.strictEqual('string', typeof err, "check type value does not generate an error");
@@ -414,14 +414,201 @@ describe('others', function() {
 
 	});
 
+	describe('readdirProm', function() {
+
+		it('should check type value', function(done) {
+
+			fs.readdirProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.readdirProm('').then(function() {
+				assert(false, "check empty content does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.readdirProm(__dirname).then(function(content) {
+				assert.strictEqual('object', typeof content, "check normal running does not generate array");
+				done();
+			}).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+	describe('readFileProm', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.readFileProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.readFileProm('').then(function() {
+				assert(false, "check empty content does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.readFileProm(_filetest, 'utf8').then(function(content) {
+				assert.strictEqual('test', content, "check normal running does not generate content");
+				done();
+			}).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+	describe('realpathProm', function() {
+
+		it('should check type value', function(done) {
+
+			fs.realpathProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.realpathProm('').then(function() {
+				assert(false, "check empty content does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.realpathProm(__filename).then(function(content) {
+				assert.strictEqual(__filename, content, "check normal running does not generate real path");
+				done();
+			}).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+	describe('renameProm', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest2); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.renameProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+
+				fs.renameProm(_filetest, false).then(function() {
+					assert(false, "check type value does not generate an error");
+					done();
+				}).catch(function(err) {
+					assert.strictEqual('string', typeof err, "check type value does not generate an error");
+					done();
+				});
+
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.renameProm('').then(function() {
+				assert(false, "check empty content does not generate an error");
+				done();
+			}).catch(function(err) {
+
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+
+				fs.renameProm(_filetest, '').then(function() {
+					assert(false, "check empty content does not generate an error");
+					done();
+				}).catch(function(err) {
+					assert.strictEqual('string', typeof err, "check type value does not generate an error");
+					done();
+				});
+
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.renameProm(_filetest, _filetest2).then(done).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
 	// missing :
 	// linkProm
 	// lstatProm
 	// mkdtempProm
-	// readProm
-	// readdirProm
-	// readFileProm
-	// realpathProm
 	// renameProm
 	// statProm
 	// truncateProm

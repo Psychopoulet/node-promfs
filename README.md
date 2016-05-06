@@ -114,17 +114,15 @@ fs.copyProm(origin, target); // return a Promise instance
 // fs.fsyncProm  -> test not created yet
 // fs.ftruncateProm  -> test not created yet
 // fs.futimesProm  -> test not created yet
-
 // fs.linkProm  -> test not created yet
 // fs.lstatProm  -> test not created yet
 // fs.mkdirProm -> check if the directory already exists before creation, so you don't have to do it
 // fs.mkdtempProm  -> test not created yet
 // fs.openProm
-// fs.readProm  -> test not created yet
-// fs.readdirProm  -> test not created yet
-// fs.readFileProm  -> test not created yet
-// fs.realpathProm  -> test not created yet
-// fs.renameProm  -> test not created yet
+// fs.readdirProm
+// fs.readFileProm 
+// fs.realpathProm
+// fs.renameProm
 // fs.rmdirProm -> check if the directory doesn't exist before removing, so you don't have to do it
 // fs.statProm  -> test not created yet
 // fs.truncateProm  -> test not created yet
