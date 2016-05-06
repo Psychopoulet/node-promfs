@@ -7,22 +7,20 @@
 
 // promises
 
-	let functionsNames = [
+	[
 
 		// simplefs
 		'concatFiles', 'copy', 'isDirectory', 'isFile', 'mkdirp', 'rmdirp',
 
 		// classical
 		'access', 'appendFile', 'chmod', 'chown', 'close',
-		'fchmod', 'fchown', 'fdatasync', 'fstat', 'fsync', 'ftruncate', 'futimesProm',
+		'fchmod', 'fchown', 'fdatasync', 'fstat', 'fsync', 'ftruncate', 'futimes',
 		'link', 'lstat', 'mkdtemp', 'open',
-		'read', 'readdir', 'readFile',
+		'readdir', 'readFile',
 		'realpath', 'rename', 'stat', 'truncate', 'utimes',
 		'write', 'writeFile'
 
-	];
-
-	functionsNames.forEach(name => {
+	].forEach(name => {
 
 		fs[name + 'Prom'] = function() {
 

@@ -12,14 +12,26 @@ const path = require('path'), fs = require('fs');
 	fs.isFileSync = function(file) {
 
 		if ('string' !== typeof file) {
-			throw "This is not a string"
+			throw new Error("This is not a string");
 		}
+		else {
 
-		try {
-			return (fs.lstatSync(file).isFile());
-		}
-		catch (e) {
-			return false;
+			file = file.trim();
+
+			if ('' == file) {
+				throw new Error("'file' is empty");
+			}
+			else {
+
+				try {
+					return (fs.lstatSync(file).isFile());
+				}
+				catch (e) {
+					return false;
+				}
+				
+			}
+
 		}
 
 	};
@@ -37,9 +49,18 @@ const path = require('path'), fs = require('fs');
 			}
 			else {
 
-				fs.stat(file, function(err, stats) {
-					callback(null, (!err && stats && stats.isFile()));
-				});
+				file = file.trim();
+
+				if ('' == file) {
+					callback("'file' is empty");
+				}
+				else {
+
+					fs.stat(file, function(err, stats) {
+						callback(null, (!err && stats && stats.isFile()));
+					});
+
+				}
 
 			}
 
@@ -57,14 +78,26 @@ const path = require('path'), fs = require('fs');
 	fs.isDirectorySync = function(dir) {
 
 		if ('string' !== typeof dir) {
-			throw "This is not a string"
+			throw new Error("This is not a string");
 		}
+		else {
 
-		try {
-			return (fs.statSync(dir).isDirectory());
-		}
-		catch (e) {
-			return false;
+			dir = dir.trim();
+
+			if ('' == dir) {
+				throw new Error("'dir' is empty");
+			}
+			else {
+
+				try {
+					return (fs.lstatSync(dir).isDirectory());
+				}
+				catch (e) {
+					return false;
+				}
+				
+			}
+
 		}
 
 	};
@@ -82,9 +115,18 @@ const path = require('path'), fs = require('fs');
 			}
 			else {
 
-				fs.stat(dir, function(err, stats) {
-					callback(null, (!err && stats && stats.isDirectory()));
-				});
+				dir = dir.trim();
+				
+				if ('' == dir) {
+					callback("'dir' is empty");
+				}
+				else {
+
+					fs.stat(dir, function(err, stats) {
+						callback(null, (!err && stats && stats.isDirectory()));
+					});
+
+				}
 
 			}
 
@@ -304,7 +346,7 @@ const path = require('path'), fs = require('fs');
 	fs.concatFilesSync = function(files, encoding, separator) {
 
 		if ('object' !== typeof files || !(files instanceof Array)) {
-			throw "This is not an array"
+			throw new Error("This is not an array");
 		}
 
 		encoding = ('string' === typeof encoding) ? encoding : null;
@@ -312,10 +354,10 @@ const path = require('path'), fs = require('fs');
 
 		let content = '';
 
-			files.forEach(function(file) {
+			files.forEach(function(file, key) {
 
 				if (fs.isFileSync(file)) {
-					content += fs.readFileSync(file, encoding) + separator;
+					content += (0 < key) ? separator + fs.readFileSync(file, encoding) : fs.readFileSync(file, encoding);
 				}
 
 			});
@@ -372,7 +414,7 @@ const path = require('path'), fs = require('fs');
 										callback((err.message) ? err.message : err);
 									}
 									else {
-										content += filecontent + separator;
+										content += (0 < i) ? separator + filecontent : filecontent;
 										readContent(i + 1);
 									}
 
@@ -404,19 +446,38 @@ const path = require('path'), fs = require('fs');
 	fs.copySync = function(origin, target) {
 
 		if ('string' !== typeof origin) {
-			throw "This is not a string"
+			throw new Error("'origin' is not a string");
 		}
 		else if ('string' !== typeof target) {
-			throw "This is not a string"
+			throw new Error("'target' is not a string");
 		}
+		else {
 
-		if (fs.isFileSync(target)) {
-			fs.unlinkSync(target);
+			origin = origin.trim();
+			target = target.trim();
+
+			if ('' === origin) {
+				throw new Error("'origin' is empty");
+			}
+				else if (!fs.isFileSync(origin)) {
+					throw new Error("'origin' is not a file");
+				}
+			else if ('' === target) {
+				throw new Error("'target' is empty");
+			}
+			else {
+
+				if (fs.isFileSync(target)) {
+					fs.unlinkSync(target);
+				}
+
+				fs.writeFileSync(target, fs.readFileSync(origin));
+
+				return true;
+
+			}
+
 		}
-
-		fs.writeFileSync(target, fs.readFileSync(origin));
-
-		return true;
 
 	};
 
@@ -462,30 +523,57 @@ const path = require('path'), fs = require('fs');
 			}
 			else {
 
-				fs.isFile(target, function(err, exists) {
+				origin = origin.trim();
+				target = target.trim();
 
-					if (err) {
-						callback(err);
-					}
-					else if (!exists) {
-						_copy(origin, target, callback);
-					}
-					else {
+				if ('' === origin) {
+					callback("'origin' is empty");
+				}
+				else if ('' === target) {
+					callback("'target' is empty");
+				}
+				else {
 
-						fs.unlink(target, function(err) {
+					fs.isFile(origin, function(err, exists) {
 
-							if (err) {
-								callback((err.message) ? err.message : err);
-							}
-							else {
-								_copy(origin, target, callback);
-							}
+						if (err) {
+							callback(err);
+						}
+						else if (!exists) {
+							callback("'origin' is not a file");
+						}
+						else {
 
-						});
+							fs.isFile(target, function(err, exists) {
 
-					}
+								if (err) {
+									callback(err);
+								}
+								else if (!exists) {
+									_copy(origin, target, callback);
+								}
+								else {
 
-				});
+									fs.unlink(target, function(err) {
+
+										if (err) {
+											callback((err.message) ? err.message : err);
+										}
+										else {
+											_copy(origin, target, callback);
+										}
+
+									});
+
+								}
+
+							});
+					
+						}
+
+					});
+
+				}
 
 			}
 

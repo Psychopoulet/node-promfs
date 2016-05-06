@@ -107,29 +107,27 @@ fs.copyProm(origin, target); // return a Promise instance
 // fs.chmodProm
 // fs.chownProm
 // fs.closeProm
-// fs.fchmodProm
-// fs.fchownProm
-// fs.fdatasyncProm
-// fs.fstatProm
-// fs.fsyncProm
-// fs.ftruncateProm
-// fs.futimesProm
-// fs.linkProm
-// fs.lstatProm
+// fs.fchmodProm  -> tests not created yet
+// fs.fchownProm  -> tests not created yet
+// fs.fdatasyncProm  -> test snot created yet
+// fs.fstatProm  -> tests not created yet
+// fs.fsyncProm  -> tests not created yet
+// fs.ftruncateProm  -> tests not created yet
+// fs.futimesProm  -> tests not created yet
+// fs.linkProm  -> tests not created yet
+// fs.lstatProm  -> tests not created yet
 // fs.mkdirProm -> check if the directory already exists before creation, so you don't have to do it
-// fs.mkdtempProm
+// fs.mkdtempProm  -> tests not created yet
 // fs.openProm
-// fs.readProm
 // fs.readdirProm
-// fs.readFileProm
+// fs.readFileProm 
 // fs.realpathProm
 // fs.renameProm
 // fs.rmdirProm -> check if the directory doesn't exist before removing, so you don't have to do it
 // fs.statProm
 // fs.truncateProm
 // fs.unlinkProm -> check if the file doesn't exist before removing, so you don't have to do it
-// fs.utimesProm
-// fs.writeProm
+// fs.utimesProm  -> tests not created yet
 // fs.writeFileProm
 
 ```
@@ -137,7 +135,7 @@ fs.copyProm(origin, target); // return a Promise instance
 ## Tests
 
 ```bash
-$ node tests/tests.js
+$ mocha tests/tests.js
 ```
 
 ## License

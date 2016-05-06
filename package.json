@@ -1,11 +1,11 @@
 {
   "name": "simplefs",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A 'fs' object extension",
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "test": "node tests/tests.js"
+    "test": "mocha tests/tests.js"
   },
   "repository": {
     "type": "git",
