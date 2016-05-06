@@ -402,19 +402,13 @@ describe('mkdirp', function() {
 
 		it('should create real existing directory', function(done) {
 
-			fs.mkdirpProm(__dirname).then(done).catch(function() {
-				assert(false, "'" + __dirname + "' cannot be created");
-				done();
-			}).catch(done);
+			fs.mkdirpProm(__dirname).then(done).catch(done);
 
 		});
 
 		it('should create real new directory', function(done) {
 			
-			fs.mkdirpProm(_dirtest).then(done).catch(function() {
-				assert(false, "'" + _dirtest + "' cannot be created");
-				done();
-			}).catch(done);
+			fs.mkdirpProm(_dirtest).then(done).catch(done);
 
 		});
 
@@ -428,15 +422,100 @@ describe('mkdirp', function() {
 
 describe('rmdirp', function() {
 
+	let dirBase = path.join(__dirname, 'testlvl1')
+
 	describe('sync', function() {
+
+		it('should check type value', function() {
+			assert.throws(function() { fs.rmdirpSync(false); }, Error, "check type value does not throw an error");
+		});
+
+		it('should check empty content value', function() {
+			assert.throws(function() { fs.rmdirpSync(''); }, Error, "check empty content value does not throw an error");
+		});
+
+		it('should delete real new directory', function() {
+			assert.strictEqual(true, fs.mkdirpSync(_dirtest), "'" + _dirtest + "' cannot be created");
+			assert.strictEqual(true, fs.rmdirpSync(dirBase), "'" + dirBase + "' cannot be deleted");
+		});
+
+		it('should not detect deleted directory', function() {
+			assert.strictEqual(false, fs.isDirectorySync(_dirtest), "'" + _dirtest + "' was not deleted");
+		});
 
 	});
 
 	describe('async', function() {
 
+		it('should check type value', function(done) {
+
+			fs.rmdirp(false, function(err) {
+				assert.notStrictEqual(null, err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.rmdirp('', function(err) {
+				assert.notStrictEqual(null, err, "check empty content value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should delete real new directory', function(done) {
+
+			assert.strictEqual(true, fs.mkdirpSync(_dirtest), "'" + _dirtest + "' cannot be created");
+
+			fs.rmdirp(fs.rmdirpSync(dirBase), function(err) {
+				assert.notStrictEqual(null, err, "'" + dirBase + "' cannot be deleted");
+				done();
+			});
+
+		});
+
+		it('should not detect deleted directory', function() {
+			assert.strictEqual(false, fs.isDirectorySync(_dirtest), "'" + _dirtest + "' was not deleted");
+		});
+
 	});
 
-	describe('promise', function() {
+	describe('promise', function(done) {
+
+		it('should check type value', function(done) {
+
+			fs.rmdirpProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.notStrictEqual(null, err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.rmdirpProm(false).then(function() {
+				assert(false, "check empty content value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.notStrictEqual(null, err, "check empty content value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should delete real new directory', function(done) {
+			assert.strictEqual(true, fs.mkdirpSync(_dirtest), "'" + _dirtest + "' cannot be created");
+			fs.rmdirpProm(dirBase).then(done).catch(done);
+		});
+
+		it('should not detect deleted directory', function() {
+			assert.strictEqual(false, fs.isDirectorySync(_dirtest), "'" + _dirtest + "' was not deleted");
+		});
 
 	});
 
@@ -446,13 +525,106 @@ describe('concatFiles', function() {
 
 	describe('sync', function() {
 
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function() {
+			assert.throws(function() { fs.concatFilesSync(false); }, Error, "check type value does not throw an error");
+		});
+
+		it('should concat nothing', function() {
+			assert.strictEqual('', fs.concatFilesSync([]), "empty array cannot be concatened");
+		});
+
+		it('should concat test files', function() {
+			assert.strictEqual('test test test', fs.concatFilesSync([_filetest, _filetest, _filetest], 'utf8', ' '), "test files cannot be concatened");
+		});
+
 	});
 
 	describe('async', function() {
 
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.concatFiles(false, function(err) {
+				assert.notStrictEqual(null, err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should concat nothing', function(done) {
+
+			fs.concatFiles([], function(err, data) {
+				assert.strictEqual('', data, "empty array cannot be concatened");
+				done();
+			});
+
+		});
+
+		it('should concat test files', function(done) {
+
+			fs.concatFiles([_filetest, _filetest, _filetest], 'utf8', ' ', function(err, data) {
+				assert.strictEqual('test test test', data, "test files cannot be concatened");
+				done();
+			});
+
+		});
+
 	});
 
 	describe('promise', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.concatFilesProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should concat nothing', function(done) {
+
+			fs.concatFilesProm([]).then(function(data) {
+				assert.strictEqual('', data, "empty array cannot be concatened");
+				done();
+			}).catch(done);
+
+		});
+
+		it('should concat test files', function(done) {
+
+			fs.concatFilesProm([_filetest, _filetest, _filetest], 'utf8', ' ').then(function(data) {
+				assert.strictEqual('test test test', data, "test files cannot be concatened");
+				done();
+			}).catch(done);
+
+		});
 
 	});
 
@@ -475,136 +647,6 @@ describe('copy', function() {
 });
 
 /*
-
-	function testFileWritePromise() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test file write promise");
-				console.log("----------------");
-				console.log("");
-
-				console.log("writeFileProm");
-
-				fs.writeFileProm(_filetest, '', 'utf8').then(function() {
-
-					console.log("must be == true :", fs.isFileSync(_filetest));
-
-					console.log("");
-					console.log("appendFileProm");
-
-					return fs.appendFileProm(_filetest, 'test', 'utf8');
-
-				}).then(function() {
-
-					console.log("must be == true :", true);
-
-					console.log("");
-					console.log("readFileProm");
-
-					return fs.readFileProm(_filetest, 'utf8');
-
-				}).then(function(content) {
-
-					console.log("must be == 'test' :", content);
-
-					console.log("");
-					console.log("unlinkProm");
-
-					return fs.unlinkProm(_filetest);
-
-				}).then(function() {
-
-					console.log("must be == false :", fs.isFileSync(_filetest));
-
-					console.log("");
-					console.log("----------------");
-					console.log("");
-
-					resolve();
-
-				}).catch(reject);
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
-	function testFileConcat() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test file concat");
-				console.log("----------------");
-				console.log("");
-
-				console.log("writeFileProm");
-
-				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
-
-					console.log("must be == true :", fs.isFileSync(_filetest));
-
-					console.log("");
-					console.log("concatFilesSync");
-					console.log("must be == 'test test test' :", fs.concatFilesSync([ _filetest, _filetest, _filetest ], 'utf8', ' '));
-
-					console.log("");
-					console.log("concatFiles");
-
-					fs.concatFiles([ _filetest, _filetest, _filetest ], 'utf8', ' ', function(err, content) {
-
-						if (err) {
-							reject(err);
-						}
-						else {
-
-							console.log("must be == 'test test test' :", content);
-
-							console.log("");
-							console.log("concatFilesProm");
-
-							fs.concatFilesProm([ _filetest, _filetest, _filetest ], 'utf8', ' ').then(function(content) {
-
-								console.log("must be == 'test test test' :", content);
-
-								fs.unlinkProm(_filetest).then(function() {
-
-									console.log("");
-									console.log("----------------");
-									console.log("");
-
-									resolve();
-
-								}).catch(reject);
-
-							}).catch(reject);
-
-						}
-
-					});
-
-				}).catch(reject);
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
 
 	function testFileCopy() {
 
@@ -683,26 +725,5 @@ describe('copy', function() {
 		});
 
 	}
-
-// run
-
-	testFileWritePromise().then(function() {
-		return testFileConcat();
-	}).then(function() {
-		return testFileCopy();
-	})
-
-	// clean
-	.then(function() {
-		return fs.unlinkProm(_filetest);
-	}).then(function() {
-		return fs.unlinkProm(_filetest2);
-	}).then(function() {
-		return fs.rmdirpProm(_dirtest);
-	})
-
-	.catch(function(err) {
-		console.log('tests interruption', err);
-	});
 
 */
