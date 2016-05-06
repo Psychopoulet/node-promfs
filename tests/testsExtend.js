@@ -8,7 +8,8 @@
 
 // private
 
-	var _dirtest = path.join(__dirname, 'testlvl1', 'testlvl2', 'testlvl3', 'testlvl4'),
+	var _dirtestBase = path.join(__dirname, 'testlvl1'),
+			_dirtest = path.join(_dirtestBase, 'testlvl2', 'testlvl3', 'testlvl4'),
 		_filetest = path.join(__dirname, 'test.txt'),
 		_filetest2 = path.join(__dirname, 'test2.txt');
 
@@ -280,16 +281,14 @@ describe('isDirectory', function() {
 
 describe('mkdirp', function() {
 
-	let dirBase = path.join(__dirname, 'testlvl1');
-
 	describe('sync', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(_dirtestBase); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'after' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(_dirtestBase); }, Error, "'after' function throw an error");
 		});
 
 		it('should check type value', function() {
@@ -317,11 +316,11 @@ describe('mkdirp', function() {
 	describe('async', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(_dirtestBase); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'after' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(_dirtestBase); }, Error, "'after' function throw an error");
 		});
 
 		it('should check type value', function(done) {
@@ -369,11 +368,11 @@ describe('mkdirp', function() {
 	describe('promise', function() {
 
 		before(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'before' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(_dirtestBase); }, Error, "'before' function throw an error");
 		});
 
 		after(function() {
-			assert.doesNotThrow(function() { fs.rmdirpSync(dirBase); }, Error, "'after' function throw an error");
+			assert.doesNotThrow(function() { fs.rmdirpSync(_dirtestBase); }, Error, "'after' function throw an error");
 		});
 
 		it('should check type value', function(done) {
@@ -422,8 +421,6 @@ describe('mkdirp', function() {
 
 describe('rmdirp', function() {
 
-	let dirBase = path.join(__dirname, 'testlvl1')
-
 	describe('sync', function() {
 
 		it('should check type value', function() {
@@ -436,7 +433,7 @@ describe('rmdirp', function() {
 
 		it('should delete real new directory', function() {
 			assert.strictEqual(true, fs.mkdirpSync(_dirtest), "'" + _dirtest + "' cannot be created");
-			assert.strictEqual(true, fs.rmdirpSync(dirBase), "'" + dirBase + "' cannot be deleted");
+			assert.strictEqual(true, fs.rmdirpSync(_dirtestBase), "'" + _dirtestBase + "' cannot be deleted");
 		});
 
 		it('should not detect deleted directory', function() {
@@ -469,8 +466,8 @@ describe('rmdirp', function() {
 
 			assert.strictEqual(true, fs.mkdirpSync(_dirtest), "'" + _dirtest + "' cannot be created");
 
-			fs.rmdirp(fs.rmdirpSync(dirBase), function(err) {
-				assert.notStrictEqual(null, err, "'" + dirBase + "' cannot be deleted");
+			fs.rmdirp(fs.rmdirpSync(_dirtestBase), function(err) {
+				assert.notStrictEqual(null, err, "'" + _dirtestBase + "' cannot be deleted");
 				done();
 			});
 
@@ -510,7 +507,7 @@ describe('rmdirp', function() {
 
 		it('should delete real new directory', function(done) {
 			assert.strictEqual(true, fs.mkdirpSync(_dirtest), "'" + _dirtest + "' cannot be created");
-			fs.rmdirpProm(dirBase).then(done).catch(done);
+			fs.rmdirpProm(_dirtestBase).then(done).catch(done);
 		});
 
 		it('should not detect deleted directory', function() {

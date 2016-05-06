@@ -1,532 +1,225 @@
 "use strict";
 
-return;
-
 // deps
 
 	const 	fs = require('../main.js'),
-			path = require('path');
+			path = require('path'),
+			assert = require('assert');
 
 // private
 
-	var _dirtest = path.join(__dirname, 'testlvl1', 'testlvl2', 'testlvl3', 'testlvl4'),
+	var _dirtestBase = path.join(__dirname, 'testlvl1'),
+			_dirtest = path.join(_dirtestBase, 'testlvl2', 'testlvl3', 'testlvl4'),
 		_filetest = path.join(__dirname, 'test.txt'),
 		_filetest2 = path.join(__dirname, 'test2.txt');
 
 // tests
 
-	function testFileExists() {
+describe('rewrited', function() {
 
-		return new Promise(function(resolve, reject) {
+	describe('mkdirProm', function() {
 
-			try {
+		after(function() {
+			assert.doesNotThrow(function() { fs.rmdirSync(_dirtestBase); }, Error, "'after' function throw an error");
+		});
 
-				console.log("");
-				console.log("----------------");
-				console.log("tests file exists");
-				console.log("----------------");
-				console.log("");
+		it('should check type value', function(done) {
 
-				console.log("isFileSync");
-				console.log("must be == false :", fs.isFileSync('eivrjeoirvneornv'));
-				console.log("must be == true :", fs.isFileSync(__filename));
-
-				console.log("must be == 'This is not a string' :");
-				try {
-					fs.isFileSync(false);
-				}
-				catch(e) {
-					console.log((e.message) ? e.message : e);
-				}
-
-				console.log("");
-				console.log("isFile");
-
-				fs.isFile(__filename, function(err, exists) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-
-						console.log("must be == true :", exists);
-
-						console.log("");
-						console.log("isFileProm");
-
-						fs.isFileProm(__filename).then(function(exists) {
-
-							console.log("must be == true :", exists);
-
-							console.log("");
-							console.log("----------------");
-							console.log("");
-
-							resolve();
-
-						}).catch(reject);
-
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
+			fs.mkdirProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
 
 		});
 
-	}
+		it('should check empty content value', function(done) {
 
-	function testDirExists() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("tests dir exists");
-				console.log("----------------");
-				console.log("");
-
-				console.log("isDirectorySync");
-				console.log("must be == false :", fs.isDirectorySync('eivrjeoirvneornv'));
-				console.log("must be == true :", fs.isDirectorySync(__dirname));
-				console.log("must be == false :", fs.isDirectorySync(_dirtest));
-
-				console.log("must be == 'This is not a string' :");
-				try {
-					fs.isDirectorySync(false);
-				}
-				catch(e) {
-					console.log((e.message) ? e.message : e);
-				}
-
-				console.log("");
-				console.log("isDirectory");
-
-				fs.isDirectory(__dirname, function(err, exists) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-
-						console.log("must be == true :", exists);
-
-						console.log("");
-						console.log("isDirectoryProm");
-
-						fs.isDirectoryProm(__dirname).then(function(exists) {
-
-							console.log("must be == true :", exists);
-
-							console.log("");
-							console.log("----------------");
-							console.log("");
-
-							resolve();
-
-						}).catch(reject);
-
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
+			fs.mkdirProm('').then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
 
 		});
 
-	}
+		it('should check normal running', function(done) {
 
-	function testDirWriteSync() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test dir write sync");
-				console.log("----------------");
-				console.log("");
-
-				console.log("mkdirpSync");
-				console.log("must be == true :", fs.mkdirpSync(_dirtest));
-				console.log("must be == true :", fs.isDirectorySync(_dirtest));
-
-				console.log("");
-				console.log("rmdirpSync");
-				console.log("must be == true :", fs.rmdirpSync(path.join(__dirname, 'testlvl1')));
-				console.log("must be == false :", fs.isDirectorySync(_dirtest));
-
-				console.log("");
-				console.log("----------------");
-				console.log("");
-
-				resolve();
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
+			fs.mkdirProm(_dirtestBase).then(function() {
+				assert.strictEqual(true, fs.isDirectorySync(_dirtestBase), "test directory cannot be created");
+				done();
+			}).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
 
 		});
 
-	}
-
-	function testDirWriteASync() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test dir write async");
-				console.log("----------------");
-				console.log("");
-
-				console.log("mkdirp");
-
-				fs.mkdirp(_dirtest, function(err) {
-
-					if (err) {
-						reject(err);
-					}
-					else {
-
-						console.log("must be == true :", fs.isDirectorySync(_dirtest));
-
-						console.log("");
-						console.log("rmdirp");
-
-						fs.rmdirp(path.join(__dirname, 'testlvl1'), function(err) {
-
-							if (err) {
-								reject(err);
-							}
-							else {
-
-								console.log("must be == false :", fs.isDirectorySync(_dirtest));
-
-								console.log("");
-								console.log("----------------");
-								console.log("");
-
-								resolve();
-
-							}
-
-						});
-
-					}
-
-				});
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
-	function testDirWritePromise() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test dir write promise");
-				console.log("----------------");
-				console.log("");
-
-				console.log("mkdirpProm");
-
-				fs.mkdirpProm(_dirtest).then(function() {
-
-					console.log("must be == true :", fs.isDirectorySync(_dirtest));
-
-					console.log("");
-					console.log("rmdirpProm");
-
-					return fs.rmdirpProm(path.join(__dirname, 'testlvl1'));
-
-				}).then(function() {
-
-					console.log("must be == false :", fs.isDirectorySync(_dirtest));
-
-					console.log("");
-					console.log("----------------");
-					console.log("");
-
-					resolve();
-
-				}).catch(reject);
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
-	function testFileWritePromise() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test file write promise");
-				console.log("----------------");
-				console.log("");
-
-				console.log("writeFileProm");
-
-				fs.writeFileProm(_filetest, '', 'utf8').then(function() {
-
-					console.log("must be == true :", fs.isFileSync(_filetest));
-
-					console.log("");
-					console.log("appendFileProm");
-
-					return fs.appendFileProm(_filetest, 'test', 'utf8');
-
-				}).then(function() {
-
-					console.log("must be == true :", true);
-
-					console.log("");
-					console.log("readFileProm");
-
-					return fs.readFileProm(_filetest, 'utf8');
-
-				}).then(function(content) {
-
-					console.log("must be == 'test' :", content);
-
-					console.log("");
-					console.log("unlinkProm");
-
-					return fs.unlinkProm(_filetest);
-
-				}).then(function() {
-
-					console.log("must be == false :", fs.isFileSync(_filetest));
-
-					console.log("");
-					console.log("----------------");
-					console.log("");
-
-					resolve();
-
-				}).catch(reject);
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
-	function testFileConcat() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test file concat");
-				console.log("----------------");
-				console.log("");
-
-				console.log("writeFileProm");
-
-				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
-
-					console.log("must be == true :", fs.isFileSync(_filetest));
-
-					console.log("");
-					console.log("concatFilesSync");
-					console.log("must be == 'test test test' :", fs.concatFilesSync([ _filetest, _filetest, _filetest ], 'utf8', ' '));
-
-					console.log("");
-					console.log("concatFiles");
-
-					fs.concatFiles([ _filetest, _filetest, _filetest ], 'utf8', ' ', function(err, content) {
-
-						if (err) {
-							reject(err);
-						}
-						else {
-
-							console.log("must be == 'test test test' :", content);
-
-							console.log("");
-							console.log("concatFilesProm");
-
-							fs.concatFilesProm([ _filetest, _filetest, _filetest ], 'utf8', ' ').then(function(content) {
-
-								console.log("must be == 'test test test' :", content);
-
-								fs.unlinkProm(_filetest).then(function() {
-
-									console.log("");
-									console.log("----------------");
-									console.log("");
-
-									resolve();
-
-								}).catch(reject);
-
-							}).catch(reject);
-
-						}
-
-					});
-
-				}).catch(reject);
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
-	function testFileCopy() {
-
-		return new Promise(function(resolve, reject) {
-
-			try {
-
-				console.log("");
-				console.log("----------------");
-				console.log("test file copy");
-				console.log("----------------");
-				console.log("");
-
-				console.log("writeFileProm");
-
-				fs.writeFileProm(_filetest, 'test', 'utf8').then(function() {
-
-					console.log("must be == true :", fs.isFileSync(_filetest));
-
-					console.log("");
-					console.log("copySync");
-
-					fs.copySync(_filetest, _filetest2);
-
-					console.log("must be == true :", fs.isFileSync(_filetest2));
-					console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
-
-					fs.unlinkSync(_filetest2);
-
-					console.log("");
-					console.log("copy");
-
-					fs.copy(_filetest, _filetest2, function(err) {
-
-						if (err) {
-							reject(err);
-						}
-						else {
-
-							console.log("must be == true :", fs.isFileSync(_filetest2));
-							console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
-
-							console.log("");
-							console.log("copyProm");
-
-							fs.copyProm(_filetest, _filetest2).then(function() {
-
-								console.log("must be == true :", fs.isFileSync(_filetest2));
-								console.log("must be == 'test' :", fs.readFileSync(_filetest2, 'utf8'));
-
-								return fs.unlinkProm(_filetest);
-
-							}).then(function() {
-								return fs.unlinkProm(_filetest2);
-							}).then(function() {
-
-								console.log("");
-								console.log("----------------");
-								console.log("");
-
-								resolve();
-								
-							}).catch(reject);
-
-						}
-
-					});
-
-				}).catch(reject);
-
-			}
-			catch(e) {
-				reject((e.message) ? e.message : e);
-			}
-
-		});
-
-	}
-
-// run
-
-	// clean
-	fs.unlinkProm(_filetest).then(function() {
-		return fs.unlinkProm(_filetest2);
-	}).then(function() {
-		return fs.rmdirpProm(_dirtest);
-	})
-
-	// tests
-	.then(function() {
-		return testFileExists();
-	}).then(function() {
-		return testDirExists();
-	}).then(function() {
-		return testDirWriteSync();
-	}).then(function() {
-		return testDirWriteASync();
-	}).then(function() {
-		return testDirWritePromise();
-	}).then(function() {
-		return testFileWritePromise();
-	}).then(function() {
-		return testFileConcat();
-	}).then(function() {
-		return testFileCopy();
-	})
-
-	// clean
-	.then(function() {
-		return fs.unlinkProm(_filetest);
-	}).then(function() {
-		return fs.unlinkProm(_filetest2);
-	}).then(function() {
-		return fs.rmdirpProm(_dirtest);
-	})
-
-	.catch(function(err) {
-		console.log('tests interruption', err);
 	});
+
+	describe('rmdirProm', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.mkdirSync(_dirtestBase); }, Error, "'before' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.rmdirProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.rmdirProm('').then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.rmdirProm(_dirtestBase).then(function() {
+				assert.strictEqual(false, fs.isDirectorySync(_dirtestBase), "test directory cannot be created");
+				done();
+			}).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+	describe('unlinkProm', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.appendFileSync(_filetest); }, Error, "'before' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.unlinkProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.unlinkProm('').then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.unlinkProm(_filetest).then(function() {
+				assert.strictEqual(false, fs.isFileSync(_filetest), "test directory cannot be created");
+				done();
+			}).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+});
+
+describe('classical', function() {
+
+	describe('accessProm', function() {
+
+		it('should check type value', function(done) {
+
+			fs.accessProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.accessProm(__filename, fs.F_OK).then(done).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+	describe('appendFileProm', function() {
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.appendFileProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.appendFileProm('').then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.appendFileProm(_filetest, 'test', 'utf8').then(function() {
+				assert.strictEqual('test', fs.readFileSync(_filetest, 'utf8'), "test file content cannot be appended");
+				done();
+			}).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+});

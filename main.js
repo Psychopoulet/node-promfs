@@ -7,7 +7,7 @@
 
 // promises
 
-	let functionsNames = [
+	[
 
 		// simplefs
 		'concatFiles', 'copy', 'isDirectory', 'isFile', 'mkdirp', 'rmdirp',
@@ -20,9 +20,7 @@
 		'realpath', 'rename', 'stat', 'truncate', 'utimes',
 		'write', 'writeFile'
 
-	];
-
-	functionsNames.forEach(name => {
+	].forEach(name => {
 
 		fs[name + 'Prom'] = function() {
 
