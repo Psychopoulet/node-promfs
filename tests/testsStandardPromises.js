@@ -151,7 +151,109 @@ describe('rewrited', function() {
 
 });
 
-describe('classical', function() {
+describe('stream', function() {
+
+	describe('openProm', function() {
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.openProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.openProm('').then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.openProm(_filetest, 'a', 755).then(function(fd) {
+				fs.closeSync(fd);
+				done();
+			}).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+	describe('closeProm', function() {
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.closeProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.closeProm('').then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			let fd;
+
+			assert.doesNotThrow(function() { fd = fs.openSync(_filetest, 'a', 755); }, Error, "'after' function throw an error");
+
+			fs.closeProm(fd).then(done).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+	// missing :
+	// fchmodProm
+	// fchownProm
+	// fdatasyncProm
+	// fstatProm
+	// fsyncProm
+	// ftruncateProm
+	// futimesProm
+
+});
+
+describe('others', function() {
 
 	describe('accessProm', function() {
 
@@ -221,5 +323,110 @@ describe('classical', function() {
 		});
 
 	});
+
+	describe('chmodProm', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.chmodProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.chmodProm('').then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.chmodProm(_filetest, 755).then(done).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+	describe('chownProm', function() {
+
+		before(function() {
+			assert.doesNotThrow(function() { fs.writeFileSync(_filetest, 'test'); }, Error, "'before' function throw an error");
+		});
+
+		after(function() {
+			assert.doesNotThrow(function() { fs.unlinkSync(_filetest); }, Error, "'after' function throw an error");
+		});
+
+		it('should check type value', function(done) {
+
+			fs.chownProm(false).then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check empty content value', function(done) {
+
+			fs.chownProm('').then(function() {
+				assert(false, "check type value does not generate an error");
+				done();
+			}).catch(function(err) {
+				assert.strictEqual('string', typeof err, "check type value does not generate an error");
+				done();
+			});
+
+		});
+
+		it('should check normal running', function(done) {
+
+			fs.chownProm(_filetest, 0, 0).then(done).catch(function(err) {
+				assert(false, "check normal running generate an error");
+				done();
+			});
+
+		});
+
+	});
+
+	// missing :
+	// linkProm
+	// lstatProm
+	// mkdtempProm
+	// readProm
+	// readdirProm
+	// readFileProm
+	// realpathProm
+	// renameProm
+	// statProm
+	// truncateProm
+	// utimesProm
+	// writeProm
+	// writeFileProm
 
 });
