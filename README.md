@@ -10,7 +10,7 @@ $ npm install simplefs
 
 ## Notes
 
-Be carefull ! To be more stable and logicaly "fs compatible", this new version 2.*.* does no longer work like the previous 1.*.*
+Be carefull ! To be more stable and logicaly "fs compatible", this new version 2.x.x does no longer work like the previous 1.x.x
 
 ## Features
 

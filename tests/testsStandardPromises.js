@@ -2,9 +2,10 @@
 
 // deps
 
-	const 	fs = require('../main.js'),
-			path = require('path'),
-			assert = require('assert');
+	const 	path = require('path'),
+			assert = require('assert'),
+			
+			fs = require('../main.js');
 
 // private
 
