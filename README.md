@@ -1,11 +1,11 @@
-# simplefs
+# node-promfs
 A basic 'fs' object extension
 
 
 ## Installation
 
 ```bash
-$ npm install simplefs
+$ npm install node-promfs
 ```
 
 ## Notes
@@ -27,7 +27,7 @@ Be carefull ! To be more stable and logicaly "fs compatible", this new version 2
 
 // sync
 
-const fs = require('simplefs'), path = require('path');
+const fs = require('node-promfs'), path = require('path');
 
 fs.isFileSync(__filename); // return true|false
 fs.isDirectorySync(__dirname); // return true|false
@@ -53,7 +53,7 @@ fs.copySync(origin, target); // return true|false
 
 // async
 
-const fs = require('simplefs'), path = require('path');
+const fs = require('node-promfs'), path = require('path');
 
 fs.isFile(__filename, callback); // callback(null|string err, bool exists)
 fs.isDirectory(__dirname, callback); // callback(null|string err, bool exists)
@@ -79,7 +79,7 @@ fs.copy(origin, target, callback); // callback(null|string err)
 
 // promise
 
-const fs = require('simplefs'), path = require('path');
+const fs = require('node-promfs'), path = require('path');
 
 fs.isFileProm(__filename); // return a Promise instance
 fs.isDirectoryProm(__dirname); // return a Promise instance
