@@ -1,6 +1,6 @@
 {
-  "name": "simplefs",
-  "version": "2.4.0",
+  "name": "node-promfs",
+  "version": "0.1.0",
   "description": "A 'fs' object extension",
   "main": "dist/main.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/Psychopoulet/simplefs.git"
+    "url": "git://github.com/Psychopoulet/node-promfs.git"
   },
   "keywords": [
     "fs", "file system",
@@ -21,7 +21,7 @@
   "author": "Sébastien VIDAL",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Psychopoulet/simplefs/issues"
+    "url": "https://github.com/Psychopoulet/node-promfs/issues"
   },
   "dependencies": {},
   "devDependencies": {
@@ -38,6 +38,6 @@
     "gulp-mocha": "^2.0.0"
 
   },
-  "homepage": "https://github.com/Psychopoulet/simplefs#readme",
+  "homepage": "https://github.com/Psychopoulet/node-promfs#readme",
   "engines" : { "node" : ">=4.0.0" }
 }
