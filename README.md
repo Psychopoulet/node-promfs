@@ -135,7 +135,7 @@ fs.copyProm(origin, target); // return a Promise instance
 ## Tests
 
 ```bash
-$ mocha tests/tests.js
+$ gulp
 ```
 
 ## License
