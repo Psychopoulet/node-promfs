@@ -6,10 +6,16 @@
 	const	path = require("path"),
 
 			gulp = require("gulp"),
-			eslint = require("gulp-eslint"),
+			plumber = require("gulp-plumber"),
 			excludeGitignore = require("gulp-exclude-gitignore"),
-			mocha = require("gulp-mocha"),
-			plumber = require("gulp-plumber");
+
+			eslint = require("gulp-eslint"),
+
+			babel = require("gulp-babel"),
+
+			mocha = require("gulp-mocha");
+
+	require("babel-preset-es2015-node4");
 
 // private
 
@@ -21,13 +27,24 @@
 
 // tasks
 
-	gulp.task("eslint", function () {
+	gulp.task("babel", function () {
+
+		return gulp.src(_libFiles)
+			.pipe(babel({
+				presets: ["es2015-node4"]
+			}))
+			.pipe(gulp.dest("dist"));
+
+	});
+
+	gulp.task("eslint", ["babel"], function () {
 
 		return gulp.src(_allJSFiles)
 			.pipe(plumber())
 			.pipe(excludeGitignore())
 			.pipe(eslint({
 				"rules": {
+					"linebreak-style": 0,
 					"indent": 0
 				},
 				"env": {
