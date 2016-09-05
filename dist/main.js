@@ -11,7 +11,7 @@ const fs = require(require("path").join(__dirname, "extends.js"));
 
 [
 
-// simplefs
+// extend
 "concatFiles", "copy", "isDirectory", "isFile", "mkdirp", "rmdirp",
 
 // classical

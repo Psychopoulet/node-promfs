@@ -8,129 +8,81 @@ A basic 'fs' object extension
 $ npm install node-promfs
 ```
 
-## Notes
-
-Be carefull ! To be more stable and logicaly "fs compatible", this new version 2.x.x does no longer work like the previous 1.x.x
-
 ## Features
+
+  * promise all fs asynchronous functions
 
   * checks for file & directory existence, with synchrone & asynchrone versions
   * create & delete directories recursively, with synchrone & asynchrone versions
   * concat files content in a string, with synchrone & asynchrone versions
   * copy files, with synchrone & asynchrone versions
 
-  * ... and add promise wrappers for asynchrone functions
+## Doc
 
-## Examples
+ ### Extended
 
-```js
+  #### concatFiles : contact files content in a string
+   * ``` concatFiles(array files [ , string encoding [ , string separator ] ], function callback) ``` callback(mixed err, string content)
+   * ``` concatFilesSync(array files [ , string encoding [ , string separator ] ]) : return string ```
+   * ``` concatFilesProm(array files [ , string encoding [ , string separator ] ]) : return Promise ``` then(string content)
 
-// sync
+  #### copy : copy a file
+   * ``` copy(string origin, string origin, function callback) ``` callback(mixed err)
+   * ``` copySync(string origin, string origin) : return bool ```
+   * ``` copyProm(string origin, string origin) : return Promise ```
 
-const fs = require('node-promfs'), path = require('path');
+  #### isDirectory
+   * ``` isDirectory(string path) ``` callback(mixed err, bool exists)
+   * ``` isDirectorySync(string path) : return bool ```
+   * ``` isDirectoryProm(string path) : return Promise ``` then(bool exists)
 
-fs.isFileSync(__filename); // return true|false
-fs.isDirectorySync(__dirname); // return true|false
+  #### isFile
+   * ``` isFile(string path) ``` callback(mixed err, bool exists)
+   * ``` isFileSync(string path) : return bool ```
+   * ``` isFileProm(string path) : return Promise ``` then(bool exists)
 
-// recursively create a directory
-// check if the directory already exists before creation, so you don't have to do it
-fs.mkdirpSync(path.join(__dirname, 'testlvl1', 'testlvl2')); // return true|false
+  #### mkdirp : recursively create a directory
+   * ``` mkdirp(string path, function callback) ``` callback(mixed err)
+   * ``` mkdirpSync(string path) : return bool ```
+   * ``` mkdirpProm(string path) : return Promise ```
 
-// recursively delete a directory
-// check if the directory doesn't exist before removing, so you don't have to do it
-fs.rmdirpSync(path.join(__dirname, 'testlvl1')); // return true|false
+  #### rmdirp : recursively delete a directory
+   * ``` rmdirp(string path) ``` callback(mixed err)=
+   * ``` rmdirpSync(string path) : return bool ```
+   * ``` rmdirpProm(string path) : return Promise ```
 
-// concate files content
-// (array files [, string encoding = 'utf8'] [, string separator = ''])
-fs.concatFilesSync([ file1, file2, file3 ], 'utf8', "\n"); // return true|false
+ ### Classical
 
-// copy file
-fs.copySync(origin, target); // return true|false
-
-```
-
-```js
-
-// async
-
-const fs = require('node-promfs'), path = require('path');
-
-fs.isFile(__filename, callback); // callback(null|string err, bool exists)
-fs.isDirectory(__dirname, callback); // callback(null|string err, bool exists)
-
-// recursively create a directory
-// check if the directory already exists before creation, so you don't have to do it
-fs.mkdirp(path.join(__dirname, 'testlvl1', 'testlvl2'), callback); // callback(null|string err)
-
-// recursively delete a directory
-// check if the directory doesn't exist before removing, so you don't have to do it
-fs.rmdirp(path.join(__dirname, 'testlvl1'), callback); // callback(null|string err)
-
-// concate files content
-// (array files [, string encoding = 'utf8'] [, string separator = ''], callback)
-fs.concatFiles([ file1, file2, file3 ], 'utf8', "\n", callback); // callback(null|string err, string content)
-
-// copy file
-fs.copy(origin, target, callback); // callback(null|string err)
-
-```
-
-```js
-
-// promise
-
-const fs = require('node-promfs'), path = require('path');
-
-fs.isFileProm(__filename); // return a Promise instance
-fs.isDirectoryProm(__dirname); // return a Promise instance
-
-// recursively create a directory
-// check if the directory already exists before creation, so you don't have to do it
-fs.mkdirpProm(path.join(__dirname, 'testlvl1', 'testlvl2')); // return a Promise instance
-
-// recursively delete a directory
-// check if the directory doesn't exist before removing, so you don't have to do it
-fs.rmdirpProm(path.join(__dirname, 'testlvl1')); // return a Promise instance
-
-// concate files content
-// (array files [, string encoding = 'utf8'] [, string separator = ''])
-fs.concatFilesProm([ file1, file2, file3 ], 'utf8', "\n"); // return a Promise instance
-
-// copy file
-fs.copyProm(origin, target); // return a Promise instance
-
-// and some classical others...
-// using same presentation (ex: fs.appendFileProm(file, data [, options]))
-
-// fs.accessProm
-// fs.appendFileProm
-// fs.chmodProm
-// fs.chownProm
-// fs.closeProm
-// fs.fchmodProm  -> tests not created yet
-// fs.fchownProm  -> tests not created yet
-// fs.fdatasyncProm  -> test snot created yet
-// fs.fstatProm  -> tests not created yet
-// fs.fsyncProm  -> tests not created yet
-// fs.ftruncateProm  -> tests not created yet
-// fs.futimesProm  -> tests not created yet
-// fs.linkProm  -> tests not created yet
-// fs.lstatProm  -> tests not created yet
-// fs.mkdirProm -> check if the directory already exists before creation, so you don't have to do it
-// fs.mkdtempProm  -> tests not created yet
-// fs.openProm
-// fs.readdirProm
-// fs.readFileProm 
-// fs.realpathProm
-// fs.renameProm
-// fs.rmdirProm -> check if the directory doesn't exist before removing, so you don't have to do it
-// fs.statProm
-// fs.truncateProm
-// fs.unlinkProm -> check if the file doesn't exist before removing, so you don't have to do it
-// fs.utimesProm  -> tests not created yet
-// fs.writeFileProm
-
-```
+  * The arguments are the same as [the official documentation's ones](https://nodejs.org/api/fs.html)
+  * "then" data are the same as the callbacks' ones
+  * ``` accessProm() : return Promise ```
+  * ``` appendFileProm() : return Promise ```
+  * ``` chmodProm() : return Promise ```
+  * ``` chownProm() : return Promise ```
+  * ``` closeProm() : return Promise ```
+  * ``` fchmodProm() : return Promise ```
+  * ``` fchownProm() : return Promise ```
+  * ``` fdatasyncProm() : return Promise ```
+  * ``` fstatProm() : return Promise ```
+  * ``` fsyncProm() : return Promise ```
+  * ``` ftruncateProm() : return Promise ```
+  * ``` futimesProm() : return Promise ```
+  * ``` linkProm() : return Promise ```
+  * ``` lstatProm() : return Promise ```
+  * ``` mkdirProm() : return Promise ```
+  * ``` mkdtempProm() : return Promise ```
+  * ``` openProm() : return Promise ```
+  * ``` readdirProm() : return Promise ```
+  * ``` readFileProm() : return Promise ```
+  * ``` realpathProm() : return Promise ```
+  * ``` renameProm() : return Promise ```
+  * ``` rmdirProm() : return Promise ```
+  * ``` statProm() : return Promise ```
+  * ``` truncateProm() : return Promise ```
+  * ``` unlinkProm() : return Promise ```
+  * ``` utimesProm() : return Promise ```
+  * ``` writeProm() : return Promise ```
+  * ``` writeFileProm() : return Promise```
 
 ## Tests
 
