@@ -22,13 +22,8 @@ describe("extend", () => {
 
 		describe("sync", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", () => {
 				assert.throws(() => { fs.concatFilesSync(false); }, Error, "check type value does not throw an error");
@@ -46,13 +41,8 @@ describe("extend", () => {
 
 		describe("async", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -85,13 +75,8 @@ describe("extend", () => {
 
 		describe("promise", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -130,13 +115,8 @@ describe("extend", () => {
 
 		describe("sync", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", () => {
 				assert.throws(() => { fs.concatDirectoryFilesSync(false); }, Error, "check type value does not throw an error");
@@ -154,13 +134,8 @@ describe("extend", () => {
 
 		describe("async", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -193,13 +168,8 @@ describe("extend", () => {
 
 		describe("promise", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -242,13 +212,14 @@ describe("extend", () => {
 
 		describe("sync", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test"); }, Error, "\"before\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
 
 			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest2); }, Error, "\"after\" function throw an error");
+
+				return fs.unlinkProm(_filetest).then(() => {
+					return fs.unlinkProm(_filetest2);
+				});
+
 			});
 
 			it("should check types values", () => {
@@ -268,13 +239,14 @@ describe("extend", () => {
 
 		describe("async", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test"); }, Error, "\"before\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
 
 			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest2); }, Error, "\"after\" function throw an error");
+
+				return fs.unlinkProm(_filetest).then(() => {
+					return fs.unlinkProm(_filetest2);
+				});
+
 			});
 
 			it("should check types values", (done) => {
@@ -315,13 +287,14 @@ describe("extend", () => {
 
 		describe("promise", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test"); }, Error, "\"before\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
 
 			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest2); }, Error, "\"after\" function throw an error");
+
+				return fs.unlinkProm(_filetest).then(() => {
+					return fs.unlinkProm(_filetest2);
+				});
+
 			});
 
 			it("should check types values", (done) => {
@@ -642,13 +615,8 @@ describe("extend", () => {
 
 		describe("sync", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.rmdirpSync(_dirtestBase); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.rmdirpSync(_dirtestBase); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.rmdirpProm(_dirtestBase); });
+			after(() => { return fs.rmdirpProm(_dirtestBase); });
 
 			it("should check type value", () => {
 				assert.throws(() => { fs.mkdirpSync(false); }, Error, "check type value does not throw an error");
@@ -674,13 +642,8 @@ describe("extend", () => {
 
 		describe("async", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.rmdirpSync(_dirtestBase); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.rmdirpSync(_dirtestBase); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.rmdirpSync(_dirtestBase); });
+			after(() => { return fs.rmdirpSync(_dirtestBase); });
 
 			it("should check type value", (done) => {
 
@@ -726,13 +689,8 @@ describe("extend", () => {
 
 		describe("promise", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.rmdirpSync(_dirtestBase); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.rmdirpSync(_dirtestBase); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.rmdirpProm(_dirtestBase); });
+			after(() => { return fs.rmdirpProm(_dirtestBase); });
 
 			it("should check type value", (done) => {
 
@@ -758,20 +716,12 @@ describe("extend", () => {
 
 			});
 
-			it("should create real existing directory", (done) => {
-
-				fs.mkdirpProm(__dirname).then(() => {
-					done();
-				}).catch(done);
-
+			it("should create real existing directory", () => {
+				return fs.mkdirpProm(__dirname);
 			});
 
-			it("should create real new directory", (done) => {
-				
-				fs.mkdirpProm(_dirtest).then(() => {
-					done();
-				}).catch(done);
-
+			it("should create real new directory", () => {
+				return fs.mkdirpProm(_dirtest);
 			});
 
 			it("should detect created directory", () => {
@@ -868,14 +818,9 @@ describe("extend", () => {
 
 			});
 
-			it("should delete real new directory", (done) => {
-
+			it("should delete real new directory", () => {
 				assert.strictEqual(true, fs.mkdirpSync(_dirtest), "\"" + _dirtest + "\" cannot be created");
-				
-				fs.rmdirpProm(_dirtestBase).then(() => {
-					done();
-				}).catch(done);
-
+				return fs.rmdirpProm(_dirtestBase);
 			});
 
 			it("should not detect deleted directory", () => {
@@ -885,5 +830,5 @@ describe("extend", () => {
 		});
 
 	});
-	
+
 });
