@@ -30,11 +30,13 @@ const fs = require(require("path").join(__dirname, "extends.js"));
 				let err = subargs.shift();
 
 				if (err) {
-					reject(err.message ? err.message : err);
+					reject(err);
 				} else {
 					resolve.apply(undefined, subargs);
 				}
 			}]));
+		}).catch(err => {
+			return Promise.reject(err.message ? err.message : err);
 		});
 	};
 });
