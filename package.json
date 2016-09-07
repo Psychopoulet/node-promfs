@@ -34,6 +34,7 @@
 
     "gulp-babel": "^6.1.2",
     "babel-preset-es2015-node4": "^2.1.0",
+    "gulp-replace": "^0.5.4",
 
     "gulp-mocha": "^2.0.0"
 
