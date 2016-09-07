@@ -21,9 +21,8 @@ describe("promisification", () => {
 
 		describe("mkdirProm", () => {
 
-			after(() => {
-				assert.doesNotThrow(() => { fs.rmdirSync(_dirtestBase); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.rmdirpProm(_dirtestBase); });
+			after(() => { return fs.rmdirpProm(_dirtestBase); });
 
 			it("should check type value", (done) => {
 
@@ -65,9 +64,8 @@ describe("promisification", () => {
 
 		describe("rmdirProm", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.mkdirSync(_dirtestBase); }, Error, "\"before\" function throw an error");
-			});
+			before(() => { return fs.mkdirpProm(_dirtestBase); });
+			after(() => { return fs.rmdirpProm(_dirtestBase); });
 
 			it("should check type value", (done) => {
 
@@ -109,9 +107,8 @@ describe("promisification", () => {
 
 		describe("unlinkProm", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.appendFileSync(_filetest); }, Error, "\"before\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -157,9 +154,8 @@ describe("promisification", () => {
 
 		describe("openProm", () => {
 
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.unlinkProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -201,9 +197,8 @@ describe("promisification", () => {
 
 		describe("closeProm", () => {
 
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -271,17 +266,16 @@ describe("promisification", () => {
 
 			});
 
-			it("should check normal running", (done) => {
-				fs.accessProm(__filename, fs.F_OK).then(done).catch(done);
+			it("should check normal running", () => {
+				return fs.accessProm(__filename, fs.F_OK);
 			});
 
 		});
 
 		describe("appendFileProm", () => {
 
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -320,13 +314,8 @@ describe("promisification", () => {
 
 		describe("chmodProm", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test", "utf8"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -352,21 +341,16 @@ describe("promisification", () => {
 
 			});
 
-			it("should check normal running", (done) => {
-				fs.chmodProm(_filetest, 755).then(done).catch(done);
+			it("should check normal running", () => {
+				return fs.chmodProm(_filetest, 755);
 			});
 
 		});
 
 		describe("chownProm", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test", "utf8"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -392,13 +376,16 @@ describe("promisification", () => {
 
 			});
 
-			it("should check normal running", (done) => {
-				fs.chownProm(_filetest, 0, 0).then(done).catch(done);
+			it("should check normal running", () => {
+				return fs.chownProm(_filetest, 0, 0);
 			});
 
 		});
 
 		describe("readdirProm", () => {
+
+			before(() => { return fs.writeFileProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -437,13 +424,8 @@ describe("promisification", () => {
 
 		describe("readFileProm", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test", "utf8"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -482,6 +464,9 @@ describe("promisification", () => {
 
 		describe("realpathProm", () => {
 
+			before(() => { return fs.writeFileProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
+
 			it("should check type value", (done) => {
 
 				fs.realpathProm(false).then(() => {
@@ -519,12 +504,14 @@ describe("promisification", () => {
 
 		describe("renameProm", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test", "utf8"); }, Error, "\"before\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, ""); });
 
 			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest2); }, Error, "\"after\" function throw an error");
+
+				return fs.unlinkProm(_filetest).then(() => {
+					return fs.unlinkProm(_filetest2);
+				});
+
 			});
 
 			it("should check type value", (done) => {
@@ -569,13 +556,16 @@ describe("promisification", () => {
 
 			});
 
-			it("should check normal running", (done) => {
-				fs.renameProm(_filetest, _filetest2).then(done).catch(done);
+			it("should check normal running", () => {
+				return fs.renameProm(_filetest, _filetest2);
 			});
 
 		});
 
 		describe("statProm", () => {
+
+			before(() => { return fs.writeFileProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -614,13 +604,8 @@ describe("promisification", () => {
 
 		describe("truncateProm", () => {
 
-			before(() => {
-				assert.doesNotThrow(() => { fs.writeFileSync(_filetest, "test", "utf8"); }, Error, "\"before\" function throw an error");
-			});
-
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
@@ -659,9 +644,8 @@ describe("promisification", () => {
 
 		describe("writeFileProm", () => {
 
-			after(() => {
-				assert.doesNotThrow(() => { fs.unlinkSync(_filetest); }, Error, "\"after\" function throw an error");
-			});
+			before(() => { return fs.unlinkProm(_filetest, ""); });
+			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", (done) => {
 
