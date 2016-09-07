@@ -3,8 +3,6 @@
 
 // deps
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
 const fs = require(require("path").join(__dirname, "extends.js"));
 
 // promises
@@ -12,129 +10,113 @@ const fs = require(require("path").join(__dirname, "extends.js"));
 [
 
 // extend
-"concatFiles", "copy", "isDirectory", "isFile", "mkdirp", "rmdirp",
+"concatFiles", "concatDirectoryFiles", "copy", "isDirectory", "isFile", "mkdirp", "rmdirp",
 
 // classical
 "access", "appendFile", "chmod", "chown", "close", "fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "open", "readdir", "readFile", "rename", "stat", "truncate", "utimes", "write", "writeFile"].forEach(name => {
 
 	fs[name + "Prom"] = function () {
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		let args = Array.prototype.slice.call(arguments, 0);
+		return new Promise((resolve, reject) => {
 
-		return new Promise(function (resolve, reject) {
+			fs[name].apply(fs, args.concat([function () {
+				for (var _len2 = arguments.length, subargs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+					subargs[_key2] = arguments[_key2];
+				}
 
-			try {
+				let err = subargs.shift();
 
-				fs[name].apply(fs, _toConsumableArray(args).concat([function (err) {
-
-					if (err) {
-						reject(err.message ? err.message : err);
-					} else {
-
-						let args = Array.prototype.slice.call(arguments, 0);
-						args.shift();
-
-						resolve.apply(undefined, _toConsumableArray(args));
-					}
-				}]));
-			} catch (e) {
-				reject(e.message ? e.message : e);
-			}
+				if (err) {
+					reject(err);
+				} else {
+					resolve.apply(undefined, subargs);
+				}
+			}]));
+		}).catch(err => {
+			return Promise.reject(err.message ? err.message : err);
 		});
 	};
 });
 
-fs.mkdirProm = function (dir) {
+fs.mkdirProm = dir => {
 
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 
-		try {
+		fs.isDirectory(dir, (err, exists) => {
 
-			fs.isDirectory(dir, function (err, exists) {
+			if (err) {
+				reject(err);
+			} else if (exists) {
+				resolve();
+			} else {
 
-				if (err) {
-					reject(err);
-				} else if (exists) {
-					resolve();
-				} else {
+				fs.mkdir(dir, err => {
 
-					fs.mkdir(dir, function (err) {
-
-						if (err) {
-							reject(err.message ? err.message : err);
-						} else {
-							resolve();
-						}
-					});
-				}
-			});
-		} catch (e) {
-			reject(e.message ? e.message : e);
-		}
+					if (err) {
+						reject(err.message ? err.message : err);
+					} else {
+						resolve();
+					}
+				});
+			}
+		});
 	});
 };
 
-fs.rmdirProm = function (dir) {
+fs.rmdirProm = dir => {
 
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 
-		try {
+		fs.isDirectory(dir, (err, exists) => {
 
-			fs.isDirectory(dir, function (err, exists) {
+			if (err) {
+				reject(err);
+			} else if (!exists) {
+				resolve();
+			} else {
 
-				if (err) {
-					reject(err);
-				} else if (!exists) {
-					resolve();
-				} else {
+				fs.rmdir(dir, err => {
 
-					fs.rmdir(dir, function (err) {
-
-						if (err) {
-							reject(err.message ? err.message : err);
-						} else {
-							resolve();
-						}
-					});
-				}
-			});
-		} catch (e) {
-			reject(e.message ? e.message : e);
-		}
+					if (err) {
+						reject(err.message ? err.message : err);
+					} else {
+						resolve();
+					}
+				});
+			}
+		});
 	});
 };
 
-fs.unlinkProm = function (file) {
+fs.unlinkProm = file => {
 
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 
-		try {
+		fs.isFile(file, (err, exists) => {
 
-			fs.isFile(file, function (err, exists) {
+			if (err) {
+				reject(err);
+			} else if (!exists) {
+				resolve();
+			} else {
 
-				if (err) {
-					reject(err);
-				} else if (!exists) {
-					resolve();
-				} else {
+				fs.unlink(file, err => {
 
-					fs.unlink(file, function (err) {
-
-						if (err) {
-							reject(err.message ? err.message : err);
-						} else {
-							resolve();
-						}
-					});
-				}
-			});
-		} catch (e) {
-			reject(e.message ? e.message : e);
-		}
+					if (err) {
+						reject(err.message ? err.message : err);
+					} else {
+						resolve();
+					}
+				});
+			}
+		});
 	});
 };
 
-fs.realpathProm = function (path, options) {
+fs.realpathProm = (path, options) => {
 
 	if ("string" !== typeof path) {
 		return Promise.reject("This is not a string");
@@ -146,9 +128,9 @@ fs.realpathProm = function (path, options) {
 			return Promise.reject("\"path\" is empty");
 		} else {
 
-			return new Promise(function (resolve, reject) {
+			return new Promise((resolve, reject) => {
 
-				fs.realpath(path, options ? options : null, function (err, result) {
+				fs.realpath(path, options ? options : null, (err, result) => {
 
 					if (err) {
 						reject(err.message ? err.message : err);

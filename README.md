@@ -26,6 +26,11 @@ $ npm install node-promfs
    * ``` concatFilesSync(array files [ , string encoding [ , string separator ] ]) : return string ```
    * ``` concatFilesProm(array files [ , string encoding [ , string separator ] ]) : return Promise ``` then(string content)
 
+  #### concatDirectoryFiles : contact directory's files content in a string
+   * ``` concatDirectoryFiles(string path [ , string encoding [ , string separator ] ], function callback) ``` callback(mixed err, string content)
+   * ``` concatDirectoryFilesSync(string path [ , string encoding [ , string separator ] ]) : return string ```
+   * ``` concatDirectoryFilesProm(string path [ , string encoding [ , string separator ] ]) : return Promise ``` then(string content)
+
   #### copy : copy a file
    * ``` copy(string origin, string origin, function callback) ``` callback(mixed err)
    * ``` copySync(string origin, string origin) : return bool ```

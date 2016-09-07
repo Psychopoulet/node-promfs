@@ -8,6 +8,7 @@
 			gulp = require("gulp"),
 			plumber = require("gulp-plumber"),
 			excludeGitignore = require("gulp-exclude-gitignore"),
+			replace = require("gulp-replace"),
 
 			eslint = require("gulp-eslint"),
 
@@ -37,7 +38,16 @@
 
 	});
 
-	gulp.task("eslint", ["babel"], function () {
+	gulp.task("replace", ["babel"], function () {
+
+		return gulp.src(_distFiles)
+			.pipe(replace("    ", "	"))
+			.pipe(replace("  ", "	"))
+			.pipe(gulp.dest("dist"));
+
+	});
+
+	gulp.task("eslint", ["replace"], function () {
 
 		return gulp.src(_allJSFiles)
 			.pipe(plumber())
@@ -45,7 +55,10 @@
 			.pipe(eslint({
 				"rules": {
 					"linebreak-style": 0,
-					"indent": 0
+					"quotes": [ 1, "double" ],
+					"indent": 0,
+					// "indent": [ 2, "tab" ],
+					"semi": [ 2, "always" ]
 				},
 				"env": {
 					"node": true, "es6": true, "mocha": true

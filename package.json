@@ -1,6 +1,6 @@
 {
   "name": "node-promfs",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A 'fs' object extension",
   "main": "dist/main.js",
   "scripts": {
@@ -34,6 +34,7 @@
 
     "gulp-babel": "^6.1.2",
     "babel-preset-es2015-node4": "^2.1.0",
+    "gulp-replace": "^0.5.4",
 
     "gulp-mocha": "^2.0.0"
 
