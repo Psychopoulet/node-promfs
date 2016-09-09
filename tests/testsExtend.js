@@ -168,8 +168,10 @@ describe("extend", () => {
 
 		describe("promise", () => {
 
+			let directoryTests = path.join(__dirname, "test");
+
 			before(() => { return fs.writeFileProm(_filetest, "test"); });
-			after(() => { return fs.unlinkProm(_filetest); });
+			after(() => { return fs.unlinkProm(_filetest).then(() => { return fs.rmdirp(directoryTests); }); });
 
 			it("should check type value", (done) => {
 
@@ -195,11 +197,38 @@ describe("extend", () => {
 
 			});
 
-			it("should concat test files", (done) => {
+			it("should concat test one file", (done) => {
 
-				fs.concatDirectoryFilesProm(__dirname, "utf8", " ").then((data) => {
-					assert.strictEqual("string", typeof data, "test files cannot be concatened");
-					done();
+				fs.mkdirpProm(directoryTests).then(() => {
+					return fs.writeFileProm(path.join(directoryTests, "test.txt"), "test");
+				}).then(() => {
+
+					return fs.concatDirectoryFilesProm(directoryTests, "utf8", "<>").then((data) => {
+
+						assert.strictEqual("string", typeof data, "test files cannot be concatened");
+						assert.strictEqual("test", data, "test files cannot be concatened");
+						done();
+
+					});
+
+				}).catch(done);
+
+			});
+
+			it("should concat test all files", (done) => {
+
+				fs.mkdirpProm(directoryTests).then(() => {
+					return fs.writeFileProm(path.join(directoryTests, "test2.txt"), "test");
+				}).then(() => {
+
+					return fs.concatDirectoryFilesProm(directoryTests, "utf8", "<>").then((data) => {
+
+						assert.strictEqual("string", typeof data, "test files cannot be concatened");
+						assert.strictEqual("test<>test", data, "test files cannot be concatened");
+						done();
+
+					});
+
 				}).catch(done);
 
 			});
