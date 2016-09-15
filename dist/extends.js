@@ -10,47 +10,52 @@ const path = require("path"),
 
 // methods
 
-function _copy(origin, target, callback) {
+function _readContentProm(files, encoding, separator, content) {
 
-	fs.readFile(origin, (err, content) => {
+	content = content ? content : "";
 
-		if (err) {
-			callback(err.message ? err.message : err);
+	return Promise.resolve().then(() => {
+
+		if (0 >= files.length) {
+			return Promise.resolve(content);
 		} else {
 
-			fs.writeFile(target, content, err => {
+			let file = files.pop();
 
-				if (err) {
-					callback(err.message ? err.message : err);
+			return fs.isFileProm(file).then(exists => {
+
+				if (!exists) {
+					return Promise.reject("\"" + file + "\" does not exist");
 				} else {
-					callback(null);
+					return fs.readFileProm(file, encoding);
 				}
+			}).then(filecontent => {
+
+				return _readContentProm(files, encoding, separator, "" === content ? filecontent : content + separator + filecontent);
 			});
 		}
 	});
 }
 
-function _readContent(encoding, separator, files, i, content) {
+function _emptyDirectoryProm(dir, files) {
 
-	return new Promise((resolve, reject) => {
+	return Promise.resolve().then(() => {
 
-		if (i >= files.length) {
-			resolve(content);
+		if (0 >= files.length) {
+			return fs.rmdirProm(dir);
 		} else {
 
-			fs.isFile(files[i], (err, exists) => {
+			let file = files.pop(),
+				curPath = path.join(dir, file);
 
-				if (err) {
-					reject(err);
-				} else if (exists) {
+			return fs.isDirectoryProm(curPath).then(exists => {
 
-					fs.readFile(files[i], encoding, (err, filecontent) => {
+				if (exists) {
+					return fs.rmdirpProm(curPath);
+				} else {
 
-						if (err) {
-							reject(err.message ? err.message : err);
-						} else {
-							_readContent(encoding, separator, files, i + 1, 0 < i ? content + separator + filecontent : content + filecontent).then(resolve).catch(reject);
-						}
+					return fs.unlinkProm(curPath).then(() => {
+						return _emptyDirectoryProm(dir, files);
 					});
 				}
 			});
@@ -58,48 +63,60 @@ function _readContent(encoding, separator, files, i, content) {
 	});
 }
 
-function _rmdirp(dir, files, i) {
+// with streams
 
-	return new Promise((resolve, reject) => {
+function _copyStream(origin, target, callback) {
 
-		if (i >= files.length) {
+	let readStream = fs.createReadStream(origin),
+		writeStream = fs.createWriteStream(target);
 
-			// no content anymore
-			fs.rmdir(dir, err => {
+	readStream.on("open", () => {
+		readStream.pipe(writeStream);
+	}).on("end", () => {
+		callback(null);
+	}).on("error", err => {
+		callback(err.message ? err.message : err);
+	});
+}
 
-				if (err) {
-					reject(err.message ? err.message : err);
-				} else {
-					resolve();
-				}
-			});
+function _concatContentStreamProm(files, targetPath, separator) {
+
+	return Promise.resolve().then(() => {
+
+		if (0 >= files.length) {
+			return Promise.resolve();
 		} else {
 
-			let curPath = path.join(dir, files[i]);
+			let file = files.pop();
 
-			fs.isDirectory(curPath, (err, exists) => {
+			return fs.isFileProm(file).then(exists => {
 
-				if (err) {
-					reject(err);
-				} else if (exists) {
-
-					fs.rmdirp(curPath, err => {
-
-						if (err) {
-							reject(err);
-						} else {
-							_rmdirp(dir, files, i + 1).then(resolve).catch(reject);
-						}
-					});
+				if (!exists) {
+					return Promise.reject("\"" + file + "\" does not exist");
 				} else {
 
-					fs.unlink(curPath, err => {
+					return new Promise((resolve, reject) => {
 
-						if (err) {
+						let readStream = fs.createReadStream(file),
+							writeStream = fs.createWriteStream(targetPath, { flags: "a" });
+
+						readStream.on("open", () => {
+							readStream.pipe(writeStream);
+						}).on("end", () => {
+
+							return Promise.resolve().then(() => {
+
+								if (0 >= files.length) {
+									return Promise.resolve();
+								} else {
+									return fs.appendFileProm(targetPath, separator);
+								}
+							}).then(() => {
+								return _concatContentStreamProm(files, targetPath, separator);
+							}).then(resolve).catch(reject);
+						}).on("error", err => {
 							reject(err.message ? err.message : err);
-						} else {
-							_rmdirp(dir, files, i + 1).then(resolve).catch(reject);
-						}
+						});
 					});
 				}
 			});
@@ -109,11 +126,11 @@ function _rmdirp(dir, files, i) {
 
 // module
 
-// concatFiles
+// filesToString
 
 // async version
 
-fs.concatFiles = (files, encoding, separator, callback) => {
+fs.filesToString = (files, encoding, separator, callback) => {
 
 	if (!callback) {
 
@@ -126,13 +143,13 @@ fs.concatFiles = (files, encoding, separator, callback) => {
 
 	callback = "function" === typeof callback ? callback : () => {};
 	encoding = "string" === typeof encoding ? encoding : "utf8";
-	separator = "string" === typeof separator ? separator : "";
+	separator = "string" === typeof separator ? separator : " ";
 
 	if ("object" !== typeof files || !(files instanceof Array)) {
 		callback("This is not an array");
 	} else {
 
-		_readContent(encoding, separator, files, 0, "").then(content => {
+		_readContentProm(files, encoding, separator).then(content => {
 			callback(null, content);
 		}).catch(callback);
 	}
@@ -140,32 +157,124 @@ fs.concatFiles = (files, encoding, separator, callback) => {
 
 // sync version
 
-fs.concatFilesSync = (files, encoding, separator) => {
+fs.filesToStringSync = (files, encoding, separator) => {
 
 	if ("object" !== typeof files || !(files instanceof Array)) {
 		throw new Error("This is not an array");
+	} else {
+
+		encoding = "string" === typeof encoding ? encoding : null;
+		separator = "string" === typeof separator ? separator : " ";
+
+		let content = "";
+
+		files.forEach(file => {
+
+			if (!fs.isFileSync(file)) {
+				throw new Error("\"" + file + "\" does not exist");
+			} else {
+				content = "" === content ? fs.readFileSync(file, encoding) : content + separator + fs.readFileSync(file, encoding);
+			}
+		});
+
+		return content;
 	}
-
-	encoding = "string" === typeof encoding ? encoding : null;
-	separator = "string" === typeof separator ? separator : "";
-
-	let content = "";
-
-	files.forEach((file, key) => {
-
-		if (fs.isFileSync(file)) {
-			content += 0 < key ? separator + fs.readFileSync(file, encoding) : fs.readFileSync(file, encoding);
-		}
-	});
-
-	return content;
 };
 
-// concatDirectoryFiles
+// filesToFile
 
 // async version
 
-fs.concatDirectoryFiles = (dir, encoding, separator, callback) => {
+fs.filesToFile = (files, targetPath, separator, callback) => {
+
+	if (!callback) {
+		callback = "function" === typeof separator ? separator : () => {};
+	}
+
+	callback = "function" === typeof callback ? callback : () => {};
+	separator = "string" === typeof separator ? separator : " ";
+
+	if ("object" !== typeof files || !(files instanceof Array)) {
+		callback("\"files\" is not an array");
+	} else if ("string" !== typeof targetPath) {
+		callback("\"targetPath\" is not a string");
+	} else {
+
+		fs.isFile(targetPath, (err, exists) => {
+
+			if (err) {
+				callback(err.message ? err.message : err);
+			} else if (exists) {
+
+				fs.unlink(targetPath, err => {
+
+					if (err) {
+						callback(err.message ? err.message : err);
+					} else {
+
+						fs.writeFile(targetPath, "", err => {
+
+							if (err) {
+								callback(err.message ? err.message : err);
+							} else {
+
+								_concatContentStreamProm(files, targetPath, separator).then(() => {
+									callback(null);
+								}).catch(callback);
+							}
+						});
+					}
+				});
+			} else {
+
+				fs.writeFile(targetPath, "", err => {
+
+					if (err) {
+						callback(err.message ? err.message : err);
+					} else {
+
+						_concatContentStreamProm(files, targetPath, separator).then(() => {
+							callback(null);
+						}).catch(callback);
+					}
+				});
+			}
+		});
+	}
+};
+
+// sync version
+
+fs.filesToFileSync = (files, targetPath, separator) => {
+
+	if ("object" !== typeof files || !(files instanceof Array)) {
+		throw new Error("\"files\" is not an array");
+	} else if ("string" !== typeof targetPath) {
+		throw new Error("\"targetPath\" is not a string");
+	} else {
+
+		separator = "string" === typeof separator ? separator : " ";
+
+		if (fs.isFileSync(targetPath)) {
+			fs.unlinkSync(targetPath);
+		}
+
+		fs.writeFileSync(targetPath, "");
+
+		files.forEach((file, key) => {
+
+			if (fs.isFileSync(file)) {
+				fs.appendFileSync(targetPath, 0 < key ? separator + fs.readFileSync(file) : fs.readFileSync(file));
+			}
+		});
+	}
+};
+
+// directoryFilesToString
+
+// async version
+
+fs.directoryFilesToString = (dir, encoding, separator, callback) => {
 
 	if (!callback) {
 
@@ -221,7 +330,7 @@ fs.concatDirectoryFiles = (dir, encoding, separator, callback) => {
 									if (err) {
 										callback(err);
 									} else {
-										fs.concatFiles(result, encoding, separator, callback);
+										fs.filesToString(result, encoding, separator, callback);
 									}
 								}
 							});
@@ -235,28 +344,124 @@ fs.concatDirectoryFiles = (dir, encoding, separator, callback) => {
 
 // sync version
 
-fs.concatDirectoryFilesSync = (dir, encoding, separator) => {
+fs.directoryFilesToStringSync = (dir, encoding, separator) => {
 
 	if ("string" !== typeof dir) {
 		throw new Error("This is not an array");
+	} else {
+
+		encoding = "string" === typeof encoding ? encoding : null;
+		separator = "string" === typeof separator ? separator : "";
+
+		let result = [],
+			files = fs.readdirSync(dir);
+
+		files.forEach(file => {
+
+			file = path.join(dir, file);
+
+			if (fs.isFileSync(file)) {
+				result.push(file);
+			}
+		});
+
+		return fs.filesToStringSync(result, encoding, separator);
+	}
+};
+
+// directoryFilesToFile
+
+// async version
+
+fs.directoryFilesToFile = (dir, targetPath, separator, callback) => {
+
+	if (!callback) {
+		callback = "function" === typeof separator ? separator : () => {};
 	}
 
-	encoding = "string" === typeof encoding ? encoding : null;
-	separator = "string" === typeof separator ? separator : "";
+	callback = "function" === typeof callback ? callback : () => {};
+	separator = "string" === typeof separator ? separator : " ";
 
-	let result = [],
-		files = fs.readdirSync(dir);
+	if ("string" !== typeof dir) {
+		callback("\"files\" is not an array");
+	} else if ("string" !== typeof targetPath) {
+		callback("\"targetPath\" is not a string");
+	} else {
 
-	files.forEach(file => {
+		fs.isDirectory(dir, (err, exists) => {
 
-		file = path.join(dir, file);
+			if (err) {
+				callback(err);
+			} else if (!exists) {
+				callback("This directory does not exist");
+			} else {
 
-		if (fs.isFileSync(file)) {
-			result.push(file);
-		}
-	});
+				fs.readdir(dir, (err, files) => {
 
-	return fs.concatFilesSync(result, encoding, separator);
+					if (err) {
+						callback(err);
+					} else {
+
+						let err = null,
+							i = 0,
+							result = [];
+
+						files.forEach(file => {
+
+							file = path.join(dir, file);
+
+							fs.isFile(file, (_err, exists) => {
+
+								++i;
+
+								if (_err) {
+									err = _err;
+								} else if (exists) {
+									result.push(file);
+								}
+
+								if (i >= files.length) {
+
+									if (err) {
+										callback(err);
+									} else {
+										fs.filesToFile(result, targetPath, separator, callback);
+									}
+								}
+							});
+						});
+					}
+				});
+			}
+		});
+	}
+};
+
+// sync version
+
+fs.directoryFilesToFileSync = (dir, targetPath, encoding, separator) => {
+
+	if ("string" !== typeof dir) {
+		throw new Error("This is not an array");
+	} else {
+
+		encoding = "string" === typeof encoding ? encoding : null;
+		separator = "string" === typeof separator ? separator : "";
+
+		let result = [],
+			files = fs.readdirSync(dir);
+
+		files.forEach(file => {
+
+			file = path.join(dir, file);
+
+			if (fs.isFileSync(file)) {
+				result.push(file);
+			}
+		});
+
+		return fs.filesToFileSync(result, targetPath, encoding, separator);
+	}
 };
 
 // copy
@@ -295,7 +500,7 @@ fs.copy = (origin, target, callback) => {
 						if (err) {
 							callback(err);
 						} else if (!exists) {
-							_copy(origin, target, callback);
+							_copyStream(origin, target, callback);
 						} else {
 
 							fs.unlink(target, err => {
@@ -303,7 +508,7 @@ fs.copy = (origin, target, callback) => {
 								if (err) {
 									callback(err.message ? err.message : err);
 								} else {
-									_copy(origin, target, callback);
+									_copyStream(origin, target, callback);
 								}
 							});
 						}
@@ -340,8 +545,6 @@ fs.copySync = (origin, target) => {
 			}
 
 			fs.writeFileSync(target, fs.readFileSync(origin));
-
-			return true;
 		}
 	}
 };
@@ -482,11 +685,13 @@ fs.mkdirp = (dir, callback) => {
 
 fs.mkdirpSync = dir => {
 
-	if (fs.isDirectorySync(dir)) {
-		return true;
-	} else if (fs.isDirectorySync(path.dirname(dir)) || fs.mkdirpSync(path.dirname(dir))) {
+	if (!fs.isDirectorySync(dir)) {
+
+		if (!fs.isDirectorySync(path.dirname(dir))) {
+			fs.mkdirpSync(path.dirname(dir));
+		}
+
 		fs.mkdirSync(dir, parseInt("0777", 8));
-		return true;
 	}
 };
 
@@ -512,7 +717,7 @@ fs.rmdirp = (dir, callback) => {
 					callback(err.message ? err.message : err);
 				} else {
 
-					_rmdirp(dir, files, 0).then(() => {
+					_emptyDirectoryProm(dir, files).then(() => {
 						callback();
 					}).catch(callback);
 				}
@@ -525,9 +730,7 @@ fs.rmdirp = (dir, callback) => {
 
 fs.rmdirpSync = dir => {
 
-	if (!fs.isDirectorySync(dir)) {
-		return true;
-	} else {
+	if (fs.isDirectorySync(dir)) {
 
 		fs.readdirSync(dir).forEach(file => {
 
@@ -541,8 +744,6 @@ fs.rmdirpSync = dir => {
 		});
 
 		fs.rmdirSync(dir);
-
-		return true;
 	}
 };
 

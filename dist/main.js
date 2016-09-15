@@ -10,7 +10,7 @@ const fs = require(require("path").join(__dirname, "extends.js"));
 [
 
 // extend
-"concatFiles", "concatDirectoryFiles", "copy", "isDirectory", "isFile", "mkdirp", "rmdirp",
+"filesToString", "filesToFile", "directoryFilesToString", "directoryFilesToFile", "copy", "isDirectory", "isFile", "mkdirp", "rmdirp",
 
 // classical
 "access", "appendFile", "chmod", "chown", "close", "fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "open", "readdir", "readFile", "rename", "stat", "truncate", "utimes", "write", "writeFile"].forEach(name => {
@@ -43,104 +43,94 @@ const fs = require(require("path").join(__dirname, "extends.js"));
 
 fs.mkdirProm = dir => {
 
-	return new Promise((resolve, reject) => {
+	return fs.isDirectoryProm(dir).then(exists => {
 
-		fs.isDirectory(dir, (err, exists) => {
+		if (exists) {
+			return Promise.resolve();
+		} else {
 
-			if (err) {
-				reject(err);
-			} else if (exists) {
-				resolve();
-			} else {
+			return new Promise((resolve, reject) => {
 
 				fs.mkdir(dir, err => {
 
 					if (err) {
-						reject(err.message ? err.message : err);
+						reject(err);
 					} else {
 						resolve();
 					}
 				});
-			}
-		});
+			});
+		}
+	}).catch(err => {
+		return Promise.reject(err.message ? err.message : err);
 	});
 };
 
 fs.rmdirProm = dir => {
 
-	return new Promise((resolve, reject) => {
+	return fs.isDirectoryProm(dir).then(exists => {
 
-		fs.isDirectory(dir, (err, exists) => {
+		if (!exists) {
+			return Promise.resolve();
+		} else {
 
-			if (err) {
-				reject(err);
-			} else if (!exists) {
-				resolve();
-			} else {
+			return new Promise((resolve, reject) => {
 
 				fs.rmdir(dir, err => {
 
 					if (err) {
-						reject(err.message ? err.message : err);
+						reject(err);
 					} else {
 						resolve();
 					}
 				});
-			}
-		});
+			});
+		}
+	}).catch(err => {
+		return Promise.reject(err.message ? err.message : err);
 	});
 };
 
 fs.unlinkProm = file => {
 
-	return new Promise((resolve, reject) => {
+	return fs.isFileProm(file).then(exists => {
 
-		fs.isFile(file, (err, exists) => {
+		if (!exists) {
+			return Promise.resolve();
+		} else {
 
-			if (err) {
-				reject(err);
-			} else if (!exists) {
-				resolve();
-			} else {
+			return new Promise((resolve, reject) => {
 
 				fs.unlink(file, err => {
 
 					if (err) {
-						reject(err.message ? err.message : err);
+						reject(err);
 					} else {
 						resolve();
 					}
 				});
-			}
-		});
+			});
+		}
+	}).catch(err => {
+		return Promise.reject(err.message ? err.message : err);
 	});
 };
 
 fs.realpathProm = (path, options) => {
 
-	if ("string" !== typeof path) {
-		return Promise.reject("This is not a string");
-	} else {
+	return new Promise((resolve, reject) => {
 
-		path = path.trim();
+		fs.realpath(path, options ? options : null, (err, result) => {
 
-		if ("" == path) {
-			return Promise.reject("\"path\" is empty");
-		} else {
-
-			return new Promise((resolve, reject) => {
-
-				fs.realpath(path, options ? options : null, (err, result) => {
-
-					if (err) {
-						reject(err.message ? err.message : err);
-					} else {
-						resolve(result);
-					}
-				});
-			});
-		}
-	}
+			if (err) {
+				reject(err);
+			} else {
+				resolve(result);
+			}
+		});
+	}).catch(err => {
+		return Promise.reject(err.message ? err.message : err);
+	});
 };
 
 // module
