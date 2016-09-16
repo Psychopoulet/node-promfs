@@ -579,55 +579,15 @@ describe("extend", () => {
 
 			it("should concat test one file", () => {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 				return fs.mkdirpProm(directoryTests).then(() => {
 					return fs.writeFileProm(test1, "test");
 				}).then(() => {
-					return fs.directoryFilesToFileProm(directoryTests, _filetest, "utf8", "<>");
+					return fs.directoryFilesToFileProm(directoryTests, _filetest, "<>");
 				}).then(() => {
-
-					(0, console).log(_filetest);
-
 					return fs.readFileProm(_filetest, "utf8");
-
 				}).then((data) => {
-
-					(0, console).log(data);
-
 					assert.strictEqual("test", data, "test files cannot be concatened");
-
 				});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 			});
 
