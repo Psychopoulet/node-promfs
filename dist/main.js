@@ -10,7 +10,7 @@ const fs = require(require("path").join(__dirname, "extends.js"));
 [
 
 // extend
-"filesToString", "filesToFile", "directoryFilesToString", "directoryFilesToFile", "copy", "isDirectory", "isFile", "mkdirp", "rmdirp",
+"extractDirectoryRealFiles", "filesToString", "filesToFile", "directoryFilesToString", "directoryFilesToFile", "copy", "isDirectory", "isFile", "mkdirp", "rmdirp",
 
 // classical
 "access", "appendFile", "chmod", "chown", "close", "fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "open", "readdir", "readFile", "rename", "stat", "truncate", "utimes", "write", "writeFile"].forEach(name => {

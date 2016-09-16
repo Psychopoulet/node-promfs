@@ -21,6 +21,11 @@ $ npm install node-promfs
 
  ### Extended
 
+  #### extractDirectoryRealFiles : return only files from directory
+   * ``` extractDirectoryRealFiles(string directory, function callback) ``` callback(string|null err, array files)
+   * ``` extractDirectoryRealFilesSync(string directory) : return array ```
+   * ``` extractDirectoryRealFilesProm(string directory) : return Promise ``` then(array files)
+
   #### filesToString : concat files content in a string
    * ``` filesToString(array files [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(string|null err, string content)
    * ``` filesToStringSync(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : return string ```

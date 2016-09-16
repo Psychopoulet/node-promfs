@@ -10,6 +10,30 @@ const path = require("path"),
 
 // methods
 
+function _extractRealFilesProm(dir, givenFiles, realFiles) {
+
+	realFiles = "object" === typeof realFiles && realFiles instanceof Array ? realFiles : [];
+
+	return Promise.resolve().then(() => {
+
+		if (0 >= givenFiles.length) {
+			return Promise.resolve(realFiles);
+		} else {
+
+			let file = path.join(dir, givenFiles.pop());
+
+			return fs.isFileProm(file).then(exists => {
+
+				if (exists) {
+					realFiles.push(file);
+				}
+
+				return _extractRealFilesProm(dir, givenFiles, realFiles);
+			});
+		}
+	});
+}
+
 function _readContentProm(files, encoding, separator, content) {
 
 	content = content ? content : "";
@@ -125,6 +149,60 @@ function _concatContentStreamProm(files, targetPath, separator) {
 }
 
 // module
+
+// extractDirectoryRealFiles
+
+// async version
+
+fs.extractDirectoryRealFiles = (dir, callback) => {
+
+	callback = "function" === typeof callback ? callback : () => {};
+
+	fs.isDirectory(dir, (err, exists) => {
+
+		if (err) {
+			callback(err);
+		} else if (!exists) {
+			callback("This directory does not exist");
+		} else {
+
+			fs.readdir(dir, (err, files) => {
+
+				if (err) {
+					callback(err.message ? err.message : err);
+				} else {
+
+					_extractRealFilesProm(dir, files).then(data => {
+						callback(null, data);
+					}).catch(callback);
+				}
+			});
+		}
+	});
+};
+
+// sync version
+
+fs.extractDirectoryRealFilesSync = dir => {
+
+	if (!fs.isDirectorySync(dir)) {
+		throw new Error("This directory does not exist");
+	} else {
+
+		let result = [];
+
+		fs.readdirSync(dir).forEach(file => {
+
+			file = path.join(dir, file);
+
+			if (fs.isFileSync(file)) {
+				result.push(file);
+			}
+		});
+
+		return result;
+	}
+};
 
 // filesToString
 
@@ -263,7 +341,9 @@ fs.filesToFileSync = (files, targetPath, separator) => {
 
 		files.forEach((file, key) => {
 
-			if (fs.isFileSync(file)) {
+			if (!fs.isFileSync(file)) {
+				throw new Error("\"" + file + "\" does not exist");
+			} else {
 				fs.appendFileSync(targetPath, 0 < key ? separator + fs.readFileSync(file) : fs.readFileSync(file));
 			}
 		});
@@ -293,52 +373,11 @@ fs.directoryFilesToString = (dir, encoding, separator, callback) => {
 		callback("This is not a string");
 	} else {
 
-		fs.isDirectory(dir, (err, exists) => {
-
-			if (err) {
-				callback(err);
-			} else if (!exists) {
-				callback("This directory does not exist");
-			} else {
-
-				fs.readdir(dir, (err, files) => {
-
-					if (err) {
-						callback(err);
-					} else {
-
-						let err = null,
-							i = 0,
-							result = [];
-
-						files.forEach(file => {
-
-							file = path.join(dir, file);
-
-							fs.isFile(file, (_err, exists) => {
-
-								++i;
-
-								if (_err) {
-									err = _err;
-								} else if (exists) {
-									result.push(file);
-								}
-
-								if (i >= files.length) {
-
-									if (err) {
-										callback(err);
-									} else {
-										fs.filesToString(result, encoding, separator, callback);
-									}
-								}
-							});
-						});
-					}
-				});
-			}
-		});
+		fs.extractDirectoryRealFilesProm(dir).then(files => {
+			return fs.filesToStringProm(files, encoding, separator);
+		}).then(content => {
+			callback(null, content);
+		}).catch(callback);
 	}
 };
 
@@ -353,19 +392,7 @@ fs.directoryFilesToStringSync = (dir, encoding, separator) => {
 		encoding = "string" === typeof encoding ? encoding : null;
 		separator = "string" === typeof separator ? separator : "";
 
-		let result = [],
-			files = fs.readdirSync(dir);
-
-		files.forEach(file => {
-
-			file = path.join(dir, file);
-
-			if (fs.isFileSync(file)) {
-				result.push(file);
-			}
-		});
-
-		return fs.filesToStringSync(result, encoding, separator);
+		return fs.filesToStringSync(fs.extractDirectoryRealFilesSync(dir), encoding, separator);
 	}
 };
 
@@ -388,52 +415,9 @@ fs.directoryFilesToFile = (dir, targetPath, separator, callback) => {
 		callback("\"targetPath\" is not a string");
 	} else {
 
-		fs.isDirectory(dir, (err, exists) => {
-
-			if (err) {
-				callback(err);
-			} else if (!exists) {
-				callback("This directory does not exist");
-			} else {
-
-				fs.readdir(dir, (err, files) => {
-
-					if (err) {
-						callback(err);
-					} else {
-
-						let err = null,
-							i = 0,
-							result = [];
-
-						files.forEach(file => {
-
-							file = path.join(dir, file);
-
-							fs.isFile(file, (_err, exists) => {
-
-								++i;
-
-								if (_err) {
-									err = _err;
-								} else if (exists) {
-									result.push(file);
-								}
-
-								if (i >= files.length) {
-
-									if (err) {
-										callback(err);
-									} else {
-										fs.filesToFile(result, targetPath, separator, callback);
-									}
-								}
-							});
-						});
-					}
-				});
-			}
-		});
+		fs.extractDirectoryRealFilesProm(dir).then(files => {
+			fs.filesToFile(files, targetPath, separator, callback);
+		}).catch(callback);
 	}
 };
 
@@ -448,19 +432,27 @@ fs.directoryFilesToFileSync = (dir, targetPath, encoding, separator) => {
 		encoding = "string" === typeof encoding ? encoding : null;
 		separator = "string" === typeof separator ? separator : "";
 
-		let result = [],
-			files = fs.readdirSync(dir);
+		let files = fs.readdirSync(dir);
 
-		files.forEach(file => {
+		if (0 >= files.length) {
+			return fs.filesToFileSync([], targetPath, encoding, separator);
+		} else {
 
-			file = path.join(dir, file);
+			let result = [];
 
-			if (fs.isFileSync(file)) {
-				result.push(file);
-			}
-		});
+			files.forEach(file => {
 
-		return fs.filesToFileSync(result, targetPath, encoding, separator);
+				file = path.join(dir, file);
+
+				if (!fs.isFileSync(file)) {
+					throw new Error("\"" + file + "\" does not exist");
+				} else {
+					result.push(file);
+				}
+			});
+
+			return fs.filesToFileSync(result, targetPath, encoding, separator);
+		}
 	}
 };
 
@@ -718,7 +710,7 @@ fs.rmdirp = (dir, callback) => {
 				} else {
 
 					_emptyDirectoryProm(dir, files).then(() => {
-						callback();
+						callback(null);
 					}).catch(callback);
 				}
 			});
