@@ -220,6 +220,14 @@ describe("extend", () => {
 
 			});
 
+			it("should concat test files with pattern", () => {
+
+				return fs.filesToStringProm([_filetest, _filetest, _filetest], "utf8", " -- [{{filename}}] -- ").then((data) => {
+					assert.strictEqual("test -- [test.txt] -- test -- [test.txt] -- test", data, "test files cannot be concatened");
+				});
+
+			});
+
 		});
 
 	});

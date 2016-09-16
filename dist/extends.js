@@ -55,7 +55,7 @@ function _readContentProm(files, encoding, separator, content) {
 				}
 			}).then(filecontent => {
 
-				return _readContentProm(files, encoding, separator, "" === content ? filecontent : content + separator + filecontent);
+				return _readContentProm(files, encoding, separator, "" === content ? filecontent : content + separator.replace("{{filename}}", path.basename(file)) + filecontent);
 			});
 		}
 	});
@@ -133,7 +133,7 @@ function _concatContentStreamProm(files, targetPath, separator) {
 								if (0 >= files.length) {
 									return Promise.resolve();
 								} else {
-									return fs.appendFileProm(targetPath, separator);
+									return fs.appendFileProm(targetPath, separator.replace("{{filename}}", path.basename(file)));
 								}
 							}).then(() => {
 								return _concatContentStreamProm(files, targetPath, separator);
@@ -251,7 +251,7 @@ fs.filesToStringSync = (files, encoding, separator) => {
 			if (!fs.isFileSync(file)) {
 				throw new Error("\"" + file + "\" does not exist");
 			} else {
-				content = "" === content ? fs.readFileSync(file, encoding) : content + separator + fs.readFileSync(file, encoding);
+				content = "" === content ? fs.readFileSync(file, encoding) : content + separator.replace("{{filename}}", path.basename(file)) + fs.readFileSync(file, encoding);
 			}
 		});
 
@@ -344,7 +344,7 @@ fs.filesToFileSync = (files, targetPath, separator) => {
 			if (!fs.isFileSync(file)) {
 				throw new Error("\"" + file + "\" does not exist");
 			} else {
-				fs.appendFileSync(targetPath, 0 < key ? separator + fs.readFileSync(file) : fs.readFileSync(file));
+				fs.appendFileSync(targetPath, 0 < key ? separator.replace("{{filename}}", path.basename(file)) + fs.readFileSync(file) : fs.readFileSync(file));
 			}
 		});
 	}

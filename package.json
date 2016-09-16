@@ -1,7 +1,7 @@
 {
   "name": "node-promfs",
   "version": "1.0.0",
-  "description": "A 'fs' object extension",
+  "description": "'fs' object extension & promisification",
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
