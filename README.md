@@ -1,5 +1,5 @@
 # node-promfs
-A basic 'fs' object extension
+'fs' object extension & promisification
 
 
 ## Installation
@@ -13,47 +13,66 @@ $ npm install node-promfs
   * promise all fs asynchronous functions
 
   * checks for file & directory existence, with synchrone & asynchrone versions
+  * extract directory's files, with synchrone & asynchrone versions
   * create & delete directories recursively, with synchrone & asynchrone versions
-  * concat files content in a string, with synchrone & asynchrone versions
+  * concat files content in a string or a file, with synchrone & asynchrone versions
   * copy files, with synchrone & asynchrone versions
 
 ## Doc
 
  ### Extended
 
-  #### concatFiles : contact files content in a string
-   * ``` concatFiles(array files [ , string encoding [ , string separator ] ], function callback) ``` callback(mixed err, string content)
-   * ``` concatFilesSync(array files [ , string encoding [ , string separator ] ]) : return string ```
-   * ``` concatFilesProm(array files [ , string encoding [ , string separator ] ]) : return Promise ``` then(string content)
+note : in "separator" parameter, you can use "{{filename}}" pattern, it will be replaced by the file's basename
+(ex : separator = "\r\n\r\n--- {{filename}} ---\r\n\r\n")
 
-  #### concatDirectoryFiles : contact directory's files content in a string
-   * ``` concatDirectoryFiles(string path [ , string encoding [ , string separator ] ], function callback) ``` callback(mixed err, string content)
-   * ``` concatDirectoryFilesSync(string path [ , string encoding [ , string separator ] ]) : return string ```
-   * ``` concatDirectoryFilesProm(string path [ , string encoding [ , string separator ] ]) : return Promise ``` then(string content)
-
-  #### copy : copy a file
-   * ``` copy(string origin, string origin, function callback) ``` callback(mixed err)
-   * ``` copySync(string origin, string origin) : return bool ```
+  #### copy : copy a file with streams
+   * ``` copy(string origin, string origin, function callback) ``` callback(string|null err)
+   * ``` copySync(string origin, string origin) ``` /!\ does not use streams /!\
    * ``` copyProm(string origin, string origin) : return Promise ```
 
+  #### directoryFilesToFile : concat directory's files content in a file
+   * ``` directoryFilesToFile(string path [ , string separator = " " ], function callback) ``` callback(string|null err)
+   * ``` directoryFilesToFileSync(string path [ , string separator = " " ]) ```
+   * ``` directoryFilesToFileProm(string path [ , string separator = " " ]) : return Promise ```
+
+  #### directoryFilesToString : concat directory's files content in a string
+   * ``` directoryFilesToString(string path [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(string|null err, string content)
+   * ``` directoryFilesToStringSync(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : return string ```
+   * ``` directoryFilesToStringProm(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : return Promise ``` then(string content)
+
+  #### extractDirectoryRealFiles : return only files from directory
+   * ``` extractDirectoryRealFiles(string directory, function callback) ``` callback(string|null err, array files)
+   * ``` extractDirectoryRealFilesSync(string directory) : return array ```
+   * ``` extractDirectoryRealFilesProm(string directory) : return Promise ``` then(array files)
+
+  #### filesToFile : concat files content in a file
+   * ``` filesToFile(array files, string targetPath [ , string separator = " " ], function callback) ``` callback(string|null err)
+   * ``` filesToFileSync(array files, string targetPath [ , string separator = " " ]) ```
+   * ``` filesToFileProm(array files, string targetPath [ , string separator = " " ]) : return Promise ```
+
+  #### filesToString : concat files content in a string
+   * ``` filesToString(array files [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(string|null err, string content)
+   * ``` filesToStringSync(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : return string ```
+   * ``` filesToStringProm(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : return Promise ``` then(string content)
+
   #### isDirectory
-   * ``` isDirectory(string path) ``` callback(mixed err, bool exists)
+   * ``` isDirectory(string path) ``` callback(string|null err, bool exists)
    * ``` isDirectorySync(string path) : return bool ```
    * ``` isDirectoryProm(string path) : return Promise ``` then(bool exists)
 
   #### isFile
-   * ``` isFile(string path) ``` callback(mixed err, bool exists)
+   * ``` isFile(string path) ``` callback(string|null err, bool exists)
    * ``` isFileSync(string path) : return bool ```
    * ``` isFileProm(string path) : return Promise ``` then(bool exists)
 
   #### mkdirp : recursively create a directory
-   * ``` mkdirp(string path, function callback) ``` callback(mixed err)
-   * ``` mkdirpSync(string path) : return bool ```
+   * ``` mkdirp(string path, function callback) ``` callback(string|null err)
+   * ``` mkdirpSync(string path) ```
    * ``` mkdirpProm(string path) : return Promise ```
 
   #### rmdirp : recursively delete a directory
-   * ``` rmdirp(string path) ``` callback(mixed err)=
-   * ``` rmdirpSync(string path) : return bool ```
+   * ``` rmdirp(string path) ``` callback(string|null err)=
+   * ``` rmdirpSync(string path) ```
    * ``` rmdirpProm(string path) : return Promise ```
 
  ### Classical

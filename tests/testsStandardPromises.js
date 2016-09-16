@@ -479,14 +479,21 @@ describe("promisification", () => {
 
 			});
 
-			it("should check empty content value", (done) => {
+			it("should check empty content value", () => {
 
-				fs.realpathProm("").then(() => {
-					assert(false, "check empty content does not generate an error");
-					done();
-				}).catch((err) => {
-					assert.strictEqual("string", typeof err, "check type value does not generate an error");
-					done();
+				return fs.realpathProm("").then((realPath) => {
+
+					return fs.realpathProm(path.join(__dirname, "..")).then((comparedRealPath) => {
+
+						if (realPath === comparedRealPath) {
+							return Promise.resolve();
+						}
+						else {
+							return Promise.reject("The empty realpath is not correct");
+						}
+
+					});
+
 				});
 
 			});

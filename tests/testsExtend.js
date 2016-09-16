@@ -18,7 +18,122 @@
 
 describe("extend", () => {
 
-	describe("concatFiles", () => {
+	describe("extractDirectoryRealFiles", () => {
+
+		describe("sync", () => {
+
+			after(() => { return fs.rmdirpProm(_dirtestBase); });
+
+			it("should check type value", () => {
+				assert.throws(() => { fs.extractDirectoryRealFilesSync(false); }, Error, "check type value does not throw an error");
+				assert.throws(() => { fs.extractDirectoryRealFilesSync(_dirtestBase); }, Error, "check type value does not throw an error");
+			});
+
+			it("should extract nothing", () => {
+				fs.mkdirpSync(_dirtestBase);
+				assert.deepStrictEqual([], fs.extractDirectoryRealFilesSync(_dirtestBase), "empty directory cannot be extract");
+			});
+
+			it("should extract files", () => {
+				fs.writeFileSync(path.join(_dirtestBase, "test.txt"), "");
+				assert.strictEqual(1, fs.extractDirectoryRealFilesSync(_dirtestBase).length, "test files cannot be extracted");
+			});
+
+		});
+
+		describe("async", () => {
+
+			after(() => { return fs.rmdirpProm(_dirtestBase); });
+
+			it("should check type value", (done) => {
+
+				fs.extractDirectoryRealFiles(false, (err) => {
+					assert.notStrictEqual(null, err, "check type value does not generate an error");
+					done();
+				});
+
+			});
+
+			it("should extract nothing", (done) => {
+
+				fs.mkdirp(_dirtestBase, (err) => {
+
+					assert.strictEqual(null, err, "extract nothing generate an error");
+
+					fs.extractDirectoryRealFiles(_dirtestBase, (err, data) => {
+
+						assert.strictEqual(null, err, "extract nothing generate an error");
+						assert.deepStrictEqual([], data, "empty directory cannot be extracted");
+
+						done();
+
+					});
+
+				});
+
+			});
+
+			it("should extract files", (done) => {
+
+				fs.writeFile(path.join(_dirtestBase, "test.txt"), "", (err) => {
+
+					assert.strictEqual(null, err, "extract files generate an error");
+
+					fs.extractDirectoryRealFiles(_dirtestBase, (err, data) => {
+
+						assert.strictEqual(null, err, "extract files generate an error");
+						assert.strictEqual(1, data.length, "test files cannot be extracted");
+
+						done();
+
+					});
+
+				});
+
+			});
+
+		});
+
+		describe("promise", () => {
+
+			after(() => { return fs.rmdirpProm(_dirtestBase); });
+
+			it("should check type value", (done) => {
+
+				fs.extractDirectoryRealFilesProm(false).then(() => {
+					done("check type value does not generate an error");
+				}).catch((err) => {
+					assert.strictEqual("string", typeof err, "check type value does not generate a valid error");
+					done();
+				});
+
+			});
+
+			it("should extract nothing", () => {
+
+				return fs.mkdirpProm(_dirtestBase).then(() => {
+					return fs.extractDirectoryRealFilesProm(_dirtestBase);
+				}).then((data) => {
+					assert.deepStrictEqual([], data, "empty directory cannot be extracted");
+				});
+
+			});
+
+			it("should extract test files", () => {
+
+				return fs.writeFileProm(path.join(_dirtestBase, "test.txt"), "").then(() => {
+					return fs.extractDirectoryRealFilesProm(_dirtestBase);
+				}).then((data) => {
+					assert.strictEqual(1, data.length, "test files cannot be extracted");
+				});
+
+			});
+
+		});
+
+	});
+
+	describe("filesToString", () => {
 
 		describe("sync", () => {
 
@@ -26,15 +141,15 @@ describe("extend", () => {
 			after(() => { return fs.unlinkProm(_filetest); });
 
 			it("should check type value", () => {
-				assert.throws(() => { fs.concatFilesSync(false); }, Error, "check type value does not throw an error");
+				assert.throws(() => { fs.filesToStringSync(false); }, Error, "check type value does not throw an error");
 			});
 
 			it("should concat nothing", () => {
-				assert.strictEqual("", fs.concatFilesSync([]), "empty array cannot be concatened");
+				assert.strictEqual("", fs.filesToStringSync([]), "empty array cannot be concatened");
 			});
 
 			it("should concat test files", () => {
-				assert.strictEqual("test test test", fs.concatFilesSync([_filetest, _filetest, _filetest], "utf8", " "), "test files cannot be concatened");
+				assert.strictEqual("test test test", fs.filesToStringSync([_filetest, _filetest, _filetest]), "test files cannot be concatened");
 			});
 
 		});
@@ -46,7 +161,7 @@ describe("extend", () => {
 
 			it("should check type value", (done) => {
 
-				fs.concatFiles(false, (err) => {
+				fs.filesToString(false, (err) => {
 					assert.notStrictEqual(null, err, "check type value does not generate an error");
 					done();
 				});
@@ -55,7 +170,7 @@ describe("extend", () => {
 
 			it("should concat nothing", (done) => {
 
-				fs.concatFiles([], (err, data) => {
+				fs.filesToString([], (err, data) => {
 					assert.strictEqual("", data, "empty array cannot be concatened");
 					done();
 				});
@@ -64,7 +179,7 @@ describe("extend", () => {
 
 			it("should concat test files", (done) => {
 
-				fs.concatFiles([_filetest, _filetest, _filetest], "utf8", " ", (err, data) => {
+				fs.filesToString([_filetest, _filetest, _filetest], (err, data) => {
 					assert.strictEqual("test test test", data, "test files cannot be concatened");
 					done();
 				});
@@ -80,7 +195,7 @@ describe("extend", () => {
 
 			it("should check type value", (done) => {
 
-				fs.concatFilesProm(false).then(() => {
+				fs.filesToStringProm(false).then(() => {
 					done("check type value does not generate an error");
 				}).catch((err) => {
 					assert.strictEqual("string", typeof err, "check type value does not generate a valid error");
@@ -89,21 +204,27 @@ describe("extend", () => {
 
 			});
 
-			it("should concat nothing", (done) => {
+			it("should concat nothing", () => {
 
-				fs.concatFilesProm([]).then((data) => {
+				return fs.filesToStringProm([]).then((data) => {
 					assert.strictEqual("", data, "empty array cannot be concatened");
-					done();
-				}).catch(done);
+				});
 
 			});
 
-			it("should concat test files", (done) => {
+			it("should concat test files", () => {
 
-				fs.concatFilesProm([_filetest, _filetest, _filetest], "utf8", " ").then((data) => {
+				return fs.filesToStringProm([_filetest, _filetest, _filetest]).then((data) => {
 					assert.strictEqual("test test test", data, "test files cannot be concatened");
-					done();
-				}).catch(done);
+				});
+
+			});
+
+			it("should concat test files with pattern", () => {
+
+				return fs.filesToStringProm([_filetest, _filetest, _filetest], "utf8", " -- [{{filename}}] -- ").then((data) => {
+					assert.strictEqual("test -- [test.txt] -- test -- [test.txt] -- test", data, "test files cannot be concatened");
+				});
 
 			});
 
@@ -111,23 +232,25 @@ describe("extend", () => {
 
 	});
 
-	describe("concatDirectoryFiles", () => {
+	describe("filesToFile", () => {
 
 		describe("sync", () => {
 
 			before(() => { return fs.writeFileProm(_filetest, "test"); });
-			after(() => { return fs.unlinkProm(_filetest); });
+			after(() => { return fs.unlinkProm(_filetest).then(() => { return fs.unlinkProm(_filetest2); }); });
 
 			it("should check type value", () => {
-				assert.throws(() => { fs.concatDirectoryFilesSync(false); }, Error, "check type value does not throw an error");
+				assert.throws(() => { fs.filesToFileSync(false); }, Error, "check type \"files\" value does not throw an error");
+				assert.throws(() => { fs.filesToFileSync([], false); }, Error, "check type \"targetPath\" value does not throw an error");
 			});
 
 			it("should concat nothing", () => {
-				assert.throws(() => { fs.concatDirectoryFilesSync(path.join(__dirname, "zgzfeze")); }, Error, "not existing directory cannot be concatened");
+				assert.doesNotThrow(() => { fs.filesToFileSync([], _filetest2); }, "empty array cannot be concatened");
 			});
 
-			it("should concat test files", () => {
-				assert.strictEqual("string", typeof fs.concatDirectoryFilesSync(__dirname, "utf8"), "test files cannot be concatened");
+			it("should concat test files into a file", () => {
+				fs.filesToFileSync([_filetest, _filetest, _filetest], _filetest2);
+				assert.strictEqual("test test test", fs.readFileSync(_filetest2, "utf8"), "test files cannot be concatened");
 			});
 
 		});
@@ -135,11 +258,124 @@ describe("extend", () => {
 		describe("async", () => {
 
 			before(() => { return fs.writeFileProm(_filetest, "test"); });
-			after(() => { return fs.unlinkProm(_filetest); });
+			after(() => { return fs.unlinkProm(_filetest).then(() => { return fs.unlinkProm(_filetest2); }); });
 
 			it("should check type value", (done) => {
 
-				fs.concatDirectoryFiles(false, (err) => {
+				fs.filesToFile(false, false, (err) => {
+
+					assert.notStrictEqual(null, err, "check type \"files\" value does not throw an error");
+					
+					fs.filesToFile([], false, (err) => {
+						assert.notStrictEqual(null, err, "check type \"targetPath\" value does not throw an error");
+						done();
+					});
+
+				});
+
+			});
+
+			it("should concat nothing", (done) => {
+
+				fs.filesToFile([], _filetest2, (err) => {
+
+					assert.strictEqual(null, err, "empty array cannot be concatened");
+					assert.strictEqual("", fs.readFileSync(_filetest2, "utf8"), "empty array cannot be concatened");
+
+					done();
+
+				});
+
+			});
+
+			it("should concat test files into a file", (done) => {
+
+				fs.filesToFile([_filetest, _filetest, _filetest], _filetest2, (err) => {
+
+					assert.strictEqual(null, err, "test files cannot be concatened");
+					assert.strictEqual("test test test", fs.readFileSync(_filetest2, "utf8"), "test files cannot be concatened");
+
+					done();
+
+				});
+
+			}).timeout(2000);
+
+		});
+
+		describe("promise", () => {
+
+			before(() => { return fs.writeFileProm(_filetest, "test"); });
+			after(() => { return fs.unlinkProm(_filetest).then(() => { return fs.unlinkProm(_filetest2); }); });
+
+			it("should check type value", (done) => {
+
+				fs.filesToFileProm(false, false).then(() => {
+					done("check type value does not generate an error");
+				}).catch((err) => {
+
+					assert.strictEqual("string", typeof err, "check type \"files\" value does not throw an error");
+
+					fs.filesToFileProm([], false).then(() => {
+						done("check type value does not generate an error");
+					}).catch((err) => {
+						assert.notStrictEqual(null, err, "check type \"targetPath\" value does not throw an error");
+						done();
+					});
+
+				});
+
+			});
+
+			it("should concat nothing", () => {
+
+				return fs.filesToFileProm([], _filetest2).then(() => {
+					assert.strictEqual("", fs.readFileSync(_filetest2, "utf8"), "empty array cannot be concatened");
+				});
+
+			});
+
+			it("should concat test files into a file", () => {
+
+				return fs.filesToFileProm([_filetest, _filetest, _filetest], _filetest2).then(() => {
+					assert.strictEqual("test test test", fs.readFileSync(_filetest2, "utf8"), "test files cannot be concatened");
+				});
+
+			});
+
+		});
+
+	});
+
+	describe("directoryFilesToString", () => {
+
+		describe("sync", () => {
+
+			before(() => { return fs.rmdirpProm(_dirtestBase); });
+			after(() => { return fs.rmdirpProm(_dirtestBase); });
+
+			it("should check type value", () => {
+				assert.throws(() => { fs.directoryFilesToStringSync(false); }, Error, "check type value does not throw an error");
+			});
+
+			it("should concat nothing", () => {
+				assert.throws(() => { fs.directoryFilesToStringSync(_dirtestBase); }, Error, "not existing directory cannot be concatened");
+			});
+
+			it("should concat test files", () => {
+				fs.mkdirpSync(_dirtestBase);
+				assert.strictEqual("string", typeof fs.directoryFilesToStringSync(_dirtestBase, "utf8"), "test files cannot be concatened");
+			});
+
+		});
+
+		describe("async", () => {
+
+			after(() => { return fs.rmdirpProm(_dirtestBase); });
+
+			it("should check type value", (done) => {
+
+				fs.directoryFilesToString(false, (err) => {
 					assert.notStrictEqual(null, err, "check type value does not generate an error");
 					done();
 				});
@@ -148,7 +384,7 @@ describe("extend", () => {
 
 			it("should concat nothing", (done) => {
 
-				fs.concatDirectoryFiles(path.join(__dirname, "zgzfeze"), (err) => {
+				fs.directoryFilesToString(_dirtestBase, (err) => {
 					assert.strictEqual("This directory does not exist", err, "not existing directory cannot be concatened");
 					done();
 				});
@@ -157,7 +393,7 @@ describe("extend", () => {
 
 			it("should concat test files", (done) => {
 
-				fs.concatDirectoryFiles(__dirname, "utf8", " ", (err, data) => {
+				fs.directoryFilesToString(__dirname, (err, data) => {
 					assert.strictEqual("string", typeof data, "test files cannot be concatened");
 					done();
 				});
@@ -168,14 +404,15 @@ describe("extend", () => {
 
 		describe("promise", () => {
 
-			let directoryTests = path.join(__dirname, "test");
+			let directoryTests = path.join(__dirname, "test"),
+				test1 = path.join(directoryTests, "test1.txt"), test2 = path.join(directoryTests, "test2.txt");
 
-			before(() => { return fs.writeFileProm(_filetest, "test"); });
-			after(() => { return fs.unlinkProm(_filetest).then(() => { return fs.rmdirp(directoryTests); }); });
+			before(() => { return fs.rmdirpProm(directoryTests); });
+			after(() => { return fs.rmdirpProm(directoryTests); });
 
 			it("should check type value", (done) => {
 
-				fs.concatDirectoryFilesProm(false).then(() => {
+				fs.directoryFilesToStringProm(false).then(() => {
 					assert(false, "check type value does not generate an error");
 					done();
 				}).catch((err) => {
@@ -187,7 +424,7 @@ describe("extend", () => {
 
 			it("should concat nothing", (done) => {
 
-				fs.concatDirectoryFilesProm(path.join(__dirname, "zgzfeze")).then((data) => {
+				fs.directoryFilesToStringProm(directoryTests).then((data) => {
 					assert.strictEqual("", data, "should concat nothing does not generate an error");
 					done();
 				}).catch((err) => {
@@ -197,16 +434,112 @@ describe("extend", () => {
 
 			});
 
-			it("should concat test one file", (done) => {
+			it("should concat test one file", () => {
+
+				return fs.mkdirpProm(directoryTests).then(() => {
+					return fs.writeFileProm(test1, "test");
+				}).then(() => {
+					return fs.directoryFilesToStringProm(directoryTests, "utf8", "<>");
+				}).then((data) => {
+
+					assert.strictEqual("string", typeof data, "test files cannot be concatened");
+					assert.strictEqual("test", data, "test files cannot be concatened");
+
+				});
+
+			});
+
+			it("should concat test all files", () => {
+
+				return fs.mkdirpProm(directoryTests).then(() => {
+					return fs.writeFileProm(test2, "test");
+				}).then(() => {
+					return fs.directoryFilesToStringProm(directoryTests, "utf8", "<>");
+				}).then((data) => {
+
+					assert.strictEqual("string", typeof data, "test files cannot be concatened");
+					assert.strictEqual("test<>test", data, "test files cannot be concatened");
+
+				});
+
+			});
+
+		});
+
+	});
+
+	describe("directoryFilesToFile", () => {
+
+		let directoryTests = path.join(__dirname, "test"),
+			test1 = path.join(directoryTests, "test1.txt"), test2 = path.join(directoryTests, "test2.txt");
+
+		describe("sync", () => {
+
+			before(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
+			after(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
+
+			it("should check type value", () => {
+				assert.throws(() => { fs.directoryFilesToFileSync(false, false); }, Error, "check type value does not throw an error");
+				assert.throws(() => { fs.directoryFilesToFileSync(directoryTests, false); }, Error, "not existing directory cannot be concatened");
+			});
+
+			it("should concat nothing", () => {
+				assert.throws(() => { fs.directoryFilesToFileSync(directoryTests, _filetest); }, Error, "not existing directory cannot be concatened");
+			});
+
+			it("should concat test files", () => {
+
+				fs.mkdirpSync(directoryTests);
+				fs.directoryFilesToFileSync(directoryTests, _filetest);
+
+				assert.strictEqual("string", typeof fs.readFileSync(_filetest, "utf8"), "test files cannot be concatened");
+				assert.strictEqual("", fs.readFileSync(_filetest, "utf8"), "test files cannot be concatened");
+
+			});
+
+		});
+
+		describe("async", () => {
+
+			before(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
+			after(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
+
+			it("should check type value", (done) => {
+
+				fs.directoryFilesToFile(false, false, (err) => {
+
+					assert.notStrictEqual(null, err, "check type value does not generate an error");
+
+					fs.directoryFilesToFile(directoryTests, false, (err) => {
+						assert.notStrictEqual(null, err, "check type value does not generate an error");
+						done();
+					});
+
+				});
+
+			});
+
+			it("should concat nothing", (done) => {
+
+				fs.directoryFilesToFile(directoryTests, _filetest, (err) => {
+
+					assert.strictEqual("This directory does not exist", err, "not existing directory cannot be concatened");
+					done();
+
+				});
+
+			});
+
+			it("should concat test files", (done) => {
 
 				fs.mkdirpProm(directoryTests).then(() => {
-					return fs.writeFileProm(path.join(directoryTests, "test.txt"), "test");
+					return fs.writeFile(test1, "");
 				}).then(() => {
 
-					return fs.concatDirectoryFilesProm(directoryTests, "utf8", "<>").then((data) => {
+					fs.directoryFilesToFile(directoryTests, _filetest, (err) => {
 
-						assert.strictEqual("string", typeof data, "test files cannot be concatened");
-						assert.strictEqual("test", data, "test files cannot be concatened");
+						assert.strictEqual(null, err, "concat test files generate an error");
+						assert.strictEqual("string", typeof fs.readFileSync(_filetest, "utf8"), "test files cannot be concatened");
 						done();
 
 					});
@@ -215,21 +548,69 @@ describe("extend", () => {
 
 			});
 
-			it("should concat test all files", (done) => {
+		});
 
-				fs.mkdirpProm(directoryTests).then(() => {
-					return fs.writeFileProm(path.join(directoryTests, "test2.txt"), "test");
-				}).then(() => {
+		describe("promise", () => {
 
-					return fs.concatDirectoryFilesProm(directoryTests, "utf8", "<>").then((data) => {
+			before(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
+			after(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
 
-						assert.strictEqual("string", typeof data, "test files cannot be concatened");
-						assert.strictEqual("test<>test", data, "test files cannot be concatened");
+			it("should check type value", (done) => {
+
+				fs.directoryFilesToFileProm(false, false).then(() => {
+					done("check type value does not generate an error");
+				}).catch((err) => {
+
+					assert.strictEqual("string", typeof err, "check type value does not generate a valid error");
+
+					fs.directoryFilesToFileProm(directoryTests, false).then(() => {
+						done("check type value does not generate an error");
+					}).catch((err) => {
+						assert.strictEqual("string", typeof err, "check type value does not generate a valid error");
 						done();
-
 					});
 
-				}).catch(done);
+				});
+
+			});
+
+			it("should concat nothing", (done) => {
+
+				fs.directoryFilesToFileProm(directoryTests, test1).then(() => {
+					done("should concat nothing does not generate an error");
+				}).catch((err) => {
+					assert.strictEqual("string", typeof err, "should concat nothing does not generate a valid error");
+					done();
+				});
+
+			});
+
+			it("should concat test one file", () => {
+
+				return fs.mkdirpProm(directoryTests).then(() => {
+					return fs.writeFileProm(test1, "test");
+				}).then(() => {
+					return fs.directoryFilesToFileProm(directoryTests, _filetest, "<>");
+				}).then(() => {
+					return fs.readFileProm(_filetest, "utf8");
+				}).then((data) => {
+					assert.strictEqual("test", data, "test files cannot be concatened");
+				});
+
+			});
+
+			it("should concat test all files", () => {
+
+				fs.mkdirpProm(directoryTests).then(() => {
+					return fs.writeFileProm(test2, "test");
+				}).then(() => {
+					return fs.directoryFilesToFileProm(directoryTests, _filetest, "utf8", "<>");
+				}).then((data) => {
+
+					assert.strictEqual("string", typeof data, "test files cannot be concatened");
+					assert.strictEqual("test<>test", data, "test files cannot be concatened");
+
+				});
 
 			});
 
@@ -261,7 +642,7 @@ describe("extend", () => {
 			});
 
 			it("should copy test files", () => {
-				assert.strictEqual(true, fs.copySync(_filetest, _filetest2), "test file cannot be copied");
+				assert.doesNotThrow(() => { fs.copySync(_filetest, _filetest2); }, "test file cannot be copied");
 			});
 
 		});
@@ -305,9 +686,17 @@ describe("extend", () => {
 			it("should copy test files", (done) => {
 
 				fs.copy(_filetest, _filetest2, (err) => {
+
 					assert.strictEqual(null, err, "test file cannot be copied");
-					assert.strictEqual("test", fs.readFileSync(_filetest2, "utf8"), "test file content cannot be copied");
-					done();
+
+					fs.readFile(_filetest2, "utf8", (err, content) => {
+
+						assert.strictEqual(null, err, "test file cannot be copied");
+						assert.strictEqual("test", content, "test file content cannot be copied");
+						done();
+
+					});
+
 				});
 
 			});
@@ -359,14 +748,13 @@ describe("extend", () => {
 
 			});
 
-			it("should copy test files", (done) => {
+			it("should copy test files", () => {
 
-				fs.copyProm(_filetest, _filetest2).then(() => {
-
-					assert.strictEqual("test", fs.readFileSync(_filetest2, "utf8"), "test file content cannot be copied");
-					done();
-
-				}).catch(done);
+				return fs.copyProm(_filetest, _filetest2).then(() => {
+					return fs.readFileProm(_filetest2, "utf8");
+				}).then((content) => {
+					assert.strictEqual("test", content, "test file content cannot be copied");
+				});
 
 			});
 
@@ -486,21 +874,19 @@ describe("extend", () => {
 
 			});
 
-			it("should check false file existance", (done) => {
+			it("should check false file existance", () => {
 
-				fs.isFileProm(path.join(__dirname, "eivrjeoirvneornv")).then((exists) => {
+				return fs.isFileProm(path.join(__dirname, "eivrjeoirvneornv")).then((exists) => {
 					assert.strictEqual(false, exists, "\"" + path.join(__dirname, "eivrjeoirvneornv") + "\" is an existing file");
-					done();
-				}).catch(done);
+				});
 
 			});
 
-			it("should check real file existance", (done) => {
+			it("should check real file existance", () => {
 
-				fs.isFileProm(__filename).then((exists) => {
+				return fs.isFileProm(__filename).then((exists) => {
 					assert.strictEqual(true, exists, "\"" + __filename + "\" is not an existing file");
-					done();
-				}).catch(done);
+				});
 
 			});
 
@@ -609,30 +995,23 @@ describe("extend", () => {
 
 			});
 
-			it("should check real content value", (done) => {
-				
-				fs.isDirectoryProm("test").then(done).catch((err) => {
-					assert.strictEqual("string", typeof err, "check real content value does not generate a valid error");
-					done();
+			it("should check real content value", () => {
+				return fs.isDirectoryProm("test");
+			});
+
+			it("should check false directory existance", () => {
+
+				return fs.isDirectoryProm(path.join(__dirname, "eivrjeoirvneornv")).then((exists) => {
+					assert.strictEqual(false, exists, "\"" + path.join(__dirname, "eivrjeoirvneornv") + "\" is an existing directory");
 				});
 
 			});
 
-			it("should check false directory existance", (done) => {
+			it("should check real directory existance", () => {
 
-				fs.isDirectoryProm(path.join(__dirname, "eivrjeoirvneornv")).then((exists) => {
-					assert.strictEqual(false, exists, "\"" + path.join(__dirname, "eivrjeoirvneornv") + "\" is an existing directory");
-					done();
-				}).catch(done);
-
-			});
-
-			it("should check real directory existance", (done) => {
-
-				fs.isDirectoryProm(__dirname).then((exists) => {
+				return fs.isDirectoryProm(__dirname).then((exists) => {
 					assert.strictEqual(true, exists, "\"" + __dirname + "\" is not an existing directory");
-					done();
-				}).catch(done);
+				});
 
 			});
 
@@ -656,11 +1035,11 @@ describe("extend", () => {
 			});
 
 			it("should create real existing directory", () => {
-				assert.strictEqual(true, fs.mkdirpSync(__dirname), "\"" + __dirname + "\" cannot be created");
+				assert.doesNotThrow(() => { fs.mkdirpSync(__dirname); }, "\"" + __dirname + "\" cannot be created");
 			});
 
 			it("should create real new directory", () => {
-				assert.strictEqual(true, fs.mkdirpSync(_dirtest), "\"" + _dirtest + "\" cannot be created");
+				assert.doesNotThrow(() => { fs.mkdirpSync(_dirtest); }, "\"" + _dirtest + "\" cannot be created");
 			});
 
 			it("should detect created directory", () => {
@@ -774,8 +1153,8 @@ describe("extend", () => {
 			});
 
 			it("should delete real new directory", () => {
-				assert.strictEqual(true, fs.mkdirpSync(_dirtest), "\"" + _dirtest + "\" cannot be created");
-				assert.strictEqual(true, fs.rmdirpSync(_dirtestBase), "\"" + _dirtestBase + "\" cannot be deleted");
+				assert.doesNotThrow(() => { fs.mkdirpSync(_dirtest); }, "\"" + _dirtest + "\" cannot be created");
+				assert.doesNotThrow(() => { fs.rmdirpSync(_dirtestBase); }, "\"" + _dirtestBase + "\" cannot be deleted");
 			});
 
 			it("should not detect deleted directory", () => {
@@ -806,9 +1185,9 @@ describe("extend", () => {
 
 			it("should delete real new directory", (done) => {
 
-				assert.strictEqual(true, fs.mkdirpSync(_dirtest), "\"" + _dirtest + "\" cannot be created");
+				assert.doesNotThrow(() => { fs.mkdirpSync(_dirtest); }, "\"" + _dirtest + "\" cannot be created");
 
-				fs.rmdirp(fs.rmdirpSync(_dirtestBase), (err) => {
+				fs.rmdirp(_dirtestBase, (err) => {
 					assert.notStrictEqual(null, err, "\"" + _dirtestBase + "\" cannot be deleted");
 					done();
 				});
@@ -848,8 +1227,11 @@ describe("extend", () => {
 			});
 
 			it("should delete real new directory", () => {
-				assert.strictEqual(true, fs.mkdirpSync(_dirtest), "\"" + _dirtest + "\" cannot be created");
-				return fs.rmdirpProm(_dirtestBase);
+
+				return fs.mkdirpProm(_dirtest).then(() => {
+					return fs.rmdirpProm(_dirtestBase);
+				});
+
 			});
 
 			it("should not detect deleted directory", () => {
