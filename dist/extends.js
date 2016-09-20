@@ -20,7 +20,7 @@ function _extractRealFilesProm(dir, givenFiles, realFiles) {
 			return Promise.resolve(realFiles);
 		} else {
 
-			let file = path.join(dir, givenFiles.pop());
+			let file = path.join(dir, givenFiles.shift());
 
 			return fs.isFileProm(file).then(exists => {
 
@@ -44,7 +44,7 @@ function _readContentProm(files, encoding, separator, content) {
 			return Promise.resolve(content);
 		} else {
 
-			let file = files.pop();
+			let file = files.shift();
 
 			return fs.isFileProm(file).then(exists => {
 
@@ -69,7 +69,7 @@ function _emptyDirectoryProm(dir, files) {
 			return fs.rmdirProm(dir);
 		} else {
 
-			let file = files.pop(),
+			let file = files.shift(),
 				curPath = path.join(dir, file);
 
 			return fs.isDirectoryProm(curPath).then(exists => {
@@ -111,7 +111,7 @@ function _concatContentStreamProm(files, targetPath, separator) {
 			return Promise.resolve();
 		} else {
 
-			let file = files.pop();
+			let file = files.shift();
 
 			return fs.isFileProm(file).then(exists => {
 
