@@ -149,7 +149,11 @@ describe("extend", () => {
 			});
 
 			it("should concat test files", () => {
-				assert.strictEqual("test test test", fs.filesToStringSync([_filetest, _filetest, _filetest]), "test files cannot be concatened");
+				assert.strictEqual("test test test", fs.filesToStringSync([_filetest, _filetest, _filetest], "utf8"), "test files cannot be concatened");
+			});
+
+			it("should concat test files with pattern", () => {
+				assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", fs.filesToStringSync([_filetest, _filetest, _filetest], "utf8", " -- [{{filename}}] -- "), "test files with pattern cannot be concatened");
 			});
 
 		});
@@ -171,6 +175,7 @@ describe("extend", () => {
 			it("should concat nothing", (done) => {
 
 				fs.filesToString([], (err, data) => {
+					assert.strictEqual(null, err, "concat nothing generate an error");
 					assert.strictEqual("", data, "empty array cannot be concatened");
 					done();
 				});
@@ -180,7 +185,18 @@ describe("extend", () => {
 			it("should concat test files", (done) => {
 
 				fs.filesToString([_filetest, _filetest, _filetest], (err, data) => {
+					assert.strictEqual(null, err, "concat test files generate an error");
 					assert.strictEqual("test test test", data, "test files cannot be concatened");
+					done();
+				});
+
+			});
+
+			it("should concat test files with pattern", (done) => {
+
+				fs.filesToString([_filetest, _filetest, _filetest], "utf8", " -- [{{filename}}] -- ", (err, data) => {
+					assert.strictEqual(null, err, "concat test files with pattern generate an error");
+					assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", data, "test files with pattern cannot be concatened");
 					done();
 				});
 
@@ -223,7 +239,7 @@ describe("extend", () => {
 			it("should concat test files with pattern", () => {
 
 				return fs.filesToStringProm([_filetest, _filetest, _filetest], "utf8", " -- [{{filename}}] -- ").then((data) => {
-					assert.strictEqual("test -- [test.txt] -- test -- [test.txt] -- test", data, "test files cannot be concatened");
+					assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", data, "test files with pattern cannot be concatened");
 				});
 
 			});
@@ -249,8 +265,19 @@ describe("extend", () => {
 			});
 
 			it("should concat test files into a file", () => {
+
 				fs.filesToFileSync([_filetest, _filetest, _filetest], _filetest2);
 				assert.strictEqual("test test test", fs.readFileSync(_filetest2, "utf8"), "test files cannot be concatened");
+
+			});
+
+			it("should concat test files with pattern into a file", () => {
+
+				fs.unlinkSync(_filetest2);
+				fs.filesToFileSync([_filetest, _filetest, _filetest], _filetest2, " -- [{{filename}}] -- ");
+
+				assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", fs.readFileSync(_filetest2, "utf8"), "test files with pattern cannot be concatened");
+				
 			});
 
 		});
@@ -301,6 +328,19 @@ describe("extend", () => {
 
 			}).timeout(2000);
 
+			it("should concat test files with pattern into a file", (done) => {
+
+				fs.filesToFile([_filetest, _filetest, _filetest], _filetest2, " -- [{{filename}}] -- ", (err) => {
+
+					assert.strictEqual(null, err, "test files with pattern cannot be concatened");
+					assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", fs.readFileSync(_filetest2, "utf8"), "test files with pattern cannot be concatened");
+
+					done();
+
+				});
+
+			}).timeout(2000);
+
 		});
 
 		describe("promise", () => {
@@ -342,6 +382,14 @@ describe("extend", () => {
 				});
 
 			});
+
+			it("should concat test files with pattern into a file", () => {
+
+				return fs.filesToFileProm([_filetest, _filetest, _filetest], _filetest2, " -- [{{filename}}] -- ").then(() => {
+					assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", fs.readFileSync(_filetest2, "utf8"), "test files cannot be concatened");
+				});
+
+			}).timeout(2000);
 
 		});
 
@@ -394,8 +442,11 @@ describe("extend", () => {
 			it("should concat test files", (done) => {
 
 				fs.directoryFilesToString(__dirname, (err, data) => {
+
+					assert.strictEqual(null, err, "concat test files generate an error");
 					assert.strictEqual("string", typeof data, "test files cannot be concatened");
 					done();
+
 				});
 
 			});
@@ -820,8 +871,11 @@ describe("extend", () => {
 			it("should check false file existance", (done) => {
 
 				fs.isFile(path.join(__dirname, "eivrjeoirvneornv"), (err, exists) => {
+
+					assert.strictEqual(null, err, "check false file existance generate an error");
 					assert.strictEqual(false, exists, "\"" + path.join(__dirname, "eivrjeoirvneornv") + "\" is an existing file");
 					done();
+
 				});
 
 			});
@@ -829,8 +883,11 @@ describe("extend", () => {
 			it("should check real file existance", (done) => {
 
 				fs.isFile(__filename, (err, exists) => {
+
+					assert.strictEqual(null, err, "check real file existance generate an error");
 					assert.strictEqual(true, exists, "\"" + __filename + "\" is not an existing file");
 					done();
+
 				});
 
 			});
@@ -952,8 +1009,11 @@ describe("extend", () => {
 			it("should check false directory existance", (done) => {
 
 				fs.isDirectory(path.join(__dirname, "eivrjeoirvneornv"), (err, exists) => {
+
+					assert.strictEqual(null, err, "check false directory existance generate an error");
 					assert.strictEqual(false, exists, "\"" + path.join(__dirname, "eivrjeoirvneornv") + "\" is an existing directory");
 					done();
+
 				});
 
 			});
@@ -961,8 +1021,11 @@ describe("extend", () => {
 			it("should check real directory existance", (done) => {
 
 				fs.isDirectory(__dirname, (err, exists) => {
+
+					assert.strictEqual(null, err, "check real directory existance generate an error");
 					assert.strictEqual(true, exists, "\"" + __dirname + "\" is not an existing directory");
 					done();
+
 				});
 
 			});
