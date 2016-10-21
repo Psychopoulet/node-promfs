@@ -14,22 +14,22 @@ function _extractRealFilesProm(dir, givenFiles, realFiles) {
 
 	realFiles = "object" === typeof realFiles && realFiles instanceof Array ? realFiles : [];
 
-	return Promise.resolve().then(() => {
+	return new Promise((resolve, reject) => {
 
 		if (0 >= givenFiles.length) {
-			return Promise.resolve(realFiles);
+			resolve(realFiles);
 		} else {
 
 			let file = path.join(dir, givenFiles.shift());
 
-			return fs.isFileProm(file).then(exists => {
+			fs.isFileProm(file).then(exists => {
 
 				if (exists) {
 					realFiles.push(file);
 				}
 
 				return _extractRealFilesProm(dir, givenFiles, realFiles);
-			});
+			}).then(resolve).catch(reject);
 		}
 	});
 }
@@ -38,15 +38,15 @@ function _readContentProm(files, encoding, separator, content) {
 
 	content = content ? content : "";
 
-	return Promise.resolve().then(() => {
+	return new Promise((resolve, reject) => {
 
 		if (0 >= files.length) {
-			return Promise.resolve(content);
+			resolve(content);
 		} else {
 
 			let file = files.shift();
 
-			return fs.isFileProm(file).then(exists => {
+			fs.isFileProm(file).then(exists => {
 
 				if (!exists) {
 					return Promise.reject("\"" + file + "\" does not exist");
@@ -62,33 +62,7 @@ function _readContentProm(files, encoding, separator, content) {
 
 					return _readContentProm(files, encoding, separator, "" === content ? filecontent : content + separator + filecontent);
 				}
-			});
-		}
-	});
-}
-
-function _emptyDirectoryProm(dir, files) {
-
-	return Promise.resolve().then(() => {
-
-		if (0 >= files.length) {
-			return fs.rmdirProm(dir);
-		} else {
-
-			let file = files.shift(),
-				curPath = path.join(dir, file);
-
-			return fs.isDirectoryProm(curPath).then(exists => {
-
-				if (exists) {
-					return fs.rmdirpProm(curPath);
-				} else {
-
-					return fs.unlinkProm(curPath).then(() => {
-						return _emptyDirectoryProm(dir, files);
-					});
-				}
-			});
+			}).then(resolve).catch(reject);
 		}
 	});
 }
@@ -111,10 +85,10 @@ function _copyStream(origin, target, callback) {
 
 function _concatContentStreamProm(files, targetPath, separator) {
 
-	return Promise.resolve().then(() => {
+	return new Promise((resolve, reject) => {
 
 		if (0 >= files.length) {
-			return Promise.resolve();
+			resolve();
 		} else {
 
 			let file = files.shift();
@@ -142,14 +116,14 @@ function _concatContentStreamProm(files, targetPath, separator) {
 							}
 						}).on("end", () => {
 
-							return Promise.resolve().then(() => {
+							return new Promise((resolve, reject) => {
 
 								if (0 >= files.length) {
-									return Promise.resolve();
+									resolve();
 								} else if (-1 >= separator.indexOf("{{filename}}")) {
-									return fs.appendFileProm(targetPath, separator);
+									fs.appendFileProm(targetPath, separator).then(resolve).catch(reject);
 								} else {
-									return Promise.resolve();
+									resolve();
 								}
 							}).then(() => {
 								return _concatContentStreamProm(files, targetPath, separator);
@@ -159,7 +133,7 @@ function _concatContentStreamProm(files, targetPath, separator) {
 						});
 					});
 				}
-			});
+			}).then(resolve).catch(reject);
 		}
 	});
 }
@@ -727,11 +701,76 @@ fs.rmdirp = (dir, callback) => {
 
 				if (err) {
 					callback(err.message ? err.message : err);
+				} else if (0 === files.length) {
+
+					fs.rmdir(dir, err => {
+
+						if (err) {
+							callback(err);
+						} else {
+							callback();
+						}
+					});
 				} else {
 
-					_emptyDirectoryProm(dir, files).then(() => {
-						callback(null);
-					}).catch(callback);
+					let deletedFiles = 0;
+					for (let i = 0; i < files.length; ++i) {
+
+						let content = path.join(dir, files[i]);
+
+						fs.isDirectory(content, (err, isdirectory) => {
+
+							if (err) {
+								callback(err);
+							} else if (isdirectory) {
+
+								fs.rmdirp(content, err => {
+
+									if (err) {
+										callback(err);
+									} else {
+
+										++deletedFiles;
+
+										if (deletedFiles >= files.length) {
+
+											fs.rmdir(dir, err => {
+
+												if (err) {
+													callback(err);
+												} else {
+													callback();
+												}
+											});
+										}
+									}
+								});
+							} else {
+
+								fs.unlink(content, err => {
+
+									if (err) {
+										callback(err);
+									} else {
+
+										++deletedFiles;
+
+										if (deletedFiles >= files.length) {
+
+											fs.rmdir(dir, err => {
+
+												if (err) {
+													callback(err);
+												} else {
+													callback();
+												}
+											});
+										}
+									}
+								});
+							}
+						});
+					}
 				}
 			});
 		}
