@@ -20,7 +20,7 @@ $ npm install node-promfs
 
 ## Doc
 
- ### Extended
+### -- Extended --
 
 note : in "separator" parameter, you can use "{{filename}}" pattern, it will be replaced by the file's basename
 (ex : separator = "\r\n\r\n--- {{filename}} ---\r\n\r\n")
@@ -75,7 +75,7 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
    * ``` rmdirpSync(string path) ```
    * ``` rmdirpProm(string path) : return Promise ```
 
- ### Classical
+### -- Classical --
 
   * The arguments are the same as [the official documentation's ones](https://nodejs.org/api/fs.html)
   * "then" data are the same as the callbacks' ones
