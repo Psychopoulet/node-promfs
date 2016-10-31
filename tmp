@@ -1,0 +1,1 @@
+cd C:\Users\meona\Documents\node-promfs && cls && node-gyp configure && node-gyp build && node lib/main.js
