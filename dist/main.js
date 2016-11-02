@@ -10,7 +10,7 @@ const fs = require(require("path").join(__dirname, "extends.js"));
 [
 
 // extend
-"extractDirectoryRealFiles", "filesToString", "filesToFile", "directoryFilesToString", "directoryFilesToFile", "copy", "isDirectory", "isFile", "mkdirp", "rmdirp",
+"extractDirectoryRealFiles", "filesToString", "filesToFile", "directoryFilesToString", "directoryFilesToFile", "copy", "isFile", "mkdirp", "rmdirp",
 
 // classical
 "access", "appendFile", "chmod", "chown", "close", "fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "open", "readdir", "readFile", "rename", "stat", "truncate", "utimes", "write", "writeFile"].forEach(name => {
@@ -35,8 +35,6 @@ const fs = require(require("path").join(__dirname, "extends.js"));
 					resolve.apply(undefined, subargs);
 				}
 			}]));
-		}).catch(err => {
-			return Promise.reject(err.message ? err.message : err);
 		});
 	};
 });

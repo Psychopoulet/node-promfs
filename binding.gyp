@@ -8,6 +8,7 @@
 
         "lib/cpp/_extends.cpp",
           "lib/cpp/tools.cpp",
+          "lib/cpp/isDirectory.cpp",
           "lib/cpp/isFile.cpp"
           
       ]
