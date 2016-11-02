@@ -6,8 +6,9 @@
 
       "sources": [
 
-        "lib/_extends.cpp",
-          "lib/isFile.cpp"
+        "lib/cpp/_extends.cpp",
+          "lib/cpp/tools.cpp",
+          "lib/cpp/isFile.cpp"
           
       ]
 
