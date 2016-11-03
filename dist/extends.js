@@ -6,60 +6,6 @@
 const path = require("path"),
 		fs = require(path.join(__dirname, "extends_native.js"));
 
-// private
-
-// methods
-
-/*
-		// with streams
-			function _concatContentStreamProm(files, targetPath, separator) {
-				return new Promise((resolve, reject) => {
-					if (0 >= files.length) {
-				resolve();
-			}
-			else {
-						let file = files.shift();
-						return fs.isFileProm(file).then((exists) => {
-							if (!exists) {
-						return Promise.reject("\"" + file + "\" does not exist");
-					}
-					else {
-								return new Promise((resolve, reject) => {
-									let readStream = fs.createReadStream(file), writeStream = fs.createWriteStream(targetPath, { flags: "a" });
-									readStream.on("open", () => {
-										if (-1 >= separator.indexOf("{{filename}}")) {
-									readStream.pipe(writeStream);
-								}
-								else {
-											return fs.appendFileProm(targetPath, separator.replace("{{filename}}", path.basename(file))).then(() => {
-										readStream.pipe(writeStream);
-									});
-									
-								}
-									}).on("end", () => {
-										return new Promise((resolve, reject) => {
-											if (0 >= files.length) {
-										resolve();
-									}
-									else if (-1 >= separator.indexOf("{{filename}}")) {
-										fs.appendFileProm(targetPath, separator).then(resolve).catch(reject);
-									}
-									else {
-										resolve();
-									}
-										}).then(() => {
-									return _concatContentStreamProm(files, targetPath, separator);
-								}).then(resolve).catch(reject);
-									}).on("error", (err) => {
-								reject(err);
-							});
-								});
-							}
-						}).then(resolve).catch(reject);
-					}
-				});
-			}*/
-
 // module
 
 // copy
@@ -168,7 +114,9 @@ function _copyStream(origin, target, callback) {
 
 	readStream.on("error", err => {
 		callback(err);
-	}).on("open", () => {
+	});
+
+	readStream.on("open", () => {
 		readStream.pipe(fs.createWriteStream(target));
 	}).on("end", () => {
 		callback(null);
@@ -186,6 +134,8 @@ fs.extractDirectoryRealFilesSync = dir => {
 	} else if ("string" !== typeof dir) {
 		throw new TypeError("'directory' argument is not a string");
 	} else {
+
+		dir = dir.trim();
 
 		if (!fs.isDirectorySync(dir)) {
 			throw new Error("'" + dir + "' is not a valid directory");
@@ -220,6 +170,8 @@ fs.extractDirectoryRealFiles = (dir, callback) => {
 	} else if ("function" !== typeof callback) {
 		throw new TypeError("'callback' argument is not a function");
 	} else {
+
+		dir = dir.trim();
 
 		fs.isDirectory(dir, (err, exists) => {
 
@@ -258,7 +210,7 @@ function _extractRealFiles(dir, givenFiles, realFiles, callback) {
 		callback(null, realFiles);
 	} else {
 
-		let file = path.join(dir, givenFiles.shift());
+		let file = path.join(dir, givenFiles.shift()).trim();
 
 		fs.isFile(file, (err, exists) => {
 
@@ -276,9 +228,6 @@ function _extractRealFiles(dir, givenFiles, realFiles, callback) {
 	}
 }
 
-// have to improve tests
-
-
 // filesToString
 
 // sync version
@@ -288,15 +237,17 @@ fs.filesToStringSync = (files, encoding, separator) => {
 	if ("undefined" === typeof files) {
 		throw new ReferenceError("missing 'files' argument");
 	} else if ("object" !== typeof files || !(files instanceof Array)) {
-		throw new TypeError("'files' argument is not a string");
+		throw new TypeError("'files' argument is not an Array");
 	} else {
 
-		encoding = "string" === typeof encoding ? encoding : null;
+		encoding = "string" === typeof encoding ? encoding.trim() : null;
 		separator = "string" === typeof separator ? separator : " ";
 
 		let content = "";
 
 		files.forEach(file => {
+
+			file = file.trim();
 
 			if (!fs.isFileSync(file)) {
 				throw new Error("\"" + file + "\" does not exist");
@@ -318,7 +269,7 @@ fs.filesToString = (files, encoding, separator, callback) => {
 	if ("undefined" === typeof files) {
 		throw new ReferenceError("missing 'files' argument");
 	} else if ("object" !== typeof files || !(files instanceof Array)) {
-		throw new TypeError("'files' argument is not a string");
+		throw new TypeError("'files' argument is not an Array");
 	} else if ("undefined" === typeof callback && "undefined" === typeof separator && "undefined" === typeof encoding) {
 		throw new ReferenceError("missing 'callback' argument");
 	} else if ("function" !== typeof callback && "function" !== typeof separator && "function" !== typeof encoding) {
@@ -334,7 +285,7 @@ fs.filesToString = (files, encoding, separator, callback) => {
 			}
 		}
 
-		encoding = "string" === typeof encoding ? encoding : "utf8";
+		encoding = "string" === typeof encoding ? encoding.trim() : "utf8";
 		separator = "string" === typeof separator ? separator : " ";
 
 		_readContent(files, encoding, separator, "", (err, content) => {
@@ -356,7 +307,7 @@ function _readContent(files, encoding, separator, content, callback) {
 		callback(null, content);
 	} else {
 
-		let file = files.shift();
+		let file = files.shift().trim();
 
 		fs.isFile(file, (err, exists) => {
 
@@ -386,7 +337,180 @@ function _readContent(files, encoding, separator, content, callback) {
 	}
 }
 
-/*// directoryFilesToString
+// filesToFile
+
+// sync version
+
+fs.filesToFileSync = (files, targetPath, separator) => {
+
+	if ("undefined" === typeof files) {
+		throw new ReferenceError("missing 'files' argument");
+	} else if ("object" !== typeof files || !(files instanceof Array)) {
+		throw new TypeError("'files' argument is not an Array");
+	} else if ("undefined" === typeof targetPath) {
+		throw new ReferenceError("missing 'targetPath' argument");
+	} else if ("string" !== typeof targetPath) {
+		throw new TypeError("'targetPath' argument is not a string");
+	} else {
+
+		targetPath = targetPath.trim();
+
+		separator = "string" === typeof separator ? separator : " ";
+
+		if (fs.isFileSync(targetPath)) {
+			fs.unlinkSync(targetPath);
+		}
+
+		fs.writeFileSync(targetPath, "");
+
+		files.forEach((file, key) => {
+
+			file = file.trim();
+
+			if (!fs.isFileSync(file)) {
+				throw new Error("\"" + file + "\" does not exist");
+			} else if (-1 < separator.indexOf("{{filename}}")) {
+				fs.appendFileSync(targetPath, separator.replace("{{filename}}", path.basename(file)) + fs.readFileSync(file));
+			} else {
+				fs.appendFileSync(targetPath, 0 < key ? separator + fs.readFileSync(file) : fs.readFileSync(file));
+			}
+		});
+	}
+};
+
+// async version
+
+fs.filesToFile = (files, targetPath, separator, callback) => {
+
+	if ("undefined" === typeof files) {
+		throw new ReferenceError("missing 'files' argument");
+	} else if ("object" !== typeof files || !(files instanceof Array)) {
+		throw new TypeError("'files' argument is not an Array");
+	} else if ("undefined" === typeof targetPath) {
+		throw new ReferenceError("missing 'targetPath' argument");
+	} else if ("string" !== typeof targetPath) {
+		throw new TypeError("'targetPath' argument is not a string");
+	} else if ("undefined" === typeof callback && "undefined" === typeof separator) {
+		throw new ReferenceError("missing 'callback' argument");
+	} else if ("function" !== typeof callback && "function" !== typeof separator) {
+		throw new TypeError("'callback' argument is not a function");
+	} else {
+
+		if ("undefined" === typeof callback) {
+			callback = separator;
+		}
+
+		targetPath = targetPath.trim();
+
+		separator = "string" === typeof separator ? separator : " ";
+
+		new Promise((resolve, reject) => {
+
+			fs.isFile(targetPath, (err, exists) => {
+
+				if (err) {
+					reject(err);
+				} else if (!exists) {
+					resolve();
+				} else {
+
+					fs.unlink(targetPath, err => {
+
+						if (err) {
+							reject(err);
+						} else {
+							resolve();
+						}
+					});
+				}
+			});
+		}).then(() => {
+
+			return new Promise((resolve, reject) => {
+
+				fs.writeFile(targetPath, "", err => {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve();
+					}
+				});
+			});
+		}).then(() => {
+
+			_concatContentStream(files, targetPath, separator, callback);
+		}).catch(callback);
+	}
+};
+
+// specific to "filesToFile" method
+
+function _concatContentStream(files, targetPath, separator, callback) {
+
+	if (0 >= files.length) {
+		callback(null);
+	} else {
+
+		let file = files.shift().trim();
+
+		fs.isFile(file, err => {
+
+			if (err) {
+				callback(err);
+			} else {
+
+				let readStream = fs.createReadStream(file).on("error", err => {
+					callback(err);
+				});
+
+				readStream.on("open", () => {
+
+					if (-1 >= separator.indexOf("{{filename}}")) {
+						readStream.pipe(fs.createWriteStream(targetPath, { flags: "a" }));
+					} else {
+
+						fs.appendFile(targetPath, separator.replace("{{filename}}", path.basename(file)), err => {
+
+							if (err) {
+								callback(err);
+							} else {
+								readStream.pipe(fs.createWriteStream(targetPath, { flags: "a" }));
+							}
+						});
+					}
+				}).on("end", () => {
+
+					if (0 >= files.length) {
+						callback(null);
+					} else {
+
+						if (-1 < separator.indexOf("{{filename}}")) {
+							_concatContentStream(files, targetPath, separator, callback);
+						} else {
+
+							fs.appendFile(targetPath, separator, err => {
+
+								if (err) {
+									callback(err);
+								} else {
+									_concatContentStream(files, targetPath, separator, callback);
+								}
+							});
+						}
+					}
+				});
+			}
+		});
+	}
+}
+
+// have to improve tests
+
+
+/*
+
+// directoryFilesToString
 
 	// sync version
 
@@ -500,89 +624,6 @@ function _readContent(files, encoding, separator, content, callback) {
 						return fs.filesToFileSync(result, targetPath, encoding, separator);
 					}
 				}
-			};
-		// filesToFile
-			// async version
-			fs.filesToFile = (files, targetPath, separator, callback) => {
-				if (!callback) {
-			callback = ("function" === typeof separator) ? separator : () => {};
-		}
-				callback = ("function" === typeof callback) ? callback : () => {};
-		separator = ("string" === typeof separator) ? separator : " ";
-				if ("object" !== typeof files || !(files instanceof Array)) {
-			callback("\"files\" is not an array");
-		}
-		else if ("string" !== typeof targetPath) {
-			callback("\"targetPath\" is not a string");
-		}
-		else {
-					fs.isFile(targetPath, (err, exists) => {
-						if (err) {
-					callback(err);
-				}
-				else if (exists) {
-							fs.unlink(targetPath, (err) => {
-								if (err) {
-							callback(err);
-						}
-						else {
-									fs.writeFile(targetPath, "", (err) => {
-										if (err) {
-									callback(err);
-								}
-								else {
-											_concatContentStreamProm(files, targetPath, separator).then(() => {
-										callback(null);
-									}).catch(callback);
-										}
-							
-							});
-								}
-							});
-						}
-				else {
-							fs.writeFile(targetPath, "", (err) => {
-								if (err) {
-							callback(err);
-						}
-						else {
-									_concatContentStreamProm(files, targetPath, separator).then(() => {
-								callback(null);
-							}).catch(callback);
-								}
-					
-					});
-						}
-					});
-				}
-			};
-			// sync version
-			fs.filesToFileSync = (files, targetPath, separator) => {
-				if ("object" !== typeof files || !(files instanceof Array)) {
-			throw new Error("\"files\" is not an array");
-		}
-		else if ("string" !== typeof targetPath) {
-			throw new Error("\"targetPath\" is not a string");
-		}
-		else {
-					separator = ("string" === typeof separator) ? separator : " ";
-					if (fs.isFileSync(targetPath)) {
-				fs.unlinkSync(targetPath);
-			}
-					fs.writeFileSync(targetPath, "");
-					files.forEach((file, key) => {
-						if (!fs.isFileSync(file)) {
-					throw new Error("\"" + file + "\" does not exist");
-				}
-				else if (-1 < separator.indexOf("{{filename}}")) {
-					fs.appendFileSync(targetPath, separator.replace("{{filename}}", path.basename(file)) + fs.readFileSync(file));
-				}
-				else {
-					fs.appendFileSync(targetPath, (0 < key) ? separator + fs.readFileSync(file) : fs.readFileSync(file));
-				}
-					});
-			
-		}
 			};
 	// mkdirp
 

@@ -67,9 +67,12 @@ describe("filesToString", () => {
 		it("should concat nothing", (done) => {
 
 			fs.filesToString([], (err, data) => {
+
 				assert.strictEqual(null, err, "concat nothing generate an error");
 				assert.strictEqual("", data, "empty array cannot be concatened");
+
 				done();
+				
 			});
 
 		});
