@@ -1,6 +1,6 @@
 "use strict";
 
-// deps
+/*// deps
 
 	const 	path = require("path"),
 			assert = require("assert"),
@@ -698,3 +698,4 @@ describe("promisification", () => {
 	});
 
 });
+*/
