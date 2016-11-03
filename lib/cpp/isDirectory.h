@@ -3,6 +3,7 @@
 
 	#define EXTEND_ISDIRECTORY
 
+	#include <string>
 	#include <node.h>
 	#include <sys/stat.h>
 	#include <uv.h>
