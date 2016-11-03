@@ -142,7 +142,6 @@ describe("extractDirectoryRealFiles", () => {
 		before((done) => { fs.writeFile(_filetest, done); });
 		after((done) => { fs.unlink(_filetest, done); });
 
-
 		it("should check missing value", (done) => {
 
 			fs.extractDirectoryRealFilesProm().then(() => {

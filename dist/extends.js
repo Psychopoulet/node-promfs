@@ -10,38 +10,7 @@ const path = require("path"),
 
 // methods
 
-/*function _readContentProm(files, encoding, separator, content) {
-			content = (content) ? content : "";
-			return new Promise((resolve, reject) => {
-				if (0 >= files.length) {
-			resolve(content);
-		}
-		else {
-					let file = files.shift();
-					fs.isFileProm(file).then((exists) => {
-						if (!exists) {
-					return Promise.reject("\"" + file + "\" does not exist");
-				}
-				else {
-					return fs.readFileProm(file, encoding);
-				}
-					}).then((filecontent) => {
-						if (-1 < separator.indexOf("{{filename}}")) {
-							return _readContentProm(
-						files, encoding, separator,
-						content + separator.replace("{{filename}}", path.basename(file)) + filecontent
-					);
-						}
-				else {
-							return _readContentProm(
-						files, encoding, separator,
-						("" === content) ? filecontent : content + separator + filecontent
-					);
-						}
-					}).then(resolve).catch(reject);
-				}
-			});
-		}
+/*
 		// with streams
 			function _concatContentStreamProm(files, targetPath, separator) {
 				return new Promise((resolve, reject) => {
@@ -206,7 +175,7 @@ function _copyStream(origin, target, callback) {
 	});
 }
 
-// concat files
+// extractDirectoryRealFiles
 
 // sync version
 
@@ -237,8 +206,6 @@ fs.extractDirectoryRealFilesSync = dir => {
 		}
 	}
 };
-
-// extractDirectoryRealFiles
 
 // async version
 
@@ -309,42 +276,154 @@ function _extractRealFiles(dir, givenFiles, realFiles, callback) {
 	}
 }
 
-/*// have to improve tests
+// have to improve tests
 
 
+// filesToString
 
+// sync version
 
+fs.filesToStringSync = (files, encoding, separator) => {
 
+	if ("undefined" === typeof files) {
+		throw new ReferenceError("missing 'files' argument");
+	} else if ("object" !== typeof files || !(files instanceof Array)) {
+		throw new TypeError("'files' argument is not a string");
+	} else {
 
+		encoding = "string" === typeof encoding ? encoding : null;
+		separator = "string" === typeof separator ? separator : " ";
 
+		let content = "";
 
+		files.forEach(file => {
 
-// directoryFilesToString
-			// sync version
-			fs.directoryFilesToStringSync = (directory, encoding, separator) => {
-				if ("undefined" === typeof directory) {
+			if (!fs.isFileSync(file)) {
+				throw new Error("\"" + file + "\" does not exist");
+			} else if (-1 < separator.indexOf("{{filename}}")) {
+				content = content + separator.replace("{{filename}}", path.basename(file)) + fs.readFileSync(file, encoding);
+			} else {
+				content = "" === content ? fs.readFileSync(file, encoding) : content + separator + fs.readFileSync(file, encoding);
+			}
+		});
+
+		return content;
+	}
+};
+
+// async version
+
+fs.filesToString = (files, encoding, separator, callback) => {
+
+	if ("undefined" === typeof files) {
+		throw new ReferenceError("missing 'files' argument");
+	} else if ("object" !== typeof files || !(files instanceof Array)) {
+		throw new TypeError("'files' argument is not a string");
+	} else if ("undefined" === typeof callback && "undefined" === typeof separator && "undefined" === typeof encoding) {
+		throw new ReferenceError("missing 'callback' argument");
+	} else if ("function" !== typeof callback && "function" !== typeof separator && "function" !== typeof encoding) {
+		throw new TypeError("'callback' argument is not a function");
+	} else {
+
+		if ("undefined" === typeof callback) {
+
+			if ("undefined" === typeof separator) {
+				callback = encoding;
+			} else {
+				callback = separator;
+			}
+		}
+
+		encoding = "string" === typeof encoding ? encoding : "utf8";
+		separator = "string" === typeof separator ? separator : " ";
+
+		_readContent(files, encoding, separator, "", (err, content) => {
+
+			if (err) {
+				callback(err);
+			} else {
+				callback(null, content);
+			}
+		});
+	}
+};
+
+// specific to "filesToString" method
+
+function _readContent(files, encoding, separator, content, callback) {
+
+	if (0 >= files.length) {
+		callback(null, content);
+	} else {
+
+		let file = files.shift();
+
+		fs.isFile(file, (err, exists) => {
+
+			if (err) {
+				callback(err);
+			} else if (!exists) {
+				callback(new Error("\"" + file + "\" does not exist"));
+			} else {
+
+				fs.readFile(file, encoding, (err, filecontent) => {
+
+					if (err) {
+						callback(err);
+					} else {
+
+						if (-1 < separator.indexOf("{{filename}}")) {
+
+							_readContent(files, encoding, separator, content + separator.replace("{{filename}}", path.basename(file)) + filecontent, callback);
+						} else {
+
+							_readContent(files, encoding, separator, "" === content ? filecontent : content + separator + filecontent, callback);
+						}
+					}
+				});
+			}
+		});
+	}
+}
+
+/*// directoryFilesToString
+
+	// sync version
+
+	fs.directoryFilesToStringSync = (directory, encoding, separator) => {
+
+		if ("undefined" === typeof directory) {
 			throw new ReferenceError("missing 'directory' argument");
 		}
 			else if ("string" !== typeof directory) {
 				throw new TypeError("'directory' argument is not a string");
 			}
 		else {
-					encoding = ("string" === typeof encoding) ? encoding : null;
+
+			encoding = ("string" === typeof encoding) ? encoding : null;
 			separator = ("string" === typeof separator) ? separator : "";
-					return fs.filesToStringSync(fs.extractDirectoryRealFilesSync(directory), encoding, separator);
-				}
-			};
-			// async version
-			fs.directoryFilesToString = (directory, encoding, separator, callback) => {
-				if ("undefined" === typeof directory) {
+
+			return fs.filesToStringSync(fs.extractDirectoryRealFilesSync(directory), encoding, separator);
+
+		}
+
+	};
+
+	// async version
+
+	fs.directoryFilesToString = (directory, encoding, separator, callback) => {
+
+		if ("undefined" === typeof directory) {
 			throw new ReferenceError("missing 'directory' argument");
 		}
 			else if ("string" !== typeof directory) {
 				throw new TypeError("'directory' argument is not a string");
 			}
 		else {
-					if (!callback) {
-						if (!separator) {
+
+			if (!callback) {
+
+				if (!separator) {
 					callback = ("function" === typeof encoding) ? encoding : () => {};
 				}
 				else {
@@ -352,22 +431,29 @@ function _extractRealFiles(dir, givenFiles, realFiles, callback) {
 				}
 				
 			}
-					callback = ("function" === typeof callback) ? callback : () => {};
+
+			callback = ("function" === typeof callback) ? callback : () => {};
 			encoding = ("string" === typeof encoding) ? encoding : "utf8";
 			separator = ("string" === typeof separator) ? separator : "";
-					if ("string" !== typeof directory) {
+
+			if ("string" !== typeof directory) {
 				callback("This is not a string");
 			}
 			else {
-						fs.extractDirectoryRealFilesProm(directory).then((files) => {
+
+				fs.extractDirectoryRealFilesProm(directory).then((files) => {
 					return fs.filesToStringProm(files, encoding, separator);
 				}).then((content) => {
 					callback(null, content);
 				}).catch(callback);
-					}
+
+			}
 			
 		}
-			};
+
+	};*/
+
+/*
 		// directoryFilesToFile
 			// async version
 			fs.directoryFilesToFile = (dir, targetPath, separator, callback) => {
@@ -413,53 +499,6 @@ function _extractRealFiles(dir, givenFiles, realFiles, callback) {
 							});
 						return fs.filesToFileSync(result, targetPath, encoding, separator);
 					}
-				}
-			};
-		// filesToString
-			// async version
-			fs.filesToString = (files, encoding, separator, callback) => {
-				if (!callback) {
-					if (!separator) {
-				callback = ("function" === typeof encoding) ? encoding : () => {};
-			}
-			else {
-				callback = ("function" === typeof separator) ? separator : () => {};
-			}
-			
-		}
-				callback = ("function" === typeof callback) ? callback : () => {};
-		encoding = ("string" === typeof encoding) ? encoding : "utf8";
-		separator = ("string" === typeof separator) ? separator : " ";
-				if ("object" !== typeof files || !(files instanceof Array)) {
-			callback("This is not an array");
-		}
-		else {
-					_readContentProm(files, encoding, separator).then((content) => {
-				callback(null, content);
-			}).catch(callback);
-				}
-			};
-			// sync version
-			fs.filesToStringSync = (files, encoding, separator) => {
-				if ("object" !== typeof files || !(files instanceof Array)) {
-			throw new Error("This is not an array");
-		}
-		else {
-					encoding = ("string" === typeof encoding) ? encoding : null;
-			separator = ("string" === typeof separator) ? separator : " ";
-					let content = "";
-						files.forEach((file) => {
-							if (!fs.isFileSync(file)) {
-						throw new Error("\"" + file + "\" does not exist");
-					}
-					else if (-1 < separator.indexOf("{{filename}}")) {
-						content = content + separator.replace("{{filename}}", path.basename(file)) + fs.readFileSync(file, encoding);
-					}
-					else {
-						content = ("" === content) ? fs.readFileSync(file, encoding) : content + separator + fs.readFileSync(file, encoding);
-					}
-						});
-					return content;
 				}
 			};
 		// filesToFile
