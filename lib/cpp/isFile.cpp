@@ -7,19 +7,6 @@ namespace _extends {
 
 		// private
 
-			// stucts
-
-				struct _AsyncWork {
-
-					uv_work_t request;
-					v8::Persistent<v8::Function> callback;
-					v8::Persistent<v8::Promise::Resolver> persistent;
-
-					std::string filename;
-					boolean exists;
-					
-				};
-
 			// methods
 
 				bool _isFile(std::string p_sFilename) {
@@ -41,7 +28,7 @@ namespace _extends {
 
 				static void _workAsync(uv_work_t *req) {
 
-					_AsyncWork *work = static_cast<_AsyncWork *>(req->data);
+					_extends::AsyncWorkStructureIsFileIsDirectory *work = static_cast<_extends::AsyncWorkStructureIsFileIsDirectory *>(req->data);
 
 					work->exists = _isFile(work->filename);
 
@@ -52,7 +39,7 @@ namespace _extends {
 					v8::Isolate *isolate = v8::Isolate::GetCurrent();
 					v8::HandleScope handleScope(isolate);
 
-					_AsyncWork *work = static_cast<_AsyncWork *>(req->data);
+					_extends::AsyncWorkStructureIsFileIsDirectory *work = static_cast<_extends::AsyncWorkStructureIsFileIsDirectory *>(req->data);
 
 						const unsigned argc = 2;
 						v8::Local<v8::Value> argv[argc];
@@ -64,6 +51,8 @@ namespace _extends {
 						->Call(isolate->GetCurrentContext()
 						->Global(), 2, argv);
 
+					isolate->RunMicrotasks();
+
 					work->callback.Reset();
 					delete work;
 
@@ -74,10 +63,12 @@ namespace _extends {
 					v8::Isolate *isolate = v8::Isolate::GetCurrent();
 					v8::HandleScope scope(isolate);
 
-					_AsyncWork *work = static_cast<_AsyncWork *>(req->data);
+					_extends::AsyncWorkStructureIsFileIsDirectory *work = static_cast<_extends::AsyncWorkStructureIsFileIsDirectory *>(req->data);
 
 						v8::Local<v8::Promise::Resolver> local = v8::Local<v8::Promise::Resolver>::New(isolate, work->persistent);
 						local->Resolve(v8::Boolean::New(isolate, work->exists));
+
+					isolate->RunMicrotasks();
 
 					work->callback.Reset();
 					delete work;
@@ -159,7 +150,7 @@ namespace _extends {
 
 								// init asynchronous treatment
 
-									_AsyncWork *work = new _AsyncWork();
+									_extends::AsyncWorkStructureIsFileIsDirectory *work = new _extends::AsyncWorkStructureIsFileIsDirectory();
 									work->request.data = work;
 
 									// callback
@@ -184,8 +175,51 @@ namespace _extends {
 			void isFileProm(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 				v8::Isolate *isolate = args.GetIsolate();
-				isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "test")));
-				args.GetReturnValue().Set(v8::Undefined(isolate));
+
+				// init promise
+
+					_extends::AsyncWorkStructureIsFileIsDirectory *work = new _extends::AsyncWorkStructureIsFileIsDirectory();
+					work->request.data = work;
+					
+					work->persistent.Reset(isolate, v8::Promise::Resolver::New(isolate));
+
+				// return promise
+
+					v8::Local<v8::Promise::Resolver> local = v8::Local<v8::Promise::Resolver>::New(isolate, work->persistent);
+					args.GetReturnValue().Set(local->GetPromise());
+				
+				// params treatment
+
+				if (0 >= args.Length()) {
+					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'filename' argument")));
+				}
+					else if (!args[0]->IsString()) {
+						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'filename' argument is not a string")));
+					}
+				else {
+
+					// params conversion
+
+						v8::String::Utf8Value param1(args[0]->ToString());
+							std::string sFilename = _extends::tools::trim(std::string(*param1));
+
+					// function treatment
+
+						if ("" == sFilename) {
+							local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'filename' argument is empty")));
+						}
+						else {
+
+								// data
+								work->filename = sFilename;
+								work->exists = false;
+
+							// start asynchronous treatment
+							uv_queue_work(uv_default_loop(), &work->request, _workAsync, _workPromiseComplete);
+
+						}
+
+				}
 
 			}
 
