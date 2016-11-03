@@ -59,8 +59,6 @@ fs.mkdirProm = dir => {
 				});
 			});
 		}
-	}).catch(err => {
-		return Promise.reject(err.message ? err.message : err);
 	});
 };
 
@@ -84,8 +82,6 @@ fs.rmdirProm = dir => {
 				});
 			});
 		}
-	}).catch(err => {
-		return Promise.reject(err.message ? err.message : err);
 	});
 };
 
@@ -109,8 +105,6 @@ fs.unlinkProm = file => {
 				});
 			});
 		}
-	}).catch(err => {
-		return Promise.reject(err.message ? err.message : err);
 	});
 };
 
@@ -126,8 +120,6 @@ fs.realpathProm = (path, options) => {
 				resolve(result);
 			}
 		});
-	}).catch(err => {
-		return Promise.reject(err.message ? err.message : err);
 	});
 };
 

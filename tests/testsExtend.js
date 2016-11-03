@@ -9,8 +9,8 @@
 
 // private
 
-	var _dirtestBase = path.join(__dirname, "testlvl1"),
-			_dirtest = path.join(_dirtestBase, "testlvl2", "testlvl3", "testlvl4"),
+	var //_dirtestBase = path.join(__dirname, "testlvl1"),
+			//_dirtest = path.join(_dirtestBase, "testlvl2", "testlvl3", "testlvl4"),
 		_filetest = path.join(__dirname, "test.txt"),
 		_filetest2 = path.join(__dirname, "test2.txt");
 
@@ -33,7 +33,7 @@ describe("extend", () => {
 				});
 
 				it("should check empty content value", () => {
-					assert.throws(() => { fs.isDirectorySync(""); }, TypeError, "check empty content value does not throw an error");
+					assert.throws(() => { fs.isDirectorySync(""); }, Error, "check empty content value does not throw an error");
 				});
 
 				it("should check false directory existance", () => {
@@ -65,7 +65,7 @@ describe("extend", () => {
 				});
 
 				it("should check empty content value", () => {
-					assert.throws(() => { fs.isDirectory("", () => {}); }, TypeError, "check empty content value does not throw an error");
+					assert.throws(() => { fs.isDirectory("", () => {}); }, Error, "check empty content value does not throw an error");
 				});
 
 				it("should check false directory existance", (done) => {
@@ -83,6 +83,7 @@ describe("extend", () => {
 
 						assert.strictEqual(null, err, "check file existance generate an error");
 						assert.strictEqual(false, exists, "\"" + __filename + "\" is an existing directory");
+
 						done();
 
 					});
@@ -95,6 +96,7 @@ describe("extend", () => {
 
 						assert.strictEqual(null, err, "check real directory existance generate an error");
 						assert.strictEqual(true, exists, "\"" + __dirname + "\" is not an existing directory");
+
 						done();
 
 					});
@@ -110,9 +112,12 @@ describe("extend", () => {
 					fs.isDirectoryProm().then(() => {
 						done("check missing value does not generate an error");
 					}).catch((err) => {
+
 						assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
 						assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
 						done();
+
 					});
 
 				});
@@ -122,9 +127,12 @@ describe("extend", () => {
 					fs.isDirectoryProm(false).then(() => {
 						done("check invalid value does not generate an error");
 					}).catch((err) => {
+
 						assert.strictEqual(true, err instanceof TypeError, "check invalid value does not generate a valid error");
 						assert.strictEqual("string", typeof err.message, "check invalid value does not generate a valid error");
+
 						done();
+
 					});
 
 				});
@@ -134,9 +142,12 @@ describe("extend", () => {
 					fs.isDirectoryProm("").then(() => {
 						done("check empty content value does not generate an error");
 					}).catch((err) => {
-						assert.strictEqual(true, err instanceof TypeError, "check empty content value does not generate a valid error");
+
+						assert.strictEqual(true, err instanceof Error, "check empty content value does not generate a valid error");
 						assert.strictEqual("string", typeof err.message, "check empty content value does not generate a valid error");
+
 						done();
+
 					});
 
 				});
@@ -182,7 +193,7 @@ describe("extend", () => {
 				});
 
 				it("should check empty content value", () => {
-					assert.throws(() => { fs.isFileSync(""); }, TypeError, "check empty content value does not throw an error");
+					assert.throws(() => { fs.isFileSync(""); }, Error, "check empty content value does not throw an error");
 				});
 
 				it("should check false file existance", () => {
@@ -214,7 +225,7 @@ describe("extend", () => {
 				});
 
 				it("should check empty content value", () => {
-					assert.throws(() => { fs.isFile("", () => {}); }, TypeError, "check empty content value does not throw an error");
+					assert.throws(() => { fs.isFile("", () => {}); }, Error, "check empty content value does not throw an error");
 				});
 
 				it("should check false file existance", (done) => {
@@ -232,6 +243,7 @@ describe("extend", () => {
 
 						assert.strictEqual(null, err, "check directory existance generate an error");
 						assert.strictEqual(false, exists, "\"" + __dirname + "\" is an existing file");
+
 						done();
 
 					});
@@ -244,6 +256,7 @@ describe("extend", () => {
 
 						assert.strictEqual(null, err, "check real file existance generate an error");
 						assert.strictEqual(true, exists, "\"" + __filename + "\" is not an existing file");
+
 						done();
 
 					});
@@ -259,9 +272,12 @@ describe("extend", () => {
 					fs.isFileProm().then(() => {
 						done("check missing value does not generate an error");
 					}).catch((err) => {
+
 						assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
 						assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
 						done();
+
 					});
 
 				});
@@ -271,9 +287,12 @@ describe("extend", () => {
 					fs.isFileProm(false).then(() => {
 						done("check invalid value does not generate an error");
 					}).catch((err) => {
+
 						assert.strictEqual(true, err instanceof TypeError, "check invalid value does not generate a valid error");
 						assert.strictEqual("string", typeof err.message, "check invalid value does not generate a valid error");
+
 						done();
+
 					});
 
 				});
@@ -283,9 +302,12 @@ describe("extend", () => {
 					fs.isFileProm("").then(() => {
 						done("check empty content value does not generate an error");
 					}).catch((err) => {
-						assert.strictEqual(true, err instanceof TypeError, "check empty content does not generate a valid error");
+
+						assert.strictEqual(true, err instanceof Error, "check empty content does not generate a valid error");
 						assert.strictEqual("string", typeof err.message, "check empty content value does not generate a valid error");
+
 						done();
+
 					});
 
 				});
@@ -322,11 +344,6 @@ describe("extend", () => {
 
 	});
 
-
-	// have to improve tests
-
-
-
 	describe("copy", () => {
 
 		describe("sync", () => {
@@ -341,9 +358,19 @@ describe("extend", () => {
 
 			});
 
-			it("should check types values", () => {
-				assert.throws(() => { fs.copySync(false); }, Error, "check \"origin\" invalid value does not throw an error");
-				assert.throws(() => { fs.copySync("test", false); }, Error, "check \"target\" invalid value does not throw an error");
+			it("should check missing value", () => {
+				assert.throws(() => { fs.copySync(); }, ReferenceError, "check missing value does not throw an error");
+				assert.throws(() => { fs.copySync("test"); }, ReferenceError, "check missing value does not throw an error");
+			});
+
+			it("should check invalid value", () => {
+				assert.throws(() => { fs.copySync(false, "test"); }, TypeError, "check invalid value does not throw an error");
+				assert.throws(() => { fs.copySync("test", false); }, TypeError, "check invalid value does not throw an error");
+			});
+
+			it("should check empty content value", () => {
+				assert.throws(() => { fs.copySync("", "test"); }, Error, "check empty content value does not throw an error");
+				assert.throws(() => { fs.copySync("test", ""); }, Error, "check empty content value does not throw an error");
 			});
 
 			it("should check inexistant origin", () => {
@@ -368,19 +395,21 @@ describe("extend", () => {
 
 			});
 
-			it("should check invalid value", (done) => {
+			it("should check missing value", () => {
+				assert.throws(() => { fs.copy(); }, ReferenceError, "check missing value does not throw an error");
+				assert.throws(() => { fs.copy("test"); }, ReferenceError, "check missing value does not throw an error");
+				assert.throws(() => { fs.copy("test", "test"); }, ReferenceError, "check missing value does not throw an error");
+			});
 
-				fs.copy(false, false, (err) => {
+			it("should check invalid value", () => {
+				assert.throws(() => { fs.copy(false, "test", () => {}); }, TypeError, "check invalid value does not throw an error");
+				assert.throws(() => { fs.copy("test", false, () => {}); }, TypeError, "check invalid value does not throw an error");
+				assert.throws(() => { fs.copy("test", "test", false); }, TypeError, "check invalid value does not throw an error");
+			});
 
-					assert.notStrictEqual(null, err, "check invalid value does not generate an error");
-					
-					fs.copy("test", false, (err) => {
-						assert.notStrictEqual(null, err, "check invalid value does not generate an error");
-						done();
-					});
-
-				});
-
+			it("should check empty content value", () => {
+				assert.throws(() => { fs.copy("", "test", () => {}); }, Error, "check empty content value does not throw an error");
+				assert.throws(() => { fs.copy("test", "", () => {}); }, Error, "check empty content value does not throw an error");
 			});
 
 			it("should check inexistant origin", (done) => {
@@ -412,6 +441,12 @@ describe("extend", () => {
 
 		});
 
+
+
+		// have to improve tests
+
+
+
 		describe("promise", () => {
 
 			before(() => { return fs.writeFileProm(_filetest, "test"); });
@@ -424,21 +459,72 @@ describe("extend", () => {
 
 			});
 
-			it("should check invalid value", (done) => {
+			it("should check missing value", (done) => {
 
-				fs.copyProm(false, false).then(() => {
-					assert(false, "check invalid value does not generate an error");
-					done();
+				fs.copyProm().then(() => {
+					done("check missing value does not generate an error");
 				}).catch((err) => {
 
-					assert.strictEqual("string", typeof err, "check invalid value does not generate a valid error");
+					assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
 
-					fs.copyProm("test", false).then(() => {
-						assert(false, "check invalid value does not generate an error");
-						done();
+					return fs.copyProm("test").then(() => {
+						done("check missing value does not generate an error");
 					}).catch((err) => {
-						assert.strictEqual("string", typeof err, "check invalid value does not generate a valid error");
+
+						assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+						assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
 						done();
+
+					});
+
+				});
+
+			});
+
+			it("should check invalid value", (done) => {
+
+				fs.copyProm(false, "test").then(() => {
+					done("check invalid value does not generate an error");
+				}).catch((err) => {
+
+					assert.strictEqual(true, err instanceof TypeError, "check invalid value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check invalid value does not generate a valid error");
+
+					return fs.copyProm("test", false).then(() => {
+						done("check invalid value does not generate an error");
+					}).catch((err) => {
+
+						assert.strictEqual(true, err instanceof TypeError, "check invalid value does not generate a valid error");
+						assert.strictEqual("string", typeof err.message, "check invalid value does not generate a valid error");
+
+						done();
+
+					});
+
+				});
+
+			});
+
+			it("should check empty value", (done) => {
+
+				fs.copyProm("", "test").then(() => {
+					done("check empty value does not generate an error");
+				}).catch((err) => {
+
+					assert.strictEqual(true, err instanceof Error, "check empty value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check empty value does not generate a valid error");
+
+					return fs.copyProm("test", "").then(() => {
+						done("check empty value does not generate an error");
+					}).catch((err) => {
+
+						assert.strictEqual(true, err instanceof Error, "check empty value does not generate a valid error");
+						assert.strictEqual("string", typeof err.message, "check empty value does not generate a valid error");
+
+						done();
+
 					});
 
 				});
@@ -448,11 +534,14 @@ describe("extend", () => {
 			it("should check inexistant origin", (done) => {
 
 				fs.copyProm("rgvservseqrvserv", _filetest).then(() => {
-					assert(false, "wrong \"origin\" file does not generate an error");
-					done();
+					done("wrong \"origin\" file does not generate an error");
 				}).catch((err) => {
-					assert.strictEqual("string", typeof err, "wrong \"origin\" file does not generate a valid error");
+
+					assert.strictEqual(true, err instanceof Error, "check empty value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check empty value does not generate a valid error");
+
 					done();
+
 				});
 
 			});
@@ -470,6 +559,12 @@ describe("extend", () => {
 		});
 
 	});
+
+
+
+	/*// have to improve tests
+
+
 
 	describe("directoryFilesToString", () => {
 
@@ -1344,6 +1439,6 @@ describe("extend", () => {
 
 		});
 
-	});
+	});*/
 
 });

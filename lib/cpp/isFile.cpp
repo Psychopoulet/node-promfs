@@ -99,7 +99,7 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sFilename) {
-								isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'filename' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'filename' argument is empty")));
 							}
 							else {
 
@@ -144,7 +144,7 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sFilename) {
-								isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'filename' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'filename' argument is empty")));
 							}
 							else {
 
@@ -206,7 +206,7 @@ namespace _extends {
 					// function treatment
 
 						if ("" == sFilename) {
-							local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'filename' argument is empty")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'filename' argument is empty")));
 						}
 						else {
 
