@@ -4,43 +4,11 @@
 // deps
 
 const path = require("path"),
-		fs = require("fs");
-
-var _extends;
-
-try {
-	_extends = require("../build/Release/_extends.node");
-} catch (e) {
-	_extends = require("../build/Debug/_extends.node");
-}
+		fs = require(path.join(__dirname, "extends_native.js"));
 
 // private
 
 // methods
-
-function _extractRealFilesProm(dir, givenFiles, realFiles) {
-
-	realFiles = "object" === typeof realFiles && realFiles instanceof Array ? realFiles : [];
-
-	return new Promise((resolve, reject) => {
-
-		if (0 >= givenFiles.length) {
-			resolve(realFiles);
-		} else {
-
-			let file = path.join(dir, givenFiles.shift());
-
-			fs.isFileProm(file).then(exists => {
-
-				if (exists) {
-					realFiles.push(file);
-				}
-
-				return _extractRealFilesProm(dir, givenFiles, realFiles);
-			}).then(resolve).catch(reject);
-		}
-	});
-}
 
 function _readContentProm(files, encoding, separator, content) {
 
@@ -148,36 +116,6 @@ function _concatContentStreamProm(files, targetPath, separator) {
 
 // module
 
-// base
-
-// isDirectory
-
-// sync version
-
-fs.isDirectorySync = _extends.isDirectorySync;
-
-// async version
-
-fs.isDirectory = _extends.isDirectory;
-
-// promise version
-
-fs.isDirectoryProm = _extends.isDirectoryProm;
-
-// isFile
-
-// sync version
-
-fs.isFileSync = _extends.isFileSync;
-
-// async version
-
-fs.isFile = _extends.isFile;
-
-// promise version
-
-fs.isFileProm = _extends.isFileProm;
-
 // copy
 
 // sync version
@@ -204,7 +142,7 @@ fs.copySync = (origin, target) => {
 		} else {
 
 			if (!fs.isFileSync(origin)) {
-				throw new Error("\"origin\" is not a file");
+				throw new Error("\"" + origin + "\" is not a valid file");
 			} else {
 
 				if (fs.isFileSync(target)) {
@@ -249,7 +187,7 @@ fs.copy = (origin, target, callback) => {
 				if (err) {
 					callback(err);
 				} else if (!exists) {
-					callback(new Error("\"origin\" is not a file"));
+					callback(new Error("\"" + origin + "\" is not a valid file"));
 				} else {
 
 					fs.isFile(target, (err, exists) => {
@@ -279,49 +217,161 @@ fs.copy = (origin, target, callback) => {
 // have to improve tests
 
 
+// concat files
+
+// sync version
+
+fs.extractDirectoryRealFilesSync = dir => {
+
+	if ("undefined" === typeof dir) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof dir) {
+		throw new TypeError("'directory' argument is not a string");
+	} else {
+
+		if (!fs.isDirectorySync(dir)) {
+			throw new Error("'" + dir + "' is not a valid directory");
+		} else {
+
+			let result = [];
+
+			fs.readdirSync(dir).forEach(file => {
+
+				file = path.join(dir, file);
+
+				if (fs.isFileSync(file)) {
+					result.push(file);
+				}
+			});
+
+			return result;
+		}
+	}
+};
+
+// extractDirectoryRealFiles
+
+// async version
+
+fs.extractDirectoryRealFiles = (dir, callback) => {
+
+	if ("undefined" === typeof dir) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof dir) {
+		throw new TypeError("'directory' argument is not a string");
+	} else if ("undefined" === typeof callback) {
+		throw new ReferenceError("missing 'callback' argument");
+	} else if ("function" !== typeof callback) {
+		throw new TypeError("'callback' argument is not a function");
+	} else {
+
+		fs.isDirectory(dir, (err, exists) => {
+
+			if (err) {
+				callback(err);
+			} else if (!exists) {
+				callback(new Error("'" + dir + "' is not a valid directory"));
+			} else {
+
+				fs.readdir(dir, (err, files) => {
+
+					if (err) {
+						callback(err);
+					} else {
+
+						_extractRealFiles(dir, files, [], (err, data) => {
+
+							if (err) {
+								callback(err);
+							} else {
+								callback(null, data);
+							}
+						});
+					}
+				});
+			}
+		});
+	}
+};
+
+// specific to "extractDirectoryRealFiles" method
+
+function _extractRealFiles(dir, givenFiles, realFiles, callback) {
+
+	if (0 >= givenFiles.length) {
+		callback(null, realFiles);
+	} else {
+
+		let file = path.join(dir, givenFiles.shift());
+
+		fs.isFile(file, (err, exists) => {
+
+			if (err) {
+				callback(err);
+			} else {
+
+				if (exists) {
+					realFiles.push(file);
+				}
+
+				_extractRealFiles(dir, givenFiles, realFiles, callback);
+			}
+		});
+	}
+}
+
 // directoryFilesToString
 
 // sync version
 
-fs.directoryFilesToStringSync = (dir, encoding, separator) => {
+fs.directoryFilesToStringSync = (directory, encoding, separator) => {
 
-	if ("string" !== typeof dir) {
-		throw new Error("This is not an array");
+	if ("undefined" === typeof directory) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof directory) {
+		throw new TypeError("'directory' argument is not a string");
 	} else {
 
 		encoding = "string" === typeof encoding ? encoding : null;
 		separator = "string" === typeof separator ? separator : "";
 
-		return fs.filesToStringSync(fs.extractDirectoryRealFilesSync(dir), encoding, separator);
+		return fs.filesToStringSync(fs.extractDirectoryRealFilesSync(directory), encoding, separator);
 	}
 };
 
 // async version
 
-fs.directoryFilesToString = (dir, encoding, separator, callback) => {
+fs.directoryFilesToString = (directory, encoding, separator, callback) => {
 
-	if (!callback) {
-
-		if (!separator) {
-			callback = "function" === typeof encoding ? encoding : () => {};
-		} else {
-			callback = "function" === typeof separator ? separator : () => {};
-		}
-	}
-
-	callback = "function" === typeof callback ? callback : () => {};
-	encoding = "string" === typeof encoding ? encoding : "utf8";
-	separator = "string" === typeof separator ? separator : "";
-
-	if ("string" !== typeof dir) {
-		callback("This is not a string");
+	if ("undefined" === typeof directory) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof directory) {
+		throw new TypeError("'directory' argument is not a string");
 	} else {
 
-		fs.extractDirectoryRealFilesProm(dir).then(files => {
-			return fs.filesToStringProm(files, encoding, separator);
-		}).then(content => {
-			callback(null, content);
-		}).catch(callback);
+		if (!callback) {
+
+			if (!separator) {
+				callback = "function" === typeof encoding ? encoding : () => {};
+			} else {
+				callback = "function" === typeof separator ? separator : () => {};
+			}
+		}
+
+		callback = "function" === typeof callback ? callback : () => {};
+		encoding = "string" === typeof encoding ? encoding : "utf8";
+		separator = "string" === typeof separator ? separator : "";
+
+		if ("string" !== typeof directory) {
+			callback("This is not a string");
+		} else {
+
+			fs.extractDirectoryRealFilesProm(directory).then(files => {
+				return fs.filesToStringProm(files, encoding, separator);
+			}).then(content => {
+				callback(null, content);
+			}).catch(callback);
+		}
 	}
 };
 
@@ -382,60 +432,6 @@ fs.directoryFilesToFileSync = (dir, targetPath, encoding, separator) => {
 
 			return fs.filesToFileSync(result, targetPath, encoding, separator);
 		}
-	}
-};
-
-// extractDirectoryRealFiles
-
-// async version
-
-fs.extractDirectoryRealFiles = (dir, callback) => {
-
-	callback = "function" === typeof callback ? callback : () => {};
-
-	fs.isDirectory(dir, (err, exists) => {
-
-		if (err) {
-			callback(err);
-		} else if (!exists) {
-			callback("This directory does not exist");
-		} else {
-
-			fs.readdir(dir, (err, files) => {
-
-				if (err) {
-					callback(err);
-				} else {
-
-					_extractRealFilesProm(dir, files).then(data => {
-						callback(null, data);
-					}).catch(callback);
-				}
-			});
-		}
-	});
-};
-
-// sync version
-
-fs.extractDirectoryRealFilesSync = dir => {
-
-	if (!fs.isDirectorySync(dir)) {
-		throw new Error("'" + dir + "' is not a valid directory");
-	} else {
-
-		let result = [];
-
-		fs.readdirSync(dir).forEach(file => {
-
-			file = path.join(dir, file);
-
-			if (fs.isFileSync(file)) {
-				result.push(file);
-			}
-		});
-
-		return result;
 	}
 };
 
