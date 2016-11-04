@@ -1,33 +1,55 @@
 "use strict";
 
-// deps
-
-	/*const 	path = require("path"),
+/*// deps
+	const 	path = require("path"),
 			assert = require("assert"),
 			
 			fs = require(path.join(__dirname, "..", "dist", "main.js"));
 
 // private
 
-	var _dirtestBase = path.join(__dirname, "testlvl1"),
-			_dirtest = path.join(_dirtestBase, "testlvl2", "testlvl3", "testlvl4"),
-		_filetest = path.join(__dirname, "test.txt"),
-		_filetest2 = path.join(__dirname, "test2.txt");*/
+	var _dirtest = path.join(__dirname, "testlvl1"),
+		_filetest = path.join(_dirtest, "test.txt"), _filetest2 = path.join(__dirname, "test2.txt");
 
 // tests
 
-/*
 describe("directoryFilesToFile", () => {
 
-	let directoryTests = path.join(__dirname, "test"),
-		test1 = path.join(directoryTests, "test1.txt"), test2 = path.join(directoryTests, "test2.txt");
+	before((done) => { fs.mkdir(_dirtest, done); });
+	after((done) => { fs.rmdir(_dirtest, done); });
 
 	describe("sync", () => {
 
-		before(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
-		after(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
+		before((done) => {
+			fs.writeFile(_filetest, "test", "utf8", done);
+		});
+
+		after((done) => {
+
+			fs.unlink(_filetest, (err) => {
+
+				if (err) {
+					done(err);
+				}
+				else {
+					fs.unlink(_filetest2, done);
+				}
+
+			});
+
+		});
+
+		it("should check missing value", () => {
+			assert.throws(() => { fs.directoryFilesToFileSync(); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.directoryFilesToFileSync("test"); }, ReferenceError, "check missing value does not throw an error");
+		});
 
 		it("should check invalid value", () => {
+			assert.throws(() => { fs.directoryFilesToFileSync(false, "test"); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.directoryFilesToFileSync("test", false); }, TypeError, "check invalid value does not throw an error");
+		});
+
+		/*it("should check invalid value", () => {
 			assert.throws(() => { fs.directoryFilesToFileSync(false, false); }, Error, "check invalid value does not throw an error");
 			assert.throws(() => { fs.directoryFilesToFileSync(directoryTests, false); }, Error, "not existing directory cannot be concatened");
 		});
@@ -48,7 +70,7 @@ describe("directoryFilesToFile", () => {
 
 	});
 
-	describe("async", () => {
+	/*describe("async", () => {
 
 		before(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
 		after(() => { return fs.rmdirpProm(directoryTests).then(() => { return fs.unlinkProm(_filetest); }); });
@@ -165,4 +187,5 @@ describe("directoryFilesToFile", () => {
 
 	});
 
-});*/
+});
+*/

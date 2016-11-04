@@ -508,74 +508,62 @@ function _concatContentStream(files, targetPath, separator, callback) {
 // have to improve tests
 
 
-/*
-
 // directoryFilesToString
 
-	// sync version
+// sync version
 
-	fs.directoryFilesToStringSync = (directory, encoding, separator) => {
+fs.directoryFilesToStringSync = (dir, encoding, separator) => {
 
-		if ("undefined" === typeof directory) {
-			throw new ReferenceError("missing 'directory' argument");
-		}
-			else if ("string" !== typeof directory) {
-				throw new TypeError("'directory' argument is not a string");
+	if ("undefined" === typeof dir) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof dir) {
+		throw new TypeError("'directory' argument is not a string");
+	} else {
+		return fs.filesToStringSync(fs.extractDirectoryRealFilesSync(dir), encoding, separator);
+	}
+};
+
+// async version
+
+fs.directoryFilesToString = (dir, encoding, separator, callback) => {
+
+	if ("undefined" === typeof dir) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof dir) {
+		throw new TypeError("'directory' argument is not a string");
+	} else if ("undefined" === typeof callback && "undefined" === typeof separator && "undefined" === typeof encoding) {
+		throw new ReferenceError("missing 'callback' argument");
+	} else if ("function" !== typeof callback && "function" !== typeof separator && "function" !== typeof encoding) {
+		throw new TypeError("'callback' argument is not a function");
+	} else {
+
+		if ("undefined" === typeof callback) {
+
+			if ("undefined" === typeof separator) {
+				callback = encoding;
+			} else {
+				callback = separator;
 			}
-		else {
-
-			encoding = ("string" === typeof encoding) ? encoding : null;
-			separator = ("string" === typeof separator) ? separator : "";
-
-			return fs.filesToStringSync(fs.extractDirectoryRealFilesSync(directory), encoding, separator);
-
-		}
-
-	};
-
-	// async version
-
-	fs.directoryFilesToString = (directory, encoding, separator, callback) => {
-
-		if ("undefined" === typeof directory) {
-			throw new ReferenceError("missing 'directory' argument");
-		}
-			else if ("string" !== typeof directory) {
-				throw new TypeError("'directory' argument is not a string");
-			}
-		else {
-
-			if (!callback) {
-
-				if (!separator) {
-					callback = ("function" === typeof encoding) ? encoding : () => {};
-				}
-				else {
-					callback = ("function" === typeof separator) ? separator : () => {};
-				}
-				
-			}
-
-			callback = ("function" === typeof callback) ? callback : () => {};
-			encoding = ("string" === typeof encoding) ? encoding : "utf8";
-			separator = ("string" === typeof separator) ? separator : "";
-
-			if ("string" !== typeof directory) {
-				callback("This is not a string");
-			}
-			else {
-
-				fs.extractDirectoryRealFilesProm(directory).then((files) => {
-					return fs.filesToStringProm(files, encoding, separator);
-				}).then((content) => {
-					callback(null, content);
-				}).catch(callback);
-
-			}
-			
 		}
 
-	};*/
+		fs.extractDirectoryRealFiles(dir, (err, files) => {
+
+			if (err) {
+				callback(err);
+			} else {
+
+				fs.filesToString(files, encoding, separator, (err, content) => {
+
+					if (err) {
+						callback(err);
+					} else {
+						callback(null, content);
+					}
+				});
+			}
+		});
+	}
+};
 
 /*
 		// directoryFilesToFile

@@ -1,6 +1,6 @@
 "use strict";
 
-/*// deps
+// deps
 
 	const 	path = require("path"),
 			assert = require("assert"),
@@ -9,7 +9,8 @@
 
 // private
 
-	var _dirtest = path.join(__dirname, "testlvl1"), _filetest = path.join(_dirtest, "test.txt");
+	var _dirtest = path.join(__dirname, "testlvl1"), _dirtest2 = path.join(__dirname, "testlvl2"),
+		_filetest = path.join(_dirtest, "test.txt");
 
 // tests
 
@@ -20,8 +21,35 @@ describe("directoryFilesToString", () => {
 
 	describe("sync", () => {
 
-		before((done) => { fs.writeFile(_filetest, done); });
-		after((done) => { fs.unlink(_filetest, done); });
+		before((done) => {
+
+			fs.writeFile(_filetest, "test", "utf8", (err) => {
+
+				if (err) {
+					done(err);
+				}
+				else {
+					fs.mkdir(_dirtest2, done);
+				}
+
+			});
+
+		});
+
+		after((done) => {
+
+			fs.unlink(_filetest, (err) => {
+
+				if (err) {
+					done(err);
+				}
+				else {
+					fs.rmdir(_dirtest2, done);
+				}
+
+			});
+
+		});
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.directoryFilesToStringSync(); }, ReferenceError, "check missing value does not throw an error");
@@ -39,47 +67,123 @@ describe("directoryFilesToString", () => {
 			assert.throws(() => { fs.directoryFilesToStringSync("rgvservseqrvserv"); }, "wrong \"directory\" does not throw an error");
 		});
 
-		/*it("should concat nothing", () => {
-			assert.throws(() => { fs.directoryFilesToStringSync(_dirtest); }, Error, "not existing directory cannot be concatened");
+		it("should concat nothing", () => {
+			assert.strictEqual("", fs.directoryFilesToStringSync(_dirtest2), "empty directory cannot be concatened");
 		});
 
 		it("should concat test files", () => {
-			fs.mkdirpSync(_dirtest);
 			assert.strictEqual("string", typeof fs.directoryFilesToStringSync(_dirtest, "utf8"), "test files cannot be concatened");
+		});
+
+		it("should concat test files with pattern", () => {
+			assert.strictEqual(" -- [test.txt] -- test", fs.directoryFilesToStringSync(_dirtest, "utf8", " -- [{{filename}}] -- "), "test files with pattern cannot be concatened");
 		});
 
 	});
 
 	describe("async", () => {
 
-		before((done) => { fs.writeFile(_filetest, done); });
-		after((done) => { fs.unlink(_filetest, done); });
+		before((done) => {
 
-		/*it("should check invalid value", (done) => {
+			fs.writeFile(_filetest, "test", "utf8", (err) => {
 
-			fs.directoryFilesToString(false, (err) => {
-				assert.notStrictEqual(null, err, "check invalid value does not generate an error");
-				done();
+				if (err) {
+					done(err);
+				}
+				else {
+					fs.mkdir(_dirtest2, done);
+				}
+
 			});
 
 		});
 
+		after((done) => {
+			
+			fs.unlink(_filetest, (err) => {
+
+				if (err) {
+					done(err);
+				}
+				else {
+					fs.rmdir(_dirtest2, done);
+				}
+
+			});
+
+		});
+
+		it("should check missing value", () => {
+			assert.throws(() => { fs.directoryFilesToString(); }, ReferenceError, "check missing value does not throw an error");
+		});
+
+		it("should check invalid value", () => {
+			assert.throws(() => { fs.directoryFilesToString(false); }, TypeError, "check invalid value does not throw an error");
+		});
+
+		it("should check empty content value", () => {
+			assert.throws(() => { fs.directoryFilesToString(""); }, Error, "check empty content value does not throw an error");
+		});
+
+		it("should check inexistant directory", () => {
+			assert.throws(() => { fs.directoryFilesToString("rgvservseqrvserv"); }, "wrong \"directory\" does not throw an error");
+		});
+
 		it("should concat nothing", (done) => {
 
-			fs.directoryFilesToString(_dirtest, (err) => {
-				assert.strictEqual("This directory does not exist", err, "not existing directory cannot be concatened");
-				done();
+			fs.directoryFilesToString(_dirtest2, (err, content) => {
+
+				if (err) {
+					done(err);
+				}
+				else {
+
+					assert.strictEqual("string", typeof content, "empty directory cannot be concatened");
+					assert.strictEqual("", content, "empty directory cannot be concatened");
+
+					done();
+
+				}
+
 			});
 
 		});
 
 		it("should concat test files", (done) => {
 
-			fs.directoryFilesToString(__dirname, (err, data) => {
+			fs.directoryFilesToString(_dirtest, (err, content) => {
 
-				assert.strictEqual(null, err, "concat test files generate an error");
-				assert.strictEqual("string", typeof data, "test files cannot be concatened");
-				done();
+				if (err) {
+					done(err);
+				}
+				else {
+					
+					assert.strictEqual("string", typeof content, "test files cannot be concatened");
+					assert.strictEqual("test", content, "test files cannot be concatened");
+
+					done();
+
+				}
+
+			});
+
+		});
+
+		it("should concat test files with pattern", (done) => {
+
+			fs.directoryFilesToString(_dirtest, "utf8", " -- [{{filename}}] -- ", (err, content) => {
+
+				if (err) {
+					done(err);
+				}
+				else {
+					
+					assert.strictEqual("string", typeof content, "test files with pattern cannot be concatened");
+					assert.strictEqual(" -- [test.txt] -- test", content, "test files with pattern cannot be concatened");
+
+					done();
+
+				}
 
 			});
 
@@ -87,7 +191,7 @@ describe("directoryFilesToString", () => {
 
 	});
 
-	describe("promise", () => {
+	/*describe("promise", () => {
 
 		before((done) => { fs.writeFile(_filetest, done); });
 		after((done) => { fs.unlink(_filetest, done); });
@@ -152,7 +256,6 @@ describe("directoryFilesToString", () => {
 
 		});
 
-	});
+	});*/
 
 });
-*/

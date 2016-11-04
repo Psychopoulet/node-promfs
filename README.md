@@ -1,6 +1,5 @@
 # node-promfs
-'fs' object extension & promisification
-
+'fs' object native extensions & promisifications
 
 ## Installation
 
