@@ -71,12 +71,12 @@ describe("directoryFilesToString", () => {
 			assert.strictEqual("", fs.directoryFilesToStringSync(_dirtest2), "empty directory cannot be concatened");
 		});
 
-		it("should concat test files", () => {
-			assert.strictEqual("string", typeof fs.directoryFilesToStringSync(_dirtest, "utf8"), "test files cannot be concatened");
+		it("should concat test directory files", () => {
+			assert.strictEqual("string", typeof fs.directoryFilesToStringSync(_dirtest, "utf8"), "test directory files cannot be concatened");
 		});
 
-		it("should concat test files with pattern", () => {
-			assert.strictEqual(" -- [test.txt] -- test", fs.directoryFilesToStringSync(_dirtest, "utf8", " -- [{{filename}}] -- "), "test files with pattern cannot be concatened");
+		it("should concat test directory files with pattern", () => {
+			assert.strictEqual(" -- [test.txt] -- test", fs.directoryFilesToStringSync(_dirtest, "utf8", " -- [{{filename}}] -- "), "test directory files with pattern cannot be concatened");
 		});
 
 	});
@@ -149,7 +149,7 @@ describe("directoryFilesToString", () => {
 
 		});
 
-		it("should concat test files", (done) => {
+		it("should concat test directory files", (done) => {
 
 			fs.directoryFilesToString(_dirtest, (err, content) => {
 
@@ -158,8 +158,8 @@ describe("directoryFilesToString", () => {
 				}
 				else {
 					
-					assert.strictEqual("string", typeof content, "test files cannot be concatened");
-					assert.strictEqual("test", content, "test files cannot be concatened");
+					assert.strictEqual("string", typeof content, "test directory files cannot be concatened");
+					assert.strictEqual("test", content, "test directory files cannot be concatened");
 
 					done();
 
@@ -169,7 +169,7 @@ describe("directoryFilesToString", () => {
 
 		});
 
-		it("should concat test files with pattern", (done) => {
+		it("should concat test directory files with pattern", (done) => {
 
 			fs.directoryFilesToString(_dirtest, "utf8", " -- [{{filename}}] -- ", (err, content) => {
 
@@ -178,8 +178,8 @@ describe("directoryFilesToString", () => {
 				}
 				else {
 					
-					assert.strictEqual("string", typeof content, "test files with pattern cannot be concatened");
-					assert.strictEqual(" -- [test.txt] -- test", content, "test files with pattern cannot be concatened");
+					assert.strictEqual("string", typeof content, "test directory files with pattern cannot be concatened");
+					assert.strictEqual(" -- [test.txt] -- test", content, "test directory files with pattern cannot be concatened");
 
 					done();
 
@@ -191,71 +191,92 @@ describe("directoryFilesToString", () => {
 
 	});
 
-	/*describe("promise", () => {
+	describe("promise", () => {
 
-		before((done) => { fs.writeFile(_filetest, done); });
-		after((done) => { fs.unlink(_filetest, done); });
+		before((done) => {
 
-		/*let directoryTests = path.join(__dirname, "test"),
-			test1 = path.join(directoryTests, "test1.txt"), test2 = path.join(directoryTests, "test2.txt");
+			fs.writeFile(_filetest, "test", "utf8", (err) => {
 
-		before(() => { return fs.rmdirpProm(directoryTests); });
-		after(() => { return fs.rmdirpProm(directoryTests); });
+				if (err) {
+					done(err);
+				}
+				else {
+					fs.mkdir(_dirtest2, done);
+				}
+
+			});
+
+		});
+
+		after((done) => {
+			
+			fs.unlink(_filetest, (err) => {
+
+				if (err) {
+					done(err);
+				}
+				else {
+					fs.rmdir(_dirtest2, done);
+				}
+
+			});
+
+		});
+
+		it("should check missing value", (done) => {
+
+			fs.directoryFilesToStringProm().then(() => {
+				done("check missing value does not generate an error");
+			}).catch((err) => {
+
+				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
+				done();
+
+			});
+
+		});
 
 		it("should check invalid value", (done) => {
 
 			fs.directoryFilesToStringProm(false).then(() => {
-				assert(false, "check invalid value does not generate an error");
-				done();
+				done("check invalid value does not generate an error");
 			}).catch((err) => {
-				assert.strictEqual("string", typeof err, "check invalid value does not generate a valid error");
+
+				assert.strictEqual(true, err instanceof TypeError, "check invalid value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check invalid value does not generate a valid error");
+
 				done();
-			});
-
-		});
-
-		it("should concat nothing", (done) => {
-
-			fs.directoryFilesToStringProm(directoryTests).then((data) => {
-				assert.strictEqual("", data, "should concat nothing does not generate an error");
-				done();
-			}).catch((err) => {
-				assert.strictEqual("string", typeof err, "should concat nothing does not generate a valid error");
-				done();
-			});
-
-		});
-
-		it("should concat test one file", () => {
-
-			return fs.mkdirpProm(directoryTests).then(() => {
-				return fs.writeFileProm(test1, "test");
-			}).then(() => {
-				return fs.directoryFilesToStringProm(directoryTests, "utf8", "<>");
-			}).then((data) => {
-
-				assert.strictEqual("string", typeof data, "test files cannot be concatened");
-				assert.strictEqual("test", data, "test files cannot be concatened");
 
 			});
 
 		});
 
-		it("should concat test all files", () => {
+		it("should concat nothing", () => {
 
-			return fs.mkdirpProm(directoryTests).then(() => {
-				return fs.writeFileProm(test2, "test");
-			}).then(() => {
-				return fs.directoryFilesToStringProm(directoryTests, "utf8", "<>");
-			}).then((data) => {
-
-				assert.strictEqual("string", typeof data, "test files cannot be concatened");
-				assert.strictEqual("test<>test", data, "test files cannot be concatened");
-
+			return fs.directoryFilesToStringProm(_dirtest2).then((data) => {
+				assert.strictEqual("", data, "empty array cannot be concatened");
 			});
 
 		});
 
-	});*/
+		it("should concat test directory files", () => {
+
+			return fs.directoryFilesToStringProm(_dirtest).then((data) => {
+				assert.strictEqual("test", data, "test directory files cannot be concatened");
+			});
+
+		});
+
+		it("should concat test directory files with pattern", () => {
+
+			return fs.directoryFilesToStringProm(_dirtest, "utf8", " -- [{{filename}}] -- ").then((data) => {
+				assert.strictEqual(" -- [test.txt] -- test", data, "test directory files with pattern cannot be concatened");
+			});
+
+		});
+
+	});
 
 });

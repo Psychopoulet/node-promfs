@@ -1,15 +1,16 @@
 "use strict";
 
-/*// deps
+// deps
+
 	const 	path = require("path"),
-			assert = require("assert"),
+			//assert = require("assert"),
 			
 			fs = require(path.join(__dirname, "..", "dist", "main.js"));
 
 // private
 
-	var _dirtest = path.join(__dirname, "testlvl1"),
-		_filetest = path.join(_dirtest, "test.txt"), _filetest2 = path.join(__dirname, "test2.txt");
+	var _dirtest = path.join(__dirname, "testlvl1")/*,
+		_filetest = path.join(_dirtest, "test.txt"), _filetest2 = path.join(__dirname, "test2.txt"), _filetest3 = path.join(__dirname, "test3.txt")*/;
 
 // tests
 
@@ -18,7 +19,7 @@ describe("directoryFilesToFile", () => {
 	before((done) => { fs.mkdir(_dirtest, done); });
 	after((done) => { fs.rmdir(_dirtest, done); });
 
-	describe("sync", () => {
+	/*describe("sync", () => {
 
 		before((done) => {
 			fs.writeFile(_filetest, "test", "utf8", done);
@@ -185,7 +186,6 @@ describe("directoryFilesToFile", () => {
 
 		});
 
-	});
+	});*/
 
 });
-*/

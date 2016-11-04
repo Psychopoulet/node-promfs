@@ -505,9 +505,6 @@ function _concatContentStream(files, targetPath, separator, callback) {
 	}
 }
 
-// have to improve tests
-
-
 // directoryFilesToString
 
 // sync version
@@ -565,54 +562,70 @@ fs.directoryFilesToString = (dir, encoding, separator, callback) => {
 	}
 };
 
+// have to improve tests
+
+
+// directoryFilesToFile
+
+// sync version
+
+fs.directoryFilesToFileSync = (dir, targetPath, encoding, separator) => {
+
+	if ("string" !== typeof dir) {
+		throw new Error("This is not an array");
+	} else {
+
+		encoding = "string" === typeof encoding ? encoding : null;
+		separator = "string" === typeof separator ? separator : "";
+
+		let files = fs.readdirSync(dir);
+
+		if (0 >= files.length) {
+			return fs.filesToFileSync([], targetPath, encoding, separator);
+		} else {
+
+			let result = [];
+
+			files.forEach(file => {
+
+				file = path.join(dir, file);
+
+				if (!fs.isFileSync(file)) {
+					throw new Error("\"" + file + "\" does not exist");
+				} else {
+					result.push(file);
+				}
+			});
+
+			return fs.filesToFileSync(result, targetPath, encoding, separator);
+		}
+	}
+};
+
+// async version
+
+fs.directoryFilesToFile = (dir, targetPath, separator, callback) => {
+
+	if (!callback) {
+		callback = "function" === typeof separator ? separator : () => {};
+	}
+
+	callback = "function" === typeof callback ? callback : () => {};
+	separator = "string" === typeof separator ? separator : " ";
+
+	if ("string" !== typeof dir) {
+		callback("\"files\" is not an array");
+	} else if ("string" !== typeof targetPath) {
+		callback("\"targetPath\" is not a string");
+	} else {
+
+		fs.extractDirectoryRealFilesProm(dir).then(files => {
+			fs.filesToFile(files, targetPath, separator, callback);
+		}).catch(callback);
+	}
+};
+
 /*
-		// directoryFilesToFile
-			// async version
-			fs.directoryFilesToFile = (dir, targetPath, separator, callback) => {
-				if (!callback) {
-			callback = ("function" === typeof separator) ? separator : () => {};
-		}
-				callback = ("function" === typeof callback) ? callback : () => {};
-		separator = ("string" === typeof separator) ? separator : " ";
-				if ("string" !== typeof dir) {
-			callback("\"files\" is not an array");
-		}
-		else if ("string" !== typeof targetPath) {
-			callback("\"targetPath\" is not a string");
-		}
-		else {
-					fs.extractDirectoryRealFilesProm(dir).then((files) => {
-				fs.filesToFile(files, targetPath, separator, callback);
-			}).catch(callback);
-				}
-			};
-			// sync version
-			fs.directoryFilesToFileSync = (dir, targetPath, encoding, separator) => {
-				if ("string" !== typeof dir) {
-			throw new Error("This is not an array");
-		}
-		else {
-					encoding = ("string" === typeof encoding) ? encoding : null;
-			separator = ("string" === typeof separator) ? separator : "";
-					let files = fs.readdirSync(dir);
-					if (0 >= files.length) {
-				return fs.filesToFileSync([], targetPath, encoding, separator);
-			}
-			else {
-						let result = [];
-							files.forEach((file) => {
-								file = path.join(dir, file);
-								if (!fs.isFileSync(file)) {
-							throw new Error("\"" + file + "\" does not exist");
-						}
-						else {
-							result.push(file);
-						}
-							});
-						return fs.filesToFileSync(result, targetPath, encoding, separator);
-					}
-				}
-			};
 	// mkdirp
 
 // async version
