@@ -16,24 +16,33 @@
 
 describe("copy", () => {
 
+	before(() => {
+		
+		if (!fs.isFileSync(_filetest)) {
+			fs.writeFileSync(_filetest, "test", "utf8");
+		}
+
+	});
+
+	after(() => {
+
+		if (fs.isFileSync(_filetest)) {
+			fs.unlinkSync(_filetest);
+		}
+
+		if (fs.isFileSync(_filetest2)) {
+			fs.unlinkSync(_filetest2);
+		}
+
+	});
+
 	describe("sync", () => {
 
-		before((done) => {
-			fs.writeFile(_filetest, "test", done);
-		});
+		afterEach(() => {
 
-		after((done) => {
-
-			fs.unlink(_filetest, (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.unlink(_filetest2, done);
-				}
-
-			});
+			if (fs.isFileSync(_filetest2)) {
+				fs.unlinkSync(_filetest2);
+			}
 
 		});
 
@@ -64,22 +73,11 @@ describe("copy", () => {
 
 	describe("async", () => {
 
-		before((done) => {
-			fs.writeFile(_filetest, "test", done);
-		});
+		afterEach(() => {
 
-		after((done) => {
-
-			fs.unlink(_filetest, (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.unlink(_filetest2, done);
-				}
-
-			});
+			if (fs.isFileSync(_filetest2)) {
+				fs.unlinkSync(_filetest2);
+			}
 
 		});
 
@@ -131,22 +129,11 @@ describe("copy", () => {
 
 	describe("promise", () => {
 
-		before((done) => {
-			fs.writeFile(_filetest, "test", done);
-		});
+		afterEach(() => {
 
-		after((done) => {
-
-			fs.unlink(_filetest, (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.unlink(_filetest2, done);
-				}
-
-			});
+			if (fs.isFileSync(_filetest2)) {
+				fs.unlinkSync(_filetest2);
+			}
 
 		});
 

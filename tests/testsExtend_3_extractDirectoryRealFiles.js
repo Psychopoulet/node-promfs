@@ -15,13 +15,33 @@
 
 describe("extractDirectoryRealFiles", () => {
 
-	before((done) => { fs.mkdir(_dirtest, done); });
-	after((done) => { fs.rmdir(_dirtest, done); });
+	before(() => {
+
+		if (!fs.isDirectorySync(_dirtest)) {
+			fs.mkdirSync(_dirtest);
+		}
+
+		if (!fs.isFileSync(_filetest)) {
+			fs.writeFileSync(_filetest, "test", "utf8");
+		}
+
+	});
+
+	after(() => {
+
+		if (fs.isDirectorySync(_dirtest)) {
+
+			if (fs.isFileSync(_filetest)) {
+				fs.unlinkSync(_filetest);
+			}
+
+			fs.rmdirSync(_dirtest);
+
+		}
+
+	});
 
 	describe("sync", () => {
-
-		before((done) => { fs.writeFile(_filetest, done); });
-		after((done) => { fs.unlink(_filetest, done); });
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.extractDirectoryRealFilesSync(); }, ReferenceError, "check missing value does not throw an error");
@@ -58,9 +78,6 @@ describe("extractDirectoryRealFiles", () => {
 	});
 
 	describe("async", () => {
-
-		before((done) => { fs.writeFile(_filetest, done); });
-		after((done) => { fs.unlink(_filetest, done); });
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.extractDirectoryRealFiles(); }, ReferenceError, "check missing value does not throw an error");
@@ -138,9 +155,6 @@ describe("extractDirectoryRealFiles", () => {
 	});
 
 	describe("promise", () => {
-
-		before((done) => { fs.writeFile(_filetest, done); });
-		after((done) => { fs.unlink(_filetest, done); });
 
 		it("should check missing value", (done) => {
 

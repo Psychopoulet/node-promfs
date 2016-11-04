@@ -16,40 +16,41 @@
 
 describe("directoryFilesToString", () => {
 
-	before((done) => { fs.mkdir(_dirtest, done); });
-	after((done) => { fs.rmdir(_dirtest, done); });
+	before(() => {
+
+		if (!fs.isDirectorySync(_dirtest)) {
+			fs.mkdirSync(_dirtest);
+		}
+
+		if (!fs.isFileSync(_filetest)) {
+			fs.writeFileSync(_filetest, "test", "utf8");
+		}
+
+		if (!fs.isDirectorySync(_dirtest2)) {
+			fs.mkdirSync(_dirtest2);
+		}
+
+	});
+
+	after(() => {
+
+		if (fs.isDirectorySync(_dirtest2)) {
+			fs.rmdirSync(_dirtest2);
+		}
+
+		if (fs.isDirectorySync(_dirtest)) {
+
+			if (fs.isFileSync(_filetest)) {
+				fs.unlinkSync(_filetest);
+			}
+
+			fs.rmdirSync(_dirtest);
+
+		}
+
+	});
 
 	describe("sync", () => {
-
-		before((done) => {
-
-			fs.writeFile(_filetest, "test", "utf8", (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.mkdir(_dirtest2, done);
-				}
-
-			});
-
-		});
-
-		after((done) => {
-
-			fs.unlink(_filetest, (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.rmdir(_dirtest2, done);
-				}
-
-			});
-
-		});
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.directoryFilesToStringSync(); }, ReferenceError, "check missing value does not throw an error");
@@ -82,36 +83,6 @@ describe("directoryFilesToString", () => {
 	});
 
 	describe("async", () => {
-
-		before((done) => {
-
-			fs.writeFile(_filetest, "test", "utf8", (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.mkdir(_dirtest2, done);
-				}
-
-			});
-
-		});
-
-		after((done) => {
-			
-			fs.unlink(_filetest, (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.rmdir(_dirtest2, done);
-				}
-
-			});
-
-		});
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.directoryFilesToString(); }, ReferenceError, "check missing value does not throw an error");
@@ -192,36 +163,6 @@ describe("directoryFilesToString", () => {
 	});
 
 	describe("promise", () => {
-
-		before((done) => {
-
-			fs.writeFile(_filetest, "test", "utf8", (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.mkdir(_dirtest2, done);
-				}
-
-			});
-
-		});
-
-		after((done) => {
-			
-			fs.unlink(_filetest, (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.rmdir(_dirtest2, done);
-				}
-
-			});
-
-		});
 
 		it("should check missing value", (done) => {
 

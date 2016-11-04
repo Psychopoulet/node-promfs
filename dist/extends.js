@@ -110,16 +110,39 @@ fs.copy = (origin, target, callback) => {
 
 function _copyStream(origin, target, callback) {
 
-	let readStream = fs.createReadStream(origin);
+	let readStream = fs.createReadStream(origin),
+		writeStream = fs.createWriteStream(target),
+		error = false;
 
-	readStream.on("error", err => {
+	writeStream.once("error", err => {
+
+		error = true;
+
+		readStream.close();
+		writeStream.close();
+
 		callback(err);
+	}).once("close", () => {
+
+		if (!error) {
+			callback(null);
+		}
 	});
 
-	readStream.on("open", () => {
-		readStream.pipe(fs.createWriteStream(target));
-	}).on("end", () => {
-		callback(null);
+	readStream.once("error", err => {
+
+		error = true;
+
+		readStream.close();
+		writeStream.close();
+
+		callback(err);
+	}).once("open", () => {
+		readStream.pipe(writeStream);
+	}).once("close", () => {
+		writeStream.close();
+	}).once("end", () => {
+		readStream.close();
 	});
 }
 
@@ -341,55 +364,60 @@ function _readContent(files, encoding, separator, content, callback) {
 
 // sync version
 
-fs.filesToFileSync = (files, targetPath, separator) => {
+fs.filesToFileSync = (files, target, separator) => {
 
 	if ("undefined" === typeof files) {
 		throw new ReferenceError("missing 'files' argument");
 	} else if ("object" !== typeof files || !(files instanceof Array)) {
 		throw new TypeError("'files' argument is not an Array");
-	} else if ("undefined" === typeof targetPath) {
-		throw new ReferenceError("missing 'targetPath' argument");
-	} else if ("string" !== typeof targetPath) {
-		throw new TypeError("'targetPath' argument is not a string");
+	} else if ("undefined" === typeof target) {
+		throw new ReferenceError("missing 'target' argument");
+	} else if ("string" !== typeof target) {
+		throw new TypeError("'target' argument is not a string");
 	} else {
 
-		targetPath = targetPath.trim();
+		target = target.trim();
 
-		separator = "string" === typeof separator ? separator : " ";
+		if ("" === target) {
+			throw new Error("'target' argument is empty");
+		} else {
 
-		if (fs.isFileSync(targetPath)) {
-			fs.unlinkSync(targetPath);
-		}
+			separator = "string" === typeof separator ? separator : " ";
 
-		fs.writeFileSync(targetPath, "");
-
-		files.forEach((file, key) => {
-
-			file = file.trim();
-
-			if (!fs.isFileSync(file)) {
-				throw new Error("\"" + file + "\" does not exist");
-			} else if (-1 < separator.indexOf("{{filename}}")) {
-				fs.appendFileSync(targetPath, separator.replace("{{filename}}", path.basename(file)) + fs.readFileSync(file));
-			} else {
-				fs.appendFileSync(targetPath, 0 < key ? separator + fs.readFileSync(file) : fs.readFileSync(file));
+			if (fs.isFileSync(target)) {
+				fs.unlinkSync(target);
 			}
-		});
+
+			fs.writeFileSync(target, "");
+
+			files.forEach((file, key) => {
+
+				file = file.trim();
+
+				if (!fs.isFileSync(file)) {
+					throw new Error("\"" + file + "\" does not exist");
+				} else if (-1 < separator.indexOf("{{filename}}")) {
+					fs.appendFileSync(target, separator.replace("{{filename}}", path.basename(file)) + fs.readFileSync(file));
+				} else {
+					fs.appendFileSync(target, 0 < key ? separator + fs.readFileSync(file) : fs.readFileSync(file));
+				}
+			});
+		}
 	}
 };
 
 // async version
 
-fs.filesToFile = (files, targetPath, separator, callback) => {
+fs.filesToFile = (files, target, separator, callback) => {
 
 	if ("undefined" === typeof files) {
 		throw new ReferenceError("missing 'files' argument");
 	} else if ("object" !== typeof files || !(files instanceof Array)) {
 		throw new TypeError("'files' argument is not an Array");
-	} else if ("undefined" === typeof targetPath) {
-		throw new ReferenceError("missing 'targetPath' argument");
-	} else if ("string" !== typeof targetPath) {
-		throw new TypeError("'targetPath' argument is not a string");
+	} else if ("undefined" === typeof target) {
+		throw new ReferenceError("missing 'target' argument");
+	} else if ("string" !== typeof target) {
+		throw new TypeError("'target' argument is not a string");
 	} else if ("undefined" === typeof callback && "undefined" === typeof separator) {
 		throw new ReferenceError("missing 'callback' argument");
 	} else if ("function" !== typeof callback && "function" !== typeof separator) {
@@ -400,21 +428,39 @@ fs.filesToFile = (files, targetPath, separator, callback) => {
 			callback = separator;
 		}
 
-		targetPath = targetPath.trim();
+		target = target.trim();
 
-		separator = "string" === typeof separator ? separator : " ";
+		if ("" === target) {
+			throw new Error("'target' argument is empty");
+		} else {
 
-		new Promise((resolve, reject) => {
+			separator = "string" === typeof separator ? separator : " ";
 
-			fs.isFile(targetPath, (err, exists) => {
+			new Promise((resolve, reject) => {
 
-				if (err) {
-					reject(err);
-				} else if (!exists) {
-					resolve();
-				} else {
+				fs.isFile(target, (err, exists) => {
 
-					fs.unlink(targetPath, err => {
+					if (err) {
+						reject(err);
+					} else if (!exists) {
+						resolve();
+					} else {
+
+						fs.unlink(target, err => {
+
+							if (err) {
+								reject(err);
+							} else {
+								resolve();
+							}
+						});
+					}
+				});
+			}).then(() => {
+
+				return new Promise((resolve, reject) => {
+
+					fs.writeFile(target, "", err => {
 
 						if (err) {
 							reject(err);
@@ -422,31 +468,18 @@ fs.filesToFile = (files, targetPath, separator, callback) => {
 							resolve();
 						}
 					});
-				}
-			});
-		}).then(() => {
-
-			return new Promise((resolve, reject) => {
-
-				fs.writeFile(targetPath, "", err => {
-
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
 				});
-			});
-		}).then(() => {
+			}).then(() => {
 
-			_concatContentStream(files, targetPath, separator, callback);
-		}).catch(callback);
+				_concatContentStream(files, target, separator, callback);
+			}).catch(callback);
+		}
 	}
 };
 
 // specific to "filesToFile" method
 
-function _concatContentStream(files, targetPath, separator, callback) {
+function _concatContentStream(files, target, separator, callback) {
 
 	if (0 >= files.length) {
 		callback(null);
@@ -454,51 +487,78 @@ function _concatContentStream(files, targetPath, separator, callback) {
 
 		let file = files.shift().trim();
 
-		fs.isFile(file, err => {
+		fs.isFile(file, (err, exists) => {
 
 			if (err) {
 				callback(err);
+			} else if (!exists) {
+				callback(new Error("\"" + file + "\" is not a valid file"));
 			} else {
 
-				let readStream = fs.createReadStream(file).on("error", err => {
+				let readStream = fs.createReadStream(file),
+					writeStream = fs.createWriteStream(target, { flags: "a" }),
+					error = false;
+
+				writeStream.once("error", err => {
+
+					error = true;
+
+					readStream.close();
+					writeStream.close();
+
 					callback(err);
+				}).once("close", () => {
+
+					if (!error) {
+
+						if (0 >= files.length) {
+							callback(null);
+						} else {
+
+							if (-1 < separator.indexOf("{{filename}}")) {
+								_concatContentStream(files, target, separator, callback);
+							} else {
+
+								fs.appendFile(target, separator, err => {
+
+									if (err) {
+										callback(err);
+									} else {
+										_concatContentStream(files, target, separator, callback);
+									}
+								});
+							}
+						}
+					}
 				});
 
-				readStream.on("open", () => {
+				readStream.once("error", err => {
+
+					error = true;
+
+					readStream.close();
+					writeStream.close();
+
+					callback(err);
+				}).once("open", () => {
 
 					if (-1 >= separator.indexOf("{{filename}}")) {
-						readStream.pipe(fs.createWriteStream(targetPath, { flags: "a" }));
+						readStream.pipe(writeStream);
 					} else {
 
-						fs.appendFile(targetPath, separator.replace("{{filename}}", path.basename(file)), err => {
+						fs.appendFile(target, separator.replace("{{filename}}", path.basename(file)), err => {
 
 							if (err) {
 								callback(err);
 							} else {
-								readStream.pipe(fs.createWriteStream(targetPath, { flags: "a" }));
+								readStream.pipe(writeStream);
 							}
 						});
 					}
-				}).on("end", () => {
-
-					if (0 >= files.length) {
-						callback(null);
-					} else {
-
-						if (-1 < separator.indexOf("{{filename}}")) {
-							_concatContentStream(files, targetPath, separator, callback);
-						} else {
-
-							fs.appendFile(targetPath, separator, err => {
-
-								if (err) {
-									callback(err);
-								} else {
-									_concatContentStream(files, targetPath, separator, callback);
-								}
-							});
-						}
-					}
+				}).once("close", () => {
+					writeStream.close();
+				}).once("end", () => {
+					readStream.close();
 				});
 			}
 		});
@@ -562,210 +622,296 @@ fs.directoryFilesToString = (dir, encoding, separator, callback) => {
 	}
 };
 
-// have to improve tests
-
-
 // directoryFilesToFile
 
 // sync version
 
-fs.directoryFilesToFileSync = (dir, targetPath, encoding, separator) => {
+fs.directoryFilesToFileSync = (dir, target, separator) => {
 
-	if ("string" !== typeof dir) {
-		throw new Error("This is not an array");
+	if ("undefined" === typeof dir) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof dir) {
+		throw new TypeError("'directory' argument is not a string");
+	} else if ("undefined" === typeof target) {
+		throw new ReferenceError("missing 'target' argument");
+	} else if ("string" !== typeof target) {
+		throw new TypeError("'target' argument is not a string");
 	} else {
 
-		encoding = "string" === typeof encoding ? encoding : null;
-		separator = "string" === typeof separator ? separator : "";
+		target = target.trim();
 
-		let files = fs.readdirSync(dir);
-
-		if (0 >= files.length) {
-			return fs.filesToFileSync([], targetPath, encoding, separator);
+		if ("" === target) {
+			throw new Error("'target' argument is empty");
 		} else {
 
-			let result = [];
-
-			files.forEach(file => {
-
-				file = path.join(dir, file);
-
-				if (!fs.isFileSync(file)) {
-					throw new Error("\"" + file + "\" does not exist");
-				} else {
-					result.push(file);
-				}
-			});
-
-			return fs.filesToFileSync(result, targetPath, encoding, separator);
+			return fs.filesToFileSync(fs.extractDirectoryRealFilesSync(dir), target, separator);
 		}
 	}
 };
 
+// have to improve tests
+
+
 // async version
 
-fs.directoryFilesToFile = (dir, targetPath, separator, callback) => {
+fs.directoryFilesToFile = (dir, target, separator, callback) => {
 
-	if (!callback) {
-		callback = "function" === typeof separator ? separator : () => {};
-	}
-
-	callback = "function" === typeof callback ? callback : () => {};
-	separator = "string" === typeof separator ? separator : " ";
-
-	if ("string" !== typeof dir) {
-		callback("\"files\" is not an array");
-	} else if ("string" !== typeof targetPath) {
-		callback("\"targetPath\" is not a string");
+	if ("undefined" === typeof dir) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof dir) {
+		throw new TypeError("'directory' argument is not a string");
+	} else if ("undefined" === typeof target) {
+		throw new ReferenceError("missing 'target' argument");
+	} else if ("string" !== typeof target) {
+		throw new TypeError("'target' argument is not a string");
+	} else if ("undefined" === typeof callback && "undefined" === typeof separator) {
+		throw new ReferenceError("missing 'callback' argument");
+	} else if ("function" !== typeof callback && "function" !== typeof separator) {
+		throw new TypeError("'callback' argument is not a function");
 	} else {
 
-		fs.extractDirectoryRealFilesProm(dir).then(files => {
-			fs.filesToFile(files, targetPath, separator, callback);
-		}).catch(callback);
+		target = target.trim();
+
+		if ("" === target) {
+			throw new Error("'target' argument is empty");
+		} else {
+
+			if ("undefined" === typeof callback) {
+				callback = separator;
+			}
+
+			fs.extractDirectoryRealFiles(dir, (err, files) => {
+
+				if (err) {
+					callback(err);
+				} else {
+
+					fs.filesToFile(files, target, separator, err => {
+
+						if (err) {
+							callback(err);
+						} else {
+							callback(null);
+						}
+					});
+				}
+			});
+		}
 	}
 };
 
 /*
 	// mkdirp
+		
+		// async version
 
-// async version
 		fs.mkdirp = (dir, callback) => {
+
 			callback = ("function" === typeof callback) ? callback : () => {};
+
 			fs.isDirectory(dir, (err, exists) => {
+
 				if (err) {
-			callback(err);
-		}
-		else if (exists) {
-			callback(null);
-		}
-		else {
-					fs.mkdirp(path.dirname(dir), (err) => {
-						if (err) {
 					callback(err);
 				}
+				else if (exists) {
+					callback(null);
+				}
 				else {
-							fs.mkdir(dir, parseInt("0777", 8), (err) => {
-								if (err) {
+
+					fs.mkdirp(path.dirname(dir), (err) => {
+
+						if (err) {
 							callback(err);
 						}
 						else {
-							callback(null);
+
+							fs.mkdir(dir, parseInt("0777", 8), (err) => {
+
+								if (err) {
+									callback(err);
+								}
+								else {
+									callback(null);
+								}
+								
+							});
+
 						}
 						
 					});
-						}
-				
-			});
+
 				}
+
 			});
+
 		};
+
 		// sync version
+
 		fs.mkdirpSync = (dir) => {
+
 			if (!fs.isDirectorySync(dir)) {
+
 				if (!fs.isDirectorySync(path.dirname(dir))) {
-			fs.mkdirpSync(path.dirname(dir));
-		}
+					fs.mkdirpSync(path.dirname(dir));
+				}
+
 				fs.mkdirSync(dir, parseInt("0777", 8));
+
 			}
+
 		};
+
 	// rmdirp
+
 		// async version
+
 		fs.rmdirp = (dir, callback) => {
+
 			callback = ("function" === typeof callback) ? callback : () => {};
+
 			fs.isDirectory(dir, (err, exists) => {
+
 				if (err) {
-			callback(err);
-		}
-		else if (!exists) {
-			callback(null);
-		}
-		else {
-					fs.readdir(dir, (err, files) => {
-						if (err) {
 					callback(err);
 				}
-				else if (0 === files.length) {
-							fs.rmdir(dir, (err) => {
-								if (err) {
+				else if (!exists) {
+					callback(null);
+				}
+				else {
+
+					fs.readdir(dir, (err, files) => {
+
+						if (err) {
 							callback(err);
 						}
-						else {
-							callback();
-						}
+						else if (0 === files.length) {
+
+							fs.rmdir(dir, (err) => {
+
+								if (err) {
+									callback(err);
+								}
+								else {
+									callback();
+								}
+
 							});
+
 						}
-				else {
+						else {
+
 							let deletedFiles = 0;
-					for (let i = 0; i < files.length; ++i) {
+							for (let i = 0; i < files.length; ++i) {
+
 								let content = path.join(dir, files[i]);
+
 								fs.isDirectory(content, (err, isdirectory) => {
+
 									if (err) {
-								callback(err);
-							}
-							else if (isdirectory) {
+										callback(err);
+									}
+									else if (isdirectory) {
+
 										fs.rmdirp(content, (err) => {
+
 											if (err) {
-										callback(err);
+												callback(err);
+											}
+											else {
+
+												++deletedFiles;
+
+												if (deletedFiles >= files.length) {
+													
+													fs.rmdir(dir, (err) => {
+
+														if (err) {
+															callback(err);
+														}
+														else {
+															callback();
+														}
+
+													});
+
+												}
+
+											}
+
+										});
+
 									}
 									else {
-												++deletedFiles;
-												if (deletedFiles >= files.length) {
-											
-											fs.rmdir(dir, (err) => {
-														if (err) {
-													callback(err);
-												}
-												else {
-													callback();
-												}
-													});
-												}
-											}
-										});
-									}
-							else {
+
 										fs.unlink(content, (err) => {
+
 											if (err) {
-										callback(err);
-									}
-									else {
-												++deletedFiles;
-												if (deletedFiles >= files.length) {
-											
-											fs.rmdir(dir, (err) => {
-														if (err) {
-													callback(err);
-												}
-												else {
-													callback();
-												}
-													});
-												}
+												callback(err);
 											}
+											else {
+
+												++deletedFiles;
+
+												if (deletedFiles >= files.length) {
+													
+													fs.rmdir(dir, (err) => {
+
+														if (err) {
+															callback(err);
+														}
+														else {
+															callback();
+														}
+
+													});
+
+												}
+
+											}
+
 										});
+
 									}
+
 								});
+
 							}
+
 						}
+
 					});
+
 				}
+
 			});
+
 		};
+
 		// sync version
+
 		fs.rmdirpSync = (dir) => {
+
 			if(fs.isDirectorySync(dir)) {
-		
-		fs.readdirSync(dir).forEach((file) => {
+				
+				fs.readdirSync(dir).forEach((file) => {
+
 					let curPath = path.join(dir, file);
+
 					if(fs.isDirectorySync(curPath)) {
-				fs.rmdirpSync(curPath);
-			}
-			else if (fs.isFileSync(curPath)) {
-				fs.unlinkSync(curPath);
-			}
+						fs.rmdirpSync(curPath);
+					}
+					else if (fs.isFileSync(curPath)) {
+						fs.unlinkSync(curPath);
+					}
+
 				});
+
 				fs.rmdirSync(dir);
+
 			}
+
 		};*/
 
 module.exports = fs;

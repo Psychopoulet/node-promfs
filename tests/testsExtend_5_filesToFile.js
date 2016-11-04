@@ -16,27 +16,47 @@
 
 describe("filesToFile", () => {
 
-	before((done) => { fs.mkdir(_dirtest, done); });
-	after((done) => { fs.rmdir(_dirtest, done); });
+	before(() => {
+
+		if (!fs.isDirectorySync(_dirtest)) {
+			fs.mkdirSync(_dirtest);
+		}
+
+		if (!fs.isFileSync(_filetest)) {
+			fs.writeFileSync(_filetest, "test", "utf8");
+		}
+
+	});
+
+	after(() => {
+
+		if (fs.isDirectorySync(_dirtest)) {
+
+			if (fs.isFileSync(_filetest)) {
+				fs.unlinkSync(_filetest);
+			}
+
+			if (fs.isFileSync(_filetest2)) {
+				fs.unlinkSync(_filetest2);
+			}
+
+			if (fs.isFileSync(_filetest3)) {
+				fs.unlinkSync(_filetest3);
+			}
+
+			fs.rmdirSync(_dirtest);
+
+		}
+
+	});
 
 	describe("sync", () => {
 
-		before((done) => {
-			fs.writeFile(_filetest, "test", "utf8", done);
-		});
+		afterEach(() => {
 
-		after((done) => {
-
-			fs.unlink(_filetest, (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.unlink(_filetest2, done);
-				}
-
-			});
+			if (fs.isFileSync(_filetest2)) {
+				fs.unlinkSync(_filetest2);
+			}
 
 		});
 
@@ -50,44 +70,34 @@ describe("filesToFile", () => {
 			assert.throws(() => { fs.filesToFileSync([], false); }, TypeError, "check invalid value does not throw an error");
 		});
 
+		it("should check empty content value", () => {
+			assert.throws(() => { fs.filesToFileSync("", "test"); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.filesToFileSync("test", ""); }, Error, "check empty content value does not throw an error");
+		});
+
 		it("should concat nothing", () => {
 			assert.doesNotThrow(() => { fs.filesToFileSync([], _filetest2); }, "empty array cannot be concatened");
 		});
 
 		it("should concat test files into a file", () => {
-
-			fs.filesToFileSync([_filetest, _filetest, _filetest], _filetest2);
+			assert.doesNotThrow(() => { fs.filesToFileSync([_filetest, _filetest, _filetest], _filetest2); }, Error, "test files cannot be concatened");
 			assert.strictEqual("test test test", fs.readFileSync(_filetest2, "utf8"), "test files cannot be concatened");
-
 		});
 
 		it("should concat test files with pattern into a file", () => {
-
 			fs.filesToFileSync([_filetest, _filetest, _filetest], _filetest2, " -- [{{filename}}] -- ");
 			assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", fs.readFileSync(_filetest2, "utf8"), "test files with pattern cannot be concatened");
-			
 		});
 
 	});
 
 	describe("async", () => {
 
-		before((done) => {
-			fs.writeFile(_filetest, "test", "utf8", done);
-		});
+		afterEach(() => {
 
-		after((done) => {
-
-			fs.unlink(_filetest, (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.unlink(_filetest2, done);
-				}
-
-			});
+			if (fs.isFileSync(_filetest2)) {
+				fs.unlinkSync(_filetest2);
+			}
 
 		});
 
@@ -109,7 +119,7 @@ describe("filesToFile", () => {
 				assert.strictEqual("", fs.readFileSync(_filetest2, "utf8"), "empty array cannot be concatened");
 
 				done();
-				
+
 			});
 
 		});
@@ -135,7 +145,7 @@ describe("filesToFile", () => {
 				assert.strictEqual("test test test", fs.readFileSync(_filetest2, "utf8"), "test files cannot be concatened");
 
 				done();
-
+				
 			});
 
 		});
@@ -169,22 +179,11 @@ describe("filesToFile", () => {
 
 	describe("promise", () => {
 
-		before((done) => {
-			fs.writeFile(_filetest, "test", "utf8", done);
-		});
+		afterEach(() => {
 
-		after((done) => {
-
-			fs.unlink(_filetest, (err) => {
-
-				if (err) {
-					done(err);
-				}
-				else {
-					fs.unlink(_filetest2, done);
-				}
-
-			});
+			if (fs.isFileSync(_filetest2)) {
+				fs.unlinkSync(_filetest2);
+			}
 
 		});
 

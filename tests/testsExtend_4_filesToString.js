@@ -15,13 +15,33 @@
 
 describe("filesToString", () => {
 
-	before((done) => { fs.mkdir(_dirtest, done); });
-	after((done) => { fs.rmdir(_dirtest, done); });
+	before(() => {
+
+		if (!fs.isDirectorySync(_dirtest)) {
+			fs.mkdirSync(_dirtest);
+		}
+
+		if (!fs.isFileSync(_filetest)) {
+			fs.writeFileSync(_filetest, "test", "utf8");
+		}
+
+	});
+
+	after(() => {
+
+		if (fs.isDirectorySync(_dirtest)) {
+
+			if (fs.isFileSync(_filetest)) {
+				fs.unlinkSync(_filetest);
+			}
+
+			fs.rmdirSync(_dirtest);
+
+		}
+
+	});
 
 	describe("sync", () => {
-
-		before((done) => { fs.writeFile(_filetest, "test", "utf8", done); });
-		after((done) => { fs.unlink(_filetest, done); });
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.filesToStringSync(); }, ReferenceError, "check missing value does not throw an error");
@@ -50,9 +70,6 @@ describe("filesToString", () => {
 	});
 
 	describe("async", () => {
-
-		before((done) => { fs.writeFile(_filetest, "test", "utf8", done); });
-		after((done) => { fs.unlink(_filetest, done); });
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.filesToString(); }, ReferenceError, "check missing value does not throw an error");
@@ -119,9 +136,6 @@ describe("filesToString", () => {
 	});
 
 	describe("promise", () => {
-
-		before((done) => { fs.writeFile(_filetest, "test", "utf8", done); });
-		after((done) => { fs.unlink(_filetest, done); });
 
 		it("should check missing value", (done) => {
 
