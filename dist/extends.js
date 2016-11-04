@@ -649,9 +649,6 @@ fs.directoryFilesToFileSync = (dir, target, separator) => {
 	}
 };
 
-// have to improve tests
-
-
 // async version
 
 fs.directoryFilesToFile = (dir, target, separator, callback) => {
@@ -700,69 +697,70 @@ fs.directoryFilesToFile = (dir, target, separator, callback) => {
 	}
 };
 
-/*
-	// mkdirp
-		
-		// async version
+// have to improve tests
 
-		fs.mkdirp = (dir, callback) => {
 
-			callback = ("function" === typeof callback) ? callback : () => {};
+// mkdirp
 
-			fs.isDirectory(dir, (err, exists) => {
+// sync version
 
-				if (err) {
-					callback(err);
-				}
-				else if (exists) {
-					callback(null);
-				}
-				else {
+fs.mkdirpSync = dir => {
 
-					fs.mkdirp(path.dirname(dir), (err) => {
+	if (!fs.isDirectorySync(dir)) {
 
-						if (err) {
-							callback(err);
-						}
-						else {
+		if (!fs.isDirectorySync(path.dirname(dir))) {
+			fs.mkdirpSync(path.dirname(dir));
+		}
 
-							fs.mkdir(dir, parseInt("0777", 8), (err) => {
+		fs.mkdirSync(dir, parseInt("0777", 8));
+	}
+};
 
-								if (err) {
-									callback(err);
-								}
-								else {
-									callback(null);
-								}
-								
-							});
+// async version
 
-						}
-						
-					});
+fs.mkdirp = (dir, callback) => {
 
-				}
+	if ("undefined" === typeof dir) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof dir) {
+		throw new TypeError("'directory' argument is not a string");
+	} else if ("undefined" === typeof callback) {
+		throw new ReferenceError("missing 'callback' argument");
+	} else if ("function" !== typeof callback) {
+		throw new TypeError("'callback' argument is not a function");
+	} else {
 
-			});
+		fs.isDirectory(dir, (err, exists) => {
 
-		};
+			if (err) {
+				callback(err);
+			} else if (exists) {
+				callback(null);
+			} else {
 
-		// sync version
+				fs.mkdirp(path.dirname(dir), err => {
 
-		fs.mkdirpSync = (dir) => {
+					if (err) {
+						callback(err);
+					} else {
 
-			if (!fs.isDirectorySync(dir)) {
+						fs.mkdir(dir, parseInt("0777", 8), err => {
 
-				if (!fs.isDirectorySync(path.dirname(dir))) {
-					fs.mkdirpSync(path.dirname(dir));
-				}
-
-				fs.mkdirSync(dir, parseInt("0777", 8));
-
+							if (err) {
+								callback(err);
+							} else {
+								callback(null);
+							}
+						});
+					}
+				});
 			}
+		});
+	}
+};
 
-		};
-
+/*
+	
 	// rmdirp
 
 		// async version
