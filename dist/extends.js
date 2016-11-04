@@ -697,9 +697,6 @@ fs.directoryFilesToFile = (dir, target, separator, callback) => {
 	}
 };
 
-// have to improve tests
-
-
 // mkdirp
 
 // sync version
@@ -759,9 +756,33 @@ fs.mkdirp = (dir, callback) => {
 	}
 };
 
+// have to improve tests
+
+
+// rmdirp
+
+// sync version
+
+fs.rmdirpSync = dir => {
+
+	if (fs.isDirectorySync(dir)) {
+
+		fs.readdirSync(dir).forEach(file => {
+
+			let curPath = path.join(dir, file);
+
+			if (fs.isDirectorySync(curPath)) {
+				fs.rmdirpSync(curPath);
+			} else if (fs.isFileSync(curPath)) {
+				fs.unlinkSync(curPath);
+			}
+		});
+
+		fs.rmdirSync(dir);
+	}
+};
+
 /*
-	
-	// rmdirp
 
 		// async version
 
@@ -886,30 +907,6 @@ fs.mkdirp = (dir, callback) => {
 			});
 
 		};
-
-		// sync version
-
-		fs.rmdirpSync = (dir) => {
-
-			if(fs.isDirectorySync(dir)) {
-				
-				fs.readdirSync(dir).forEach((file) => {
-
-					let curPath = path.join(dir, file);
-
-					if(fs.isDirectorySync(curPath)) {
-						fs.rmdirpSync(curPath);
-					}
-					else if (fs.isFileSync(curPath)) {
-						fs.unlinkSync(curPath);
-					}
-
-				});
-
-				fs.rmdirSync(dir);
-
-			}
-
-		};*/
+*/
 
 module.exports = fs;
