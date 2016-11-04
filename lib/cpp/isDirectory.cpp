@@ -86,6 +86,9 @@ namespace _extends {
 						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'dirname' argument")));
 						
 					}
+						else if (args[0]->IsUndefined()) {
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'dirname' argument")));
+						}
 						else if (!args[0]->IsString()) {
 							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'dirname' argument is not a string")));
 						}
@@ -124,12 +127,18 @@ namespace _extends {
 					if (0 >= args.Length()) {
 						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'dirname' argument")));
 					}
+						else if (args[0]->IsUndefined()) {
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'dirname' argument")));
+						}
 						else if (!args[0]->IsString()) {
 							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'dirname' argument is not a string")));
 						}
 					else if (1 >= args.Length()) {
 						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
 					}
+						else if (args[0]->IsUndefined()) {
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
+						}
 						else if (!args[1]->IsFunction()) {
 							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'callback' argument is not a function")));
 						}
