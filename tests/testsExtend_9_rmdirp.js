@@ -84,65 +84,92 @@ describe("rmdirp", () => {
 
 	});
 
-	/*describe("async", () => {
+	describe("async", () => {
 
-		it("should check invalid value", (done) => {
-
-			fs.rmdirp(false, (err) => {
-				assert.notStrictEqual(null, err, "check invalid value does not generate an error");
-				done();
-			});
-
+		it("should check missing value", () => {
+			assert.throws(() => { fs.rmdirp(); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.rmdirp("test"); }, ReferenceError, "check missing value does not throw an error");
 		});
 
-		it("should check empty content value", (done) => {
+		it("should check invalid value", () => {
+			assert.throws(() => { fs.rmdirp(false, () => {}); }, Error, "check invalid value does not throw an error");
+			assert.throws(() => { fs.rmdirp("test", false); }, Error, "check invalid value does not throw an error");
+		});
 
-			fs.rmdirp("", (err) => {
-				assert.notStrictEqual(null, err, "check empty content value does not generate an error");
-				done();
-			});
-
+		it("should check empty content value", () => {
+			assert.throws(() => { fs.rmdirp("", () => {}); }, Error, "check empty content value does not throw an error");
 		});
 
 		it("should delete real new directory", (done) => {
 
-			assert.doesNotThrow(() => { fs.mkdirpSync(_dirtest); }, "\"" + _dirtest + "\" cannot be created");
+			fs.mkdirp(_dirtest, (err) => {
 
-			fs.rmdirp(_dirtestBase, (err) => {
-				assert.notStrictEqual(null, err, "\"" + _dirtestBase + "\" cannot be deleted");
-				done();
+				assert.strictEqual(null, err, "\"" + _dirtestBase + "\" cannot be created");
+
+				fs.rmdirp(_dirtestBase, (err) => {
+
+					assert.strictEqual(null, err, "\"" + _dirtestBase + "\" cannot be deleted");
+
+					fs.isDirectory(_dirtestBase, (err) => {
+
+						assert.strictEqual(null, err, "\"" + _dirtestBase + "\" was not deleted");
+
+						done();
+
+					});
+
+				});
+
 			});
 
-		});
-
-		it("should not detect deleted directory", () => {
-			assert.strictEqual(false, fs.isDirectorySync(_dirtest), "\"" + _dirtest + "\" was not deleted");
 		});
 
 	});
 
 	describe("promise", () => {
 
+		it("should check missing value", (done) => {
+
+			fs.rmdirpProm().then(() => {
+				done("check invalid value does not generate an error");
+			}).catch((err) => {
+
+				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
+				done();
+
+			});
+
+		});
+
 		it("should check invalid value", (done) => {
 
 			fs.rmdirpProm(false).then(() => {
-				assert(false, "check invalid value does not generate an error");
-				done();
+				done("check invalid value does not generate an error");
 			}).catch((err) => {
-				assert.notStrictEqual(null, err, "check invalid value does not generate an error");
+				
+				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
 				done();
+
 			});
 
 		});
 
 		it("should check empty content value", (done) => {
 
-			fs.rmdirpProm(false).then(() => {
+			fs.rmdirpProm("").then(() => {
 				assert(false, "check empty content value does not generate an error");
 				done();
 			}).catch((err) => {
-				assert.notStrictEqual(null, err, "check empty content value does not generate an error");
+				
+				assert.strictEqual(true, err instanceof Error, "check missing value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
 				done();
+
 			});
 
 		});
@@ -151,14 +178,16 @@ describe("rmdirp", () => {
 
 			return fs.mkdirpProm(_dirtest).then(() => {
 				return fs.rmdirpProm(_dirtestBase);
+			}).then(() => {
+
+				return fs.isDirectoryProm(_dirtestBase).then((exists) => {
+					assert.strictEqual(false, exists, "\"" + _dirtest + "\" was not deleted");
+				});
+
 			});
 
 		});
 
-		it("should not detect deleted directory", () => {
-			assert.strictEqual(false, fs.isDirectorySync(_dirtest), "\"" + _dirtest + "\" was not deleted");
-		});
-
-	});*/
+	});
 
 });

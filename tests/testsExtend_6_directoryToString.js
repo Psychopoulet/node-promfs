@@ -14,7 +14,7 @@
 
 // tests
 
-describe("directoryFilesToString", () => {
+describe("directoryToString", () => {
 
 	before(() => {
 
@@ -53,31 +53,31 @@ describe("directoryFilesToString", () => {
 	describe("sync", () => {
 
 		it("should check missing value", () => {
-			assert.throws(() => { fs.directoryFilesToStringSync(); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.directoryToStringSync(); }, ReferenceError, "check missing value does not throw an error");
 		});
 
 		it("should check invalid value", () => {
-			assert.throws(() => { fs.directoryFilesToStringSync(false); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.directoryToStringSync(false); }, TypeError, "check invalid value does not throw an error");
 		});
 
 		it("should check empty content value", () => {
-			assert.throws(() => { fs.directoryFilesToStringSync(""); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.directoryToStringSync(""); }, Error, "check empty content value does not throw an error");
 		});
 
 		it("should check inexistant directory", () => {
-			assert.throws(() => { fs.directoryFilesToStringSync("rgvservseqrvserv"); }, "wrong \"directory\" does not throw an error");
+			assert.throws(() => { fs.directoryToStringSync("rgvservseqrvserv"); }, "wrong \"directory\" does not throw an error");
 		});
 
 		it("should concat nothing", () => {
-			assert.strictEqual("", fs.directoryFilesToStringSync(_dirtest2), "empty directory cannot be concatened");
+			assert.strictEqual("", fs.directoryToStringSync(_dirtest2), "empty directory cannot be concatened");
 		});
 
 		it("should concat test directory files", () => {
-			assert.strictEqual("string", typeof fs.directoryFilesToStringSync(_dirtest, "utf8"), "test directory files cannot be concatened");
+			assert.strictEqual("string", typeof fs.directoryToStringSync(_dirtest, "utf8"), "test directory files cannot be concatened");
 		});
 
 		it("should concat test directory files with pattern", () => {
-			assert.strictEqual(" -- [test.txt] -- test", fs.directoryFilesToStringSync(_dirtest, "utf8", " -- [{{filename}}] -- "), "test directory files with pattern cannot be concatened");
+			assert.strictEqual(" -- [test.txt] -- test", fs.directoryToStringSync(_dirtest, "utf8", " -- [{{filename}}] -- "), "test directory files with pattern cannot be concatened");
 		});
 
 	});
@@ -85,24 +85,24 @@ describe("directoryFilesToString", () => {
 	describe("async", () => {
 
 		it("should check missing value", () => {
-			assert.throws(() => { fs.directoryFilesToString(); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.directoryToString(); }, ReferenceError, "check missing value does not throw an error");
 		});
 
 		it("should check invalid value", () => {
-			assert.throws(() => { fs.directoryFilesToString(false); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.directoryToString(false); }, TypeError, "check invalid value does not throw an error");
 		});
 
 		it("should check empty content value", () => {
-			assert.throws(() => { fs.directoryFilesToString(""); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.directoryToString(""); }, Error, "check empty content value does not throw an error");
 		});
 
 		it("should check inexistant directory", () => {
-			assert.throws(() => { fs.directoryFilesToString("rgvservseqrvserv"); }, "wrong \"directory\" does not throw an error");
+			assert.throws(() => { fs.directoryToString("rgvservseqrvserv"); }, "wrong \"directory\" does not throw an error");
 		});
 
 		it("should concat nothing", (done) => {
 
-			fs.directoryFilesToString(_dirtest2, (err, content) => {
+			fs.directoryToString(_dirtest2, (err, content) => {
 
 				if (err) {
 					done(err);
@@ -122,7 +122,7 @@ describe("directoryFilesToString", () => {
 
 		it("should concat test directory files", (done) => {
 
-			fs.directoryFilesToString(_dirtest, (err, content) => {
+			fs.directoryToString(_dirtest, (err, content) => {
 
 				if (err) {
 					done(err);
@@ -142,7 +142,7 @@ describe("directoryFilesToString", () => {
 
 		it("should concat test directory files with pattern", (done) => {
 
-			fs.directoryFilesToString(_dirtest, "utf8", " -- [{{filename}}] -- ", (err, content) => {
+			fs.directoryToString(_dirtest, "utf8", " -- [{{filename}}] -- ", (err, content) => {
 
 				if (err) {
 					done(err);
@@ -166,7 +166,7 @@ describe("directoryFilesToString", () => {
 
 		it("should check missing value", (done) => {
 
-			fs.directoryFilesToStringProm().then(() => {
+			fs.directoryToStringProm().then(() => {
 				done("check missing value does not generate an error");
 			}).catch((err) => {
 
@@ -181,7 +181,7 @@ describe("directoryFilesToString", () => {
 
 		it("should check invalid value", (done) => {
 
-			fs.directoryFilesToStringProm(false).then(() => {
+			fs.directoryToStringProm(false).then(() => {
 				done("check invalid value does not generate an error");
 			}).catch((err) => {
 
@@ -196,7 +196,7 @@ describe("directoryFilesToString", () => {
 
 		it("should concat nothing", () => {
 
-			return fs.directoryFilesToStringProm(_dirtest2).then((data) => {
+			return fs.directoryToStringProm(_dirtest2).then((data) => {
 				assert.strictEqual("", data, "empty array cannot be concatened");
 			});
 
@@ -204,7 +204,7 @@ describe("directoryFilesToString", () => {
 
 		it("should concat test directory files", () => {
 
-			return fs.directoryFilesToStringProm(_dirtest).then((data) => {
+			return fs.directoryToStringProm(_dirtest).then((data) => {
 				assert.strictEqual("test", data, "test directory files cannot be concatened");
 			});
 
@@ -212,7 +212,7 @@ describe("directoryFilesToString", () => {
 
 		it("should concat test directory files with pattern", () => {
 
-			return fs.directoryFilesToStringProm(_dirtest, "utf8", " -- [{{filename}}] -- ").then((data) => {
+			return fs.directoryToStringProm(_dirtest, "utf8", " -- [{{filename}}] -- ").then((data) => {
 				assert.strictEqual(" -- [test.txt] -- test", data, "test directory files with pattern cannot be concatened");
 			});
 

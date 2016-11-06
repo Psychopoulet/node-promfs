@@ -5,6 +5,8 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
+    "install": "node-gyp configure && node-gyp build",
+    "rebuild-all": "npm rebuild && node-gyp rebuild",
     "test": "gulp"
   },
   "repository": {
@@ -41,5 +43,6 @@
 
   },
   "homepage": "https://github.com/Psychopoulet/node-promfs#readme",
-  "engines" : { "node" : ">=4.6.1" }
+  "engines" : { "node" : ">=4.6.1" },
+  "gypfile": true
 }

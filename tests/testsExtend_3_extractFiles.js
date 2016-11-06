@@ -13,7 +13,7 @@
 
 // tests
 
-describe("extractDirectoryRealFiles", () => {
+describe("extractFiles", () => {
 
 	before(() => {
 
@@ -44,19 +44,19 @@ describe("extractDirectoryRealFiles", () => {
 	describe("sync", () => {
 
 		it("should check missing value", () => {
-			assert.throws(() => { fs.extractDirectoryRealFilesSync(); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.extractFilesSync(); }, ReferenceError, "check missing value does not throw an error");
 		});
 
 		it("should check invalid value", () => {
-			assert.throws(() => { fs.extractDirectoryRealFilesSync(false); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.extractFilesSync(false); }, TypeError, "check invalid value does not throw an error");
 		});
 
 		it("should check empty content value", () => {
-			assert.throws(() => { fs.extractDirectoryRealFilesSync(""); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.extractFilesSync(""); }, Error, "check empty content value does not throw an error");
 		});
 
 		it("should check inexistant directory", () => {
-			assert.throws(() => { fs.extractDirectoryRealFilesSync("rgvservseqrvserv"); }, "wrong \"directory\" does not throw an error");
+			assert.throws(() => { fs.extractFilesSync("rgvservseqrvserv"); }, "wrong \"directory\" does not throw an error");
 		});
 
 		it("should extract nothing", () => {
@@ -65,14 +65,14 @@ describe("extractDirectoryRealFiles", () => {
 
 			fs.mkdirSync(lvl2);
 
-				assert.deepStrictEqual([], fs.extractDirectoryRealFilesSync(lvl2), "empty directory cannot be extract");
+				assert.deepStrictEqual([], fs.extractFilesSync(lvl2), "empty directory cannot be extract");
 
 			fs.rmdirSync(lvl2);
 
 		});
 
 		it("should extract files", () => {
-			assert.strictEqual(1, fs.extractDirectoryRealFilesSync(_dirtest).length, "test files cannot be extracted");
+			assert.strictEqual(1, fs.extractFilesSync(_dirtest).length, "test files cannot be extracted");
 		});
 
 	});
@@ -80,22 +80,22 @@ describe("extractDirectoryRealFiles", () => {
 	describe("async", () => {
 
 		it("should check missing value", () => {
-			assert.throws(() => { fs.extractDirectoryRealFiles(); }, ReferenceError, "check missing value does not throw an error");
-			assert.throws(() => { fs.extractDirectoryRealFiles("test"); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.extractFiles(); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.extractFiles("test"); }, ReferenceError, "check missing value does not throw an error");
 		});
 
 		it("should check invalid value", () => {
-			assert.throws(() => { fs.extractDirectoryRealFiles(false, () => {}); }, TypeError, "check invalid value does not throw an error");
-			assert.throws(() => { fs.extractDirectoryRealFiles("test", false); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.extractFiles(false, () => {}); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.extractFiles("test", false); }, TypeError, "check invalid value does not throw an error");
 		});
 
 		it("should check empty content value", () => {
-			assert.throws(() => { fs.extractDirectoryRealFiles("", () => {}); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.extractFiles("", () => {}); }, Error, "check empty content value does not throw an error");
 		});
 
 		it("should check inexistant directory", (done) => {
 
-			fs.extractDirectoryRealFiles("rgvservseqrvserv", (err) => {
+			fs.extractFiles("rgvservseqrvserv", (err) => {
 
 				assert.strictEqual(true, err instanceof Error, "check inexistant directory does not generate a valid error");
 				assert.strictEqual("string", typeof err.message, "check inexistant directory does not generate a valid error");
@@ -114,7 +114,7 @@ describe("extractDirectoryRealFiles", () => {
 
 				assert.strictEqual(null, err, "extract nothing generate an error");
 
-				fs.extractDirectoryRealFiles(lvl2, (err, data) => {
+				fs.extractFiles(lvl2, (err, data) => {
 
 					assert.strictEqual(null, err, "extract nothing generate an error");
 					assert.deepStrictEqual([], data, "empty directory cannot be extracted");
@@ -138,7 +138,7 @@ describe("extractDirectoryRealFiles", () => {
 
 				assert.strictEqual(null, err, "extract files generate an error");
 
-				fs.extractDirectoryRealFiles(_dirtest, (err, data) => {
+				fs.extractFiles(_dirtest, (err, data) => {
 
 					assert.strictEqual(null, err, "extract files generate an error");
 					assert.strictEqual(1, data.length, "test files cannot be extracted");
@@ -158,7 +158,7 @@ describe("extractDirectoryRealFiles", () => {
 
 		it("should check missing value", (done) => {
 
-			fs.extractDirectoryRealFilesProm().then(() => {
+			fs.extractFilesProm().then(() => {
 				done("check missing value does not generate an error");
 			}).catch((err) => {
 
@@ -173,7 +173,7 @@ describe("extractDirectoryRealFiles", () => {
 
 		it("should check invalid value", (done) => {
 
-			fs.extractDirectoryRealFilesProm(false).then(() => {
+			fs.extractFilesProm(false).then(() => {
 				done("check invalid value does not generate an error");
 			}).catch((err) => {
 
@@ -188,7 +188,7 @@ describe("extractDirectoryRealFiles", () => {
 
 		it("should check empty value", (done) => {
 
-			fs.copyProm("").then(() => {
+			fs.copyFileProm("").then(() => {
 				done("check empty value does not generate an error");
 			}).catch((err) => {
 
@@ -203,7 +203,7 @@ describe("extractDirectoryRealFiles", () => {
 
 		it("should check inexistant directory", (done) => {
 
-			fs.extractDirectoryRealFilesProm("rgvservseqrvserv").then(() => {
+			fs.extractFilesProm("rgvservseqrvserv").then(() => {
 				done("wrong \"directory\" does not generate an error");
 			}).catch((err) => {
 
@@ -235,7 +235,7 @@ describe("extractDirectoryRealFiles", () => {
 
 			}).then(() => {
 
-				return fs.extractDirectoryRealFilesProm(lvl2);
+				return fs.extractFilesProm(lvl2);
 
 			}).then((data) => {
 
@@ -263,7 +263,7 @@ describe("extractDirectoryRealFiles", () => {
 		it("should extract test files", () => {
 
 			return fs.writeFileProm(path.join(_dirtest, "test.txt"), "").then(() => {
-				return fs.extractDirectoryRealFilesProm(_dirtest);
+				return fs.extractFilesProm(_dirtest);
 			}).then((data) => {
 				assert.strictEqual(1, data.length, "test files cannot be extracted");
 			});

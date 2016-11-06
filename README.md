@@ -24,27 +24,27 @@ $ npm install node-promfs
 note : in "separator" parameter, you can use "{{filename}}" pattern, it will be replaced by the file's basename
 (ex : separator = "\r\n\r\n--- {{filename}} ---\r\n\r\n")
 
-  #### copy : copy a file with streams
-   * ``` copy(string origin, string origin, function callback) ``` callback(Error|null err)
-   * ``` copySync(string origin, string origin) ``` /!\ does not use streams /!\
-   * ``` copyProm(string origin, string origin) : return Promise ```
+  #### copyFile : copy a file with streams
+   * ``` copyFile(string origin, string origin, function callback) ``` callback(Error|null err)
+   * ``` copyFileSync(string origin, string origin) ```
+   * ``` copyFileProm(string origin, string origin) : return Promise ```
 
-  #### directoryFilesToFile : concat directory's files content in a file
-   * ``` directoryFilesToFile(string path [ , string separator = " " ], function callback) ``` callback(Error|null err)
-   * ``` directoryFilesToFileSync(string path [ , string separator = " " ]) ```
-   * ``` directoryFilesToFileProm(string path [ , string separator = " " ]) : return Promise ```
+  #### directoryToFile : concat directory's files content in a file (extractFilesSync && filesToFileSync)
+   * ``` directoryToFile(string path [ , string separator = " " ], function callback) ``` callback(Error|null err)
+   * ``` directoryToFileSync(string path [ , string separator = " " ]) ```
+   * ``` directoryToFileProm(string path [ , string separator = " " ]) : return Promise ```
 
-  #### directoryFilesToString : concat directory's files content in a string
-   * ``` directoryFilesToString(string path [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(Error|null err, string content)
-   * ``` directoryFilesToStringSync(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : return string ```
-   * ``` directoryFilesToStringProm(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : return Promise ``` then(string content)
+  #### directoryToString : concat directory's files content in a string (extractFilesSync && filesToStringSync)
+   * ``` directoryToString(string path [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(Error|null err, string content)
+   * ``` directoryToStringSync(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : return string ```
+   * ``` directoryToStringProm(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : return Promise ``` then(string content)
 
-  #### extractDirectoryRealFiles : return only files from directory
-   * ``` extractDirectoryRealFiles(string directory, function callback) ``` callback(Error|null err, array files)
-   * ``` extractDirectoryRealFilesSync(string directory) : return array ```
-   * ``` extractDirectoryRealFilesProm(string directory) : return Promise ``` then(array files)
+  #### extractFiles : return only files from a directory
+   * ``` extractFiles(string directory, function callback) ``` callback(Error|null err, array files)
+   * ``` extractFilesSync(string directory) : return array ```
+   * ``` extractFilesProm(string directory) : return Promise ``` then(array files)
 
-  #### filesToFile : concat files content in a file
+  #### filesToFile : concat files content in a file with streams
    * ``` filesToFile(array files, string targetPath [ , string separator = " " ], function callback) ``` callback(Error|null err)
    * ``` filesToFileSync(array files, string targetPath [ , string separator = " " ]) ```
    * ``` filesToFileProm(array files, string targetPath [ , string separator = " " ]) : return Promise ```
@@ -54,12 +54,12 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
    * ``` filesToStringSync(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : return string ```
    * ``` filesToStringProm(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : return Promise ``` then(string content)
 
-  #### isDirectory
+  #### isDirectory -> native
    * ``` isDirectory(string path) ``` callback(Error|null err, bool exists)
    * ``` isDirectorySync(string path) : return bool ```
    * ``` isDirectoryProm(string path) : return Promise ``` then(bool exists)
 
-  #### isFile
+  #### isFile -> native
    * ``` isFile(string path) ``` callback(Error|null err, bool exists)
    * ``` isFileSync(string path) : return bool ```
    * ``` isFileProm(string path) : return Promise ``` then(bool exists)

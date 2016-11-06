@@ -8,11 +8,11 @@ const path = require("path"),
 
 // module
 
-// copy
+// copyFile
 
 // sync version
 
-fs.copySync = (origin, target) => {
+fs.copyFileSync = (origin, target) => {
 
 	if ("undefined" === typeof origin) {
 		throw new ReferenceError("missing 'origin' argument");
@@ -49,7 +49,7 @@ fs.copySync = (origin, target) => {
 
 // async version
 
-fs.copy = (origin, target, callback) => {
+fs.copyFile = (origin, target, callback) => {
 
 	if ("undefined" === typeof origin) {
 		throw new ReferenceError("missing 'origin' argument");
@@ -87,7 +87,7 @@ fs.copy = (origin, target, callback) => {
 						if (err) {
 							callback(err);
 						} else if (!exists) {
-							_copyStream(origin, target, callback);
+							_copyFileStream(origin, target, callback);
 						} else {
 
 							fs.unlink(target, err => {
@@ -95,7 +95,7 @@ fs.copy = (origin, target, callback) => {
 								if (err) {
 									callback(err);
 								} else {
-									_copyStream(origin, target, callback);
+									_copyFileStream(origin, target, callback);
 								}
 							});
 						}
@@ -106,9 +106,9 @@ fs.copy = (origin, target, callback) => {
 	}
 };
 
-// specific to "copy" method
+// specific to "copyFile" method
 
-function _copyStream(origin, target, callback) {
+function _copyFileStream(origin, target, callback) {
 
 	let readStream = fs.createReadStream(origin),
 		writeStream = fs.createWriteStream(target),
@@ -146,11 +146,11 @@ function _copyStream(origin, target, callback) {
 	});
 }
 
-// extractDirectoryRealFiles
+// extractFiles
 
 // sync version
 
-fs.extractDirectoryRealFilesSync = dir => {
+fs.extractFilesSync = dir => {
 
 	if ("undefined" === typeof dir) {
 		throw new ReferenceError("missing 'directory' argument");
@@ -182,7 +182,7 @@ fs.extractDirectoryRealFilesSync = dir => {
 
 // async version
 
-fs.extractDirectoryRealFiles = (dir, callback) => {
+fs.extractFiles = (dir, callback) => {
 
 	if ("undefined" === typeof dir) {
 		throw new ReferenceError("missing 'directory' argument");
@@ -225,7 +225,7 @@ fs.extractDirectoryRealFiles = (dir, callback) => {
 	}
 };
 
-// specific to "extractDirectoryRealFiles" method
+// specific to "extractFiles" method
 
 function _extractRealFiles(dir, givenFiles, realFiles, callback) {
 
@@ -565,24 +565,24 @@ function _concatContentStream(files, target, separator, callback) {
 	}
 }
 
-// directoryFilesToString
+// directoryToString
 
 // sync version
 
-fs.directoryFilesToStringSync = (dir, encoding, separator) => {
+fs.directoryToStringSync = (dir, encoding, separator) => {
 
 	if ("undefined" === typeof dir) {
 		throw new ReferenceError("missing 'directory' argument");
 	} else if ("string" !== typeof dir) {
 		throw new TypeError("'directory' argument is not a string");
 	} else {
-		return fs.filesToStringSync(fs.extractDirectoryRealFilesSync(dir), encoding, separator);
+		return fs.filesToStringSync(fs.extractFilesSync(dir), encoding, separator);
 	}
 };
 
 // async version
 
-fs.directoryFilesToString = (dir, encoding, separator, callback) => {
+fs.directoryToString = (dir, encoding, separator, callback) => {
 
 	if ("undefined" === typeof dir) {
 		throw new ReferenceError("missing 'directory' argument");
@@ -603,7 +603,7 @@ fs.directoryFilesToString = (dir, encoding, separator, callback) => {
 			}
 		}
 
-		fs.extractDirectoryRealFiles(dir, (err, files) => {
+		fs.extractFiles(dir, (err, files) => {
 
 			if (err) {
 				callback(err);
@@ -622,11 +622,11 @@ fs.directoryFilesToString = (dir, encoding, separator, callback) => {
 	}
 };
 
-// directoryFilesToFile
+// directoryToFile
 
 // sync version
 
-fs.directoryFilesToFileSync = (dir, target, separator) => {
+fs.directoryToFileSync = (dir, target, separator) => {
 
 	if ("undefined" === typeof dir) {
 		throw new ReferenceError("missing 'directory' argument");
@@ -644,14 +644,14 @@ fs.directoryFilesToFileSync = (dir, target, separator) => {
 			throw new Error("'target' argument is empty");
 		} else {
 
-			return fs.filesToFileSync(fs.extractDirectoryRealFilesSync(dir), target, separator);
+			return fs.filesToFileSync(fs.extractFilesSync(dir), target, separator);
 		}
 	}
 };
 
 // async version
 
-fs.directoryFilesToFile = (dir, target, separator, callback) => {
+fs.directoryToFile = (dir, target, separator, callback) => {
 
 	if ("undefined" === typeof dir) {
 		throw new ReferenceError("missing 'directory' argument");
@@ -677,7 +677,7 @@ fs.directoryFilesToFile = (dir, target, separator, callback) => {
 				callback = separator;
 			}
 
-			fs.extractDirectoryRealFiles(dir, (err, files) => {
+			fs.extractFiles(dir, (err, files) => {
 
 				if (err) {
 					callback(err);
@@ -756,9 +756,6 @@ fs.mkdirp = (dir, callback) => {
 	}
 };
 
-// have to improve tests
-
-
 // rmdirp
 
 // sync version
@@ -782,131 +779,107 @@ fs.rmdirpSync = dir => {
 	}
 };
 
-/*
+// async version
 
-		// async version
+fs.rmdirp = (dir, callback) => {
 
-		fs.rmdirp = (dir, callback) => {
+	if ("undefined" === typeof dir) {
+		throw new ReferenceError("missing 'directory' argument");
+	} else if ("string" !== typeof dir) {
+		throw new TypeError("'directory' argument is not a string");
+	} else if ("undefined" === typeof callback) {
+		throw new ReferenceError("missing 'callback' argument");
+	} else if ("function" !== typeof callback) {
+		throw new TypeError("'callback' argument is not a function");
+	} else {
 
-			callback = ("function" === typeof callback) ? callback : () => {};
+		fs.isDirectory(dir, (err, exists) => {
 
-			fs.isDirectory(dir, (err, exists) => {
+			if (err) {
+				callback(err);
+			} else if (!exists) {
+				callback(null);
+			} else {
 
-				if (err) {
-					callback(err);
-				}
-				else if (!exists) {
-					callback(null);
-				}
-				else {
+				fs.readdir(dir, (err, files) => {
 
-					fs.readdir(dir, (err, files) => {
+					if (err) {
+						callback(err);
+					} else if (0 === files.length) {
 
-						if (err) {
-							callback(err);
-						}
-						else if (0 === files.length) {
+						fs.rmdir(dir, err => {
 
-							fs.rmdir(dir, (err) => {
+							if (err) {
+								callback(err);
+							} else {
+								callback();
+							}
+						});
+					} else {
+
+						let deletedFiles = 0;
+						for (let i = 0; i < files.length; ++i) {
+
+							let content = path.join(dir, files[i]);
+
+							fs.isDirectory(content, (err, isdirectory) => {
 
 								if (err) {
 									callback(err);
-								}
-								else {
-									callback();
-								}
+								} else if (isdirectory) {
 
+									fs.rmdirp(content, err => {
+
+										if (err) {
+											callback(err);
+										} else {
+
+											++deletedFiles;
+
+											if (deletedFiles >= files.length) {
+
+												fs.rmdir(dir, err => {
+
+													if (err) {
+														callback(err);
+													} else {
+														callback(null);
+													}
+												});
+											}
+										}
+									});
+								} else {
+
+									fs.unlink(content, err => {
+
+										if (err) {
+											callback(err);
+										} else {
+
+											++deletedFiles;
+
+											if (deletedFiles >= files.length) {
+
+												fs.rmdir(dir, err => {
+
+													if (err) {
+														callback(err);
+													} else {
+														callback(null);
+													}
+												});
+											}
+										}
+									});
+								}
 							});
-
 						}
-						else {
-
-							let deletedFiles = 0;
-							for (let i = 0; i < files.length; ++i) {
-
-								let content = path.join(dir, files[i]);
-
-								fs.isDirectory(content, (err, isdirectory) => {
-
-									if (err) {
-										callback(err);
-									}
-									else if (isdirectory) {
-
-										fs.rmdirp(content, (err) => {
-
-											if (err) {
-												callback(err);
-											}
-											else {
-
-												++deletedFiles;
-
-												if (deletedFiles >= files.length) {
-													
-													fs.rmdir(dir, (err) => {
-
-														if (err) {
-															callback(err);
-														}
-														else {
-															callback();
-														}
-
-													});
-
-												}
-
-											}
-
-										});
-
-									}
-									else {
-
-										fs.unlink(content, (err) => {
-
-											if (err) {
-												callback(err);
-											}
-											else {
-
-												++deletedFiles;
-
-												if (deletedFiles >= files.length) {
-													
-													fs.rmdir(dir, (err) => {
-
-														if (err) {
-															callback(err);
-														}
-														else {
-															callback();
-														}
-
-													});
-
-												}
-
-											}
-
-										});
-
-									}
-
-								});
-
-							}
-
-						}
-
-					});
-
-				}
-
-			});
-
-		};
-*/
+					}
+				});
+			}
+		});
+	}
+};
 
 module.exports = fs;
