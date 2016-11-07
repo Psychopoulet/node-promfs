@@ -88,12 +88,12 @@ describe("rmdirp", () => {
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.rmdirp(); }, ReferenceError, "check missing value does not throw an error");
-			assert.throws(() => { fs.rmdirp("test"); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.rmdirp(__dirname); }, ReferenceError, "check missing value does not throw an error");
 		});
 
 		it("should check invalid value", () => {
 			assert.throws(() => { fs.rmdirp(false, () => {}); }, Error, "check invalid value does not throw an error");
-			assert.throws(() => { fs.rmdirp("test", false); }, Error, "check invalid value does not throw an error");
+			assert.throws(() => { fs.rmdirp(__dirname, false); }, Error, "check invalid value does not throw an error");
 		});
 
 		it("should check empty content value", () => {

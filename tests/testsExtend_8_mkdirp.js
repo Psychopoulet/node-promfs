@@ -81,12 +81,12 @@ describe("mkdirp", () => {
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.mkdirp(); }, ReferenceError, "check missing value does not throw an error");
-			assert.throws(() => { fs.mkdirp("test"); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.mkdirp(__dirname); }, ReferenceError, "check missing value does not throw an error");
 		});
 
 		it("should check invalid value", () => {
 			assert.throws(() => { fs.mkdirp(false, () => {}); }, Error, "check invalid value does not throw an error");
-			assert.throws(() => { fs.mkdirp("test", false); }, Error, "check invalid value does not throw an error");
+			assert.throws(() => { fs.mkdirp(__dirname, false); }, Error, "check invalid value does not throw an error");
 		});
 
 		it("should check empty content value", () => {

@@ -81,12 +81,12 @@ describe("extractFiles", () => {
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.extractFiles(); }, ReferenceError, "check missing value does not throw an error");
-			assert.throws(() => { fs.extractFiles("test"); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.extractFiles(__dirname); }, ReferenceError, "check missing value does not throw an error");
 		});
 
 		it("should check invalid value", () => {
 			assert.throws(() => { fs.extractFiles(false, () => {}); }, TypeError, "check invalid value does not throw an error");
-			assert.throws(() => { fs.extractFiles("test", false); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.extractFiles(__dirname, false); }, TypeError, "check invalid value does not throw an error");
 		});
 
 		it("should check empty content value", () => {

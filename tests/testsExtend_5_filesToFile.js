@@ -71,8 +71,8 @@ describe("filesToFile", () => {
 		});
 
 		it("should check empty content value", () => {
-			assert.throws(() => { fs.filesToFileSync("", "test"); }, Error, "check empty content value does not throw an error");
-			assert.throws(() => { fs.filesToFileSync("test", ""); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.filesToFileSync("", __filename); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.filesToFileSync([], ""); }, Error, "check empty content value does not throw an error");
 		});
 
 		it("should concat nothing", () => {

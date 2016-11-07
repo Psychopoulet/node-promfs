@@ -66,17 +66,17 @@ describe("directoryToFile", () => {
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.directoryToFileSync(); }, ReferenceError, "check missing value does not throw an error");
-			assert.throws(() => { fs.directoryToFileSync("test"); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.directoryToFileSync(__dirname); }, ReferenceError, "check missing value does not throw an error");
 		});
 
 		it("should check invalid value", () => {
-			assert.throws(() => { fs.directoryToFileSync(false, "test"); }, TypeError, "check invalid value does not throw an error");
-			assert.throws(() => { fs.directoryToFileSync("test", false); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.directoryToFileSync(false, __filename); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.directoryToFileSync(__dirname, false); }, TypeError, "check invalid value does not throw an error");
 		});
 
 		it("should check empty content value", () => {
-			assert.throws(() => { fs.directoryToFileSync("", "test"); }, Error, "check empty content value does not throw an error");
-			assert.throws(() => { fs.directoryToFileSync("test", ""); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.directoryToFileSync("", __filename); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.directoryToFileSync(__dirname, ""); }, Error, "check empty content value does not throw an error");
 		});
 
 		it("should concat nothing", () => {
@@ -108,18 +108,18 @@ describe("directoryToFile", () => {
 
 		it("should check missing value", () => {
 			assert.throws(() => { fs.directoryToFile(); }, ReferenceError, "check missing value does not throw an error");
-			assert.throws(() => { fs.directoryToFile("test"); }, ReferenceError, "check missing value does not throw an error");
-			assert.throws(() => { fs.directoryToFile("test", "test"); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.directoryToFile(__dirname); }, ReferenceError, "check missing value does not throw an error");
+			assert.throws(() => { fs.directoryToFile(__dirname, __filename); }, ReferenceError, "check missing value does not throw an error");
 		});
 
 		it("should check invalid value", () => {
-			assert.throws(() => { fs.directoryToFile(false, "test", () => {}); }, TypeError, "check invalid value does not throw an error");
-			assert.throws(() => { fs.directoryToFile("test", false, () => {}); }, TypeError, "check invalid value does not throw an error");
-			assert.throws(() => { fs.directoryToFile("test", "test", false); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.directoryToFile(false, __filename, () => {}); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.directoryToFile(__dirname, false, () => {}); }, TypeError, "check invalid value does not throw an error");
+			assert.throws(() => { fs.directoryToFile(__dirname, __filename, false); }, TypeError, "check invalid value does not throw an error");
 		});
 
 		it("should check empty content value", () => {
-			assert.throws(() => { fs.directoryToFile("", "test", () => {}); }, Error, "check empty content value does not throw an error");
+			assert.throws(() => { fs.directoryToFile("", __filename, () => {}); }, Error, "check empty content value does not throw an error");
 			assert.throws(() => { fs.directoryToFile(__dirname, "", () => {}); }, Error, "check empty content value does not throw an error");
 		});
 
@@ -183,7 +183,7 @@ describe("directoryToFile", () => {
 				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
 				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
 
-				fs.directoryToFileProm("test").then(() => {
+				fs.directoryToFileProm(__dirname).then(() => {
 					done("check missing value does not generate an error");
 				}).catch((err) => {
 
@@ -200,7 +200,7 @@ describe("directoryToFile", () => {
 
 		it("should check invalid value", (done) => {
 
-			fs.directoryToFileProm(false, "test").then(() => {
+			fs.directoryToFileProm(false, __filename).then(() => {
 				done("check invalid value does not generate an error");
 			}).catch((err) => {
 

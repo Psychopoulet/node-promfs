@@ -52,7 +52,7 @@ describe("native", () => {
 			});
 
 			it("should check missing callback", () => {
-				assert.throws(() => { fs.isDirectory("test"); }, ReferenceError, "check missing callback does not throw an error");
+				assert.throws(() => { fs.isDirectory(__dirname); }, ReferenceError, "check missing callback does not throw an error");
 			});
 
 			it("should check empty content value", () => {
@@ -212,7 +212,7 @@ describe("native", () => {
 			});
 
 			it("should check missing callback", () => {
-				assert.throws(() => { fs.isFile("test"); }, ReferenceError, "check missing callback does not throw an error");
+				assert.throws(() => { fs.isFile(__filename); }, ReferenceError, "check missing callback does not throw an error");
 			});
 
 			it("should check empty content value", () => {
