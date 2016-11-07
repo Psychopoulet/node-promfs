@@ -54,12 +54,12 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
    * ``` filesToStringSync(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
    * ``` filesToStringProm(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
 
-  #### isDirectory -> native
+  #### isDirectory : does the file exists and is a directory ? -> native
    * ``` isDirectory(string path) ``` callback(Error|null err, bool exists)
    * ``` isDirectorySync(string path) : bool ```
    * ``` isDirectoryProm(string path) : Promise ``` then(bool exists)
 
-  #### isFile -> native
+  #### isFile : does the file exists and is a regular file ? -> native
    * ``` isFile(string path) ``` callback(Error|null err, bool exists)
    * ``` isFileSync(string path) : bool ```
    * ``` isFileProm(string path) : Promise ``` then(bool exists)
