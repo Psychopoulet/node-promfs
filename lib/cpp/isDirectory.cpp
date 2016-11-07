@@ -9,7 +9,7 @@ namespace _extends {
 
 			// methods
 
-				bool _isDirectory(std::string p_sDirname) {
+				bool _isDirectory(const std::string &p_sDirname) {
 
 					bool bResult = false;
 
@@ -49,7 +49,7 @@ namespace _extends {
 
 					v8::Local<v8::Function>::New(isolate, work->callback)
 						->Call(isolate->GetCurrentContext()
-						->Global(), 2, argv);
+						->Global(), argc, argv);
 
 					isolate->RunMicrotasks();
 
@@ -83,14 +83,14 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= args.Length()) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'dirname' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
 						
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'dirname' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'dirname' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
 						}
 					else {
 
@@ -102,7 +102,7 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sDirname) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'dirname' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
 							}
 							else {
 
@@ -125,18 +125,18 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= args.Length()) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'dirname' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'dirname' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'dirname' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
 						}
 					else if (1 >= args.Length()) {
 						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
 					}
-						else if (args[0]->IsUndefined()) {
+						else if (args[1]->IsUndefined()) {
 							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
 						}
 						else if (!args[1]->IsFunction()) {
@@ -153,7 +153,7 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sDirname) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'dirname' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
 							}
 							else {
 
@@ -200,10 +200,13 @@ namespace _extends {
 				// params treatment
 
 				if (0 >= args.Length()) {
-					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'dirname' argument")));
+					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
 				}
+					else if (args[0]->IsUndefined()) {
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+					}
 					else if (!args[0]->IsString()) {
-						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'dirname' argument is not a string")));
+						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
 					}
 				else {
 
@@ -215,13 +218,13 @@ namespace _extends {
 					// function treatment
 
 						if ("" == sDirname) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'dirname' argument is empty")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
 						}
 						else {
 
-								// data
-								work->filename = sDirname;
-								work->exists = false;
+							// data
+							work->filename = sDirname;
+							work->exists = false;
 
 							// start asynchronous treatment
 							uv_queue_work(uv_default_loop(), &work->request, _workAsync, _workPromiseComplete);

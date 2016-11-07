@@ -15,7 +15,11 @@
 
 		namespace isFile {
 
-			// methods
+			// private
+
+			bool _isFile(const std::string &p_sFilename);
+
+			// public
 
 			void isFileSync(const v8::FunctionCallbackInfo<v8::Value>& args);
 			void isFile(const v8::FunctionCallbackInfo<v8::Value>& args);

@@ -15,7 +15,7 @@
 
 		namespace isDirectory {
 
-			// methods
+			// public
 
 			void isDirectorySync(const v8::FunctionCallbackInfo<v8::Value>& args);
 			void isDirectory(const v8::FunctionCallbackInfo<v8::Value>& args);

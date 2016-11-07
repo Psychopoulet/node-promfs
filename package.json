@@ -43,6 +43,6 @@
 
   },
   "homepage": "https://github.com/Psychopoulet/node-promfs#readme",
-  "engines" : { "node" : ">=4.6.1" },
+  "engines" : { "node" : ">=4.0.0" },
   "gypfile": true
 }

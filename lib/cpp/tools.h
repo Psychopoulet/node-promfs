@@ -10,10 +10,10 @@
 
 		namespace tools {
 
-			// public
+			// private
 
-				std::string trim(const std::string &s);
-				void sleep(int milliseconds);
+			std::string trim(const std::string &s);
+			void sleep(int milliseconds);
 
 		}
 
