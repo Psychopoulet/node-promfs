@@ -78,34 +78,34 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
 
   * The arguments are the same as [the official documentation's ones](https://nodejs.org/api/fs.html)
   * "then" data are the same as the callbacks' ones
-  * ``` accessProm() : return Promise ```
-  * ``` appendFileProm() : return Promise ```
-  * ``` chmodProm() : return Promise ```
-  * ``` chownProm() : return Promise ```
-  * ``` closeProm() : return Promise ```
-  * ``` fchmodProm() : return Promise ```
-  * ``` fchownProm() : return Promise ```
-  * ``` fdatasyncProm() : return Promise ```
-  * ``` fstatProm() : return Promise ```
-  * ``` fsyncProm() : return Promise ```
-  * ``` ftruncateProm() : return Promise ```
-  * ``` futimesProm() : return Promise ```
-  * ``` linkProm() : return Promise ```
-  * ``` lstatProm() : return Promise ```
-  * ``` mkdirProm() : return Promise ```
-  * ``` mkdtempProm() : return Promise ```
-  * ``` openProm() : return Promise ```
-  * ``` readdirProm() : return Promise ```
-  * ``` readFileProm() : return Promise ```
-  * ``` realpathProm() : return Promise ```
-  * ``` renameProm() : return Promise ```
-  * ``` rmdirProm() : return Promise ```
-  * ``` statProm() : return Promise ```
-  * ``` truncateProm() : return Promise ```
-  * ``` unlinkProm() : return Promise ```
-  * ``` utimesProm() : return Promise ```
-  * ``` writeProm() : return Promise ```
-  * ``` writeFileProm() : return Promise```
+  * ``` accessProm() : Promise ``` -> tested
+  * ``` appendFileProm() : Promise ``` -> tested
+  * ``` chmodProm() : Promise ``` -> tested
+  * ``` chownProm() : Promise ``` -> tested
+  * ``` closeProm() : Promise ``` -> tested
+  * ``` fchmodProm() : Promise ```
+  * ``` fchownProm() : Promise ```
+  * ``` fdatasyncProm() : Promise ```
+  * ``` fstatProm() : Promise ```
+  * ``` fsyncProm() : Promise ```
+  * ``` ftruncateProm() : Promise ```
+  * ``` futimesProm() : Promise ```
+  * ``` linkProm() : Promise ```
+  * ``` lstatProm() : Promise ```
+  * ``` mkdirProm() : Promise ``` -> tested
+  * ``` mkdtempProm() : Promise ```
+  * ``` openProm() : Promise ``` -> tested
+  * ``` readdirProm() : Promise ```
+  * ``` readFileProm() : Promise ```
+  * ``` realpathProm() : Promise ``` -> tested
+  * ``` renameProm() : Promise ```
+  * ``` rmdirProm() : Promise ``` -> tested
+  * ``` statProm() : Promise ```
+  * ``` truncateProm() : Promise ```
+  * ``` unlinkProm() : Promise ``` -> tested
+  * ``` utimesProm() : Promise ```
+  * ``` writeProm() : Promise ```
+  * ``` writeFileProm() : Promise```
 
 ## Tests
 
