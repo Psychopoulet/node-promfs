@@ -63,7 +63,7 @@ describe("copy", () => {
 
 		it("should check inexistant origin", () => {
 			assert.throws(() => { fs.copyFileSync("rgvservseqrvserv", _filetest); }, "wrong \"origin\" file does not throw an error");
-			
+
 		});
 
 		it("should copy test files", () => {
@@ -140,14 +140,14 @@ describe("copy", () => {
 				done("check missing value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+				assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
 				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
 
 				return fs.copyFileProm(__filename).then(() => {
 					done("check missing value does not generate an error");
 				}).catch((err) => {
 
-					assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+					assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
 					assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
 
 					done();

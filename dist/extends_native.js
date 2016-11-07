@@ -15,6 +15,20 @@ try {
 
 // module
 
+// copyFile
+
+// sync version
+
+fs.copyFileSync = _extends.copyFileSync;
+
+// async version
+
+fs.copyFile = _extends.copyFile;
+
+// promise version
+
+fs.copyFileProm = _extends.copyFileProm;
+
 // isDirectory
 
 // sync version
