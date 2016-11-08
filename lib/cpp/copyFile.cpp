@@ -1,8 +1,6 @@
 
 #include "copyFile.h"
 
-#include <iostream>
-
 namespace _extends {
 
 	namespace copyFile {

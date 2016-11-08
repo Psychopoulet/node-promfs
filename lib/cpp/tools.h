@@ -4,7 +4,7 @@
 	#define EXTEND_TOOLS
 
 	#include <string>
-	#include <time.h>
+	//#include <time.h>
 
 	namespace _extends {
 
@@ -13,7 +13,7 @@
 			// private
 
 			std::string trim(const std::string &s);
-			void sleep(int milliseconds);
+			//void sleep(int milliseconds);
 
 		}
 

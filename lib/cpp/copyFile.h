@@ -3,10 +3,11 @@
 
 	#define EXTEND_COPYFILE
 
-	#include <string>
-	#include <fstream>
 	#include <node.h>
 	#include <uv.h>
+
+	#include <string>
+	#include <fstream>
 
 	#include "tools.h"
 	#include "isFile.h"
@@ -15,7 +16,7 @@
 
 		namespace copyFile {
 
-			// methods
+			// public
 
 			void copyFileSync(const v8::FunctionCallbackInfo<v8::Value>& args);
 			void copyFile(const v8::FunctionCallbackInfo<v8::Value>& args);

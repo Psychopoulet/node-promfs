@@ -3,10 +3,11 @@
 
 	#define EXTEND_ISDIRECTORY
 
-	#include <string>
 	#include <node.h>
-	#include <sys/stat.h>
 	#include <uv.h>
+
+	#include <string>
+	#include <sys/stat.h>
 
 	#include "AsyncWorkStructureIsFileIsDirectory.h"
 	#include "tools.h"

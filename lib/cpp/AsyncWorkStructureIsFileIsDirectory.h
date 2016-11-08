@@ -3,8 +3,6 @@
 
 	#define EXTEND_ASIFID
 
-	#include <string>
-
 	namespace _extends {
 
 		struct AsyncWorkStructureIsFileIsDirectory {

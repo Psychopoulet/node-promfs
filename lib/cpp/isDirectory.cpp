@@ -7,73 +7,71 @@ namespace _extends {
 
 		// private
 
-			// methods
+			bool _isDirectory(const std::string &p_sDirname) {
 
-				bool _isDirectory(const std::string &p_sDirname) {
+				bool bResult = false;
 
-					bool bResult = false;
+					struct stat sb;
+					if (0 == stat(p_sDirname.c_str(), &sb)) {
 
-						struct stat sb;
-						if (0 == stat(p_sDirname.c_str(), &sb)) {
-
-							if (S_IFDIR == (sb.st_mode & S_IFMT)) {
-								bResult = true;
-							}
-
+						if (S_IFDIR == (sb.st_mode & S_IFMT)) {
+							bResult = true;
 						}
 
-					return bResult;
+					}
 
-				}
+				return bResult;
 
-				static void _workAsync(uv_work_t *req) {
+			}
 
-					_extends::AsyncWorkStructureIsFileIsDirectory *work = static_cast<_extends::AsyncWorkStructureIsFileIsDirectory *>(req->data);
+			static void _workAsync(uv_work_t *req) {
 
-					work->exists = _isDirectory(work->filename);
+				_extends::AsyncWorkStructureIsFileIsDirectory *work = static_cast<_extends::AsyncWorkStructureIsFileIsDirectory *>(req->data);
 
-				}
+				work->exists = _isDirectory(work->filename);
 
-				static void _workAsyncComplete(uv_work_t *req, int status) {
+			}
 
-					v8::Isolate *isolate = v8::Isolate::GetCurrent();
-					v8::HandleScope handleScope(isolate);
+			static void _workAsyncComplete(uv_work_t *req, int status) {
 
-					_extends::AsyncWorkStructureIsFileIsDirectory *work = static_cast<_extends::AsyncWorkStructureIsFileIsDirectory *>(req->data);
+				v8::Isolate *isolate = v8::Isolate::GetCurrent();
+				v8::HandleScope handleScope(isolate);
 
-						const unsigned argc = 2;
-						v8::Local<v8::Value> argv[argc];
+				_extends::AsyncWorkStructureIsFileIsDirectory *work = static_cast<_extends::AsyncWorkStructureIsFileIsDirectory *>(req->data);
 
-						argv[0] = v8::Null(isolate);
-						argv[1] = v8::Boolean::New(isolate, work->exists);
+					const unsigned argc = 2;
+					v8::Local<v8::Value> argv[argc];
 
-					v8::Local<v8::Function>::New(isolate, work->callback)
-						->Call(isolate->GetCurrentContext()
-						->Global(), argc, argv);
+					argv[0] = v8::Null(isolate);
+					argv[1] = v8::Boolean::New(isolate, work->exists);
 
-					isolate->RunMicrotasks();
+				v8::Local<v8::Function>::New(isolate, work->callback)
+					->Call(isolate->GetCurrentContext()
+					->Global(), argc, argv);
 
-					work->callback.Reset();
-					delete work;
+				isolate->RunMicrotasks();
 
-				}
+				work->callback.Reset();
+				delete work;
 
-				static void _workPromiseComplete(uv_work_t* req, int i) {
+			}
 
-					v8::Isolate *isolate = v8::Isolate::GetCurrent();
-					v8::HandleScope scope(isolate);
+			static void _workPromiseComplete(uv_work_t* req, int i) {
 
-					_extends::AsyncWorkStructureIsFileIsDirectory *work = static_cast<_extends::AsyncWorkStructureIsFileIsDirectory *>(req->data);
+				v8::Isolate *isolate = v8::Isolate::GetCurrent();
+				v8::HandleScope scope(isolate);
 
-						v8::Local<v8::Promise::Resolver> local = v8::Local<v8::Promise::Resolver>::New(isolate, work->persistent);
-						local->Resolve(v8::Boolean::New(isolate, work->exists));
+				_extends::AsyncWorkStructureIsFileIsDirectory *work = static_cast<_extends::AsyncWorkStructureIsFileIsDirectory *>(req->data);
 
-					isolate->RunMicrotasks();
+					v8::Local<v8::Promise::Resolver> local = v8::Local<v8::Promise::Resolver>::New(isolate, work->persistent);
+					local->Resolve(v8::Boolean::New(isolate, work->exists));
 
-					work->callback.Reset();
-					delete work;
+				isolate->RunMicrotasks();
 
-				}
+				work->callback.Reset();
+				delete work;
+
+			}
 
 		// public
 
