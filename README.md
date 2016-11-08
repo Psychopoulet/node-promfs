@@ -78,6 +78,7 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
 
   * The arguments are the same as [the official documentation's ones](https://nodejs.org/api/fs.html)
   * "then" data are the same as the callbacks' ones
+  * all the methods cannot be tested (too much arguments)
   * ``` accessProm() : Promise ``` -> tested
   * ``` appendFileProm() : Promise ``` -> tested
   * ``` chmodProm() : Promise ``` -> tested
@@ -105,7 +106,7 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
   * ``` unlinkProm() : Promise ``` -> tested
   * ``` utimesProm() : Promise ```
   * ``` writeProm() : Promise ```
-  * ``` writeFileProm() : Promise```
+  * ``` writeFileProm() : Promise``` -> tested
 
 ## Tests
 

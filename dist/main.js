@@ -404,13 +404,101 @@ fs.renameProm = (oldPath, newPath) => {
 	}
 };
 
+fs.statProm = path => {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			return new Promise((resolve, reject) => {
+
+				fs.stat(path, (err, result) => {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.truncateProm = (path, len) => {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else if ("undefined" === typeof len) {
+		return Promise.reject(new ReferenceError("missing 'len' argument"));
+	} else if ("number" !== typeof len) {
+		return Promise.reject(new TypeError("'len' argument is not a number"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			return new Promise((resolve, reject) => {
+
+				fs.truncate(path, len, (err, result) => {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.writeFileProm = (file, data, options) => {
+
+	if ("undefined" === typeof file) {
+		return Promise.reject(new ReferenceError("missing 'file' argument"));
+	} else if ("string" !== typeof file && "number" !== typeof file && ("object" !== typeof file || !(file instanceof Buffer))) {
+		return Promise.reject(new TypeError("'file' argument is not a string, a number or a Buffer"));
+	} else if ("undefined" === typeof data) {
+		return Promise.reject(new ReferenceError("missing 'data' argument"));
+	} else if ("string" !== typeof data && ("object" !== typeof data || !(data instanceof Buffer))) {
+		return Promise.reject(new TypeError("'data' argument is not a string or a Buffer"));
+	} else {
+
+		return new Promise((resolve, reject) => {
+
+			fs.writeFile(file, data, options ? options : null, (err, result) => {
+
+				if (err) {
+					reject(err);
+				} else {
+					resolve(result);
+				}
+			});
+		});
+	}
+};
+
 [
 
 // extend
 "directoryToString", "directoryToFile", "extractFiles", "filesToString", "filesToFile", "mkdirp", "rmdirp",
 
 // classical
-"fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "stat", "truncate", "utimes", "write", "writeFile"].forEach(name => {
+"fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "utimes", "write"].forEach(name => {
 
 	fs[name + "Prom"] = function () {
 		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
