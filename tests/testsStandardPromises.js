@@ -10,8 +10,8 @@
 // private
 
 	var _dirtestBase = path.join(__dirname, "testlvl1"),
-		_filetest = path.join(__dirname, "test.txt")/*,
-		_filetest2 = path.join(__dirname, "test2.txt")*/;
+		_filetest = path.join(__dirname, "test.txt"),
+		_filetest2 = path.join(__dirname, "test2.txt");
 
 // tests
 
@@ -695,21 +695,37 @@ describe("promisification", () => {
 
 		});
 
-		/*
-
 		describe("readFileProm", () => {
 
 			before(() => { return fs.writeFileProm(_filetest, "test"); });
 			after(() => { return fs.unlinkProm(_filetest); });
 
+			it("should check missing value", (done) => {
+
+				fs.readFileProm().then(() => {
+					done("check missing value does not generate an error");
+				}).catch((err) => {
+
+					assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
+					done();
+
+				});
+
+			});
+
 			it("should check type value", (done) => {
 
 				fs.readFileProm(false).then(() => {
-					assert(false, "check type value does not generate an error");
-					done();
+					done("check type value does not generate an error");
 				}).catch((err) => {
-					assert.strictEqual("string", typeof err, "check type value does not generate an error");
+
+					assert.strictEqual(true, err instanceof TypeError, "check type value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check type value does not generate a valid error");
+
 					done();
+
 				});
 
 			});
@@ -717,27 +733,27 @@ describe("promisification", () => {
 			it("should check empty content value", (done) => {
 
 				fs.readFileProm("").then(() => {
-					assert(false, "check empty content does not generate an error");
-					done();
+					done("check empty content does not generate an error");
 				}).catch((err) => {
-					assert.strictEqual("string", typeof err, "check type value does not generate an error");
+
+					assert.strictEqual(true, err instanceof Error, "check empty content value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check empty content value does not generate a valid error");
+
 					done();
+
 				});
 
 			});
 
-			it("should check normal running", (done) => {
+			it("should check normal running", () => {
 
-				fs.readFileProm(_filetest, "utf8").then((content) => {
+				return fs.readFileProm(_filetest, "utf8").then((content) => {
 					assert.strictEqual("test", content, "check normal running does not generate content");
-					done();
-				}).catch(done);
+				});
 
 			});
 
 		});
-
-		*/
 
 		describe("realpathProm", () => {
 
@@ -800,8 +816,6 @@ describe("promisification", () => {
 
 		});
 
-		/*
-
 		describe("renameProm", () => {
 
 			before(() => { return fs.writeFileProm(_filetest, ""); });
@@ -814,21 +828,48 @@ describe("promisification", () => {
 
 			});
 
-			it("should check type value", (done) => {
+			it("should check missing value", (done) => {
 
-				fs.renameProm(false).then(() => {
-					assert(false, "check type value does not generate an error");
-					done();
+				fs.renameProm().then(() => {
+					done("check missing value does not generate an error");
 				}).catch((err) => {
 
-					assert.strictEqual("string", typeof err, "check type value does not generate an error");
+					assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
+					fs.renameProm(_filetest).then(() => {
+						done("check missing value does not generate an error");
+					}).catch((err) => {
+
+						assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
+						assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
+						done();
+
+					});
+
+				});
+
+			});
+
+			it("should check type value", (done) => {
+
+				fs.renameProm(false, _filetest).then(() => {
+					done("check type value does not generate an error");
+				}).catch((err) => {
+
+					assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
 
 					fs.renameProm(_filetest, false).then(() => {
-						assert(false, "check type value does not generate an error");
-						done();
+						done("check type value does not generate an error");
 					}).catch((err) => {
-						assert.strictEqual("string", typeof err, "check type value does not generate an error");
+						
+						assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+						assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
 						done();
+
 					});
 
 				});
@@ -837,19 +878,22 @@ describe("promisification", () => {
 
 			it("should check empty content value", (done) => {
 
-				fs.renameProm("").then(() => {
-					assert(false, "check empty content does not generate an error");
-					done();
+				fs.renameProm("", _filetest).then(() => {
+					done("check empty content does not generate an error");
 				}).catch((err) => {
 
-					assert.strictEqual("string", typeof err, "check type value does not generate an error");
+					assert.strictEqual(true, err instanceof Error, "check missing value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
 
 					fs.renameProm(_filetest, "").then(() => {
-						assert(false, "check empty content does not generate an error");
-						done();
+						done("check empty content does not generate an error");
 					}).catch((err) => {
-						assert.strictEqual("string", typeof err, "check type value does not generate an error");
+						
+						assert.strictEqual(true, err instanceof Error, "check missing value does not generate a valid error");
+						assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+
 						done();
+
 					});
 
 				});
@@ -861,6 +905,8 @@ describe("promisification", () => {
 			});
 
 		});
+
+		/*
 
 		describe("statProm", () => {
 

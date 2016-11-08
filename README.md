@@ -96,9 +96,9 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
   * ``` mkdtempProm() : Promise ```
   * ``` openProm() : Promise ``` -> tested
   * ``` readdirProm() : Promise ``` -> tested
-  * ``` readFileProm() : Promise ```
+  * ``` readFileProm() : Promise ``` -> tested
   * ``` realpathProm() : Promise ``` -> tested
-  * ``` renameProm() : Promise ```
+  * ``` renameProm() : Promise ``` -> tested
   * ``` rmdirProm() : Promise ``` -> tested
   * ``` statProm() : Promise ```
   * ``` truncateProm() : Promise ```

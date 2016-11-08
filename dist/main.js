@@ -317,6 +317,28 @@ fs.readdirProm = (path, options) => {
 	}
 };
 
+fs.readFileProm = (file, options) => {
+
+	if ("undefined" === typeof file) {
+		return Promise.reject(new ReferenceError("missing 'file' argument"));
+	} else if ("string" !== typeof file && "number" !== typeof file && ("object" !== typeof file || !(file instanceof Buffer))) {
+		return Promise.reject(new TypeError("'file' argument is not a string, a number or a Buffer"));
+	} else {
+
+		return new Promise((resolve, reject) => {
+
+			fs.readFile(file, options ? options : null, (err, result) => {
+
+				if (err) {
+					reject(err);
+				} else {
+					resolve(result);
+				}
+			});
+		});
+	}
+};
+
 fs.realpathProm = (path, options) => {
 
 	if ("undefined" === typeof path) {
@@ -346,13 +368,49 @@ fs.realpathProm = (path, options) => {
 	}
 };
 
+fs.renameProm = (oldPath, newPath) => {
+
+	if ("undefined" === typeof oldPath) {
+		return Promise.reject(new ReferenceError("missing 'oldPath' argument"));
+	} else if ("string" !== typeof oldPath) {
+		return Promise.reject(new TypeError("'oldPath' argument is not a string"));
+	} else if ("undefined" === typeof newPath) {
+		return Promise.reject(new ReferenceError("missing 'newPath' argument"));
+	} else if ("string" !== typeof newPath) {
+		return Promise.reject(new TypeError("'newPath' argument is not a string"));
+	} else {
+
+		oldPath = oldPath.trim();
+		newPath = newPath.trim();
+
+		if ("" === oldPath) {
+			return Promise.reject(new Error("'oldPath' argument is empty"));
+		} else if ("" === newPath) {
+			return Promise.reject(new Error("'newPath' argument is empty"));
+		} else {
+
+			return new Promise((resolve, reject) => {
+
+				fs.rename(oldPath, newPath, (err, result) => {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+			});
+		}
+	}
+};
+
 [
 
 // extend
 "directoryToString", "directoryToFile", "extractFiles", "filesToString", "filesToFile", "mkdirp", "rmdirp",
 
 // classical
-"fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "readFile", "rename", "stat", "truncate", "utimes", "write", "writeFile"].forEach(name => {
+"fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "stat", "truncate", "utimes", "write", "writeFile"].forEach(name => {
 
 	fs[name + "Prom"] = function () {
 		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
