@@ -498,7 +498,10 @@ fs.writeFileProm = (file, data, options) => {
 "directoryToString", "directoryToFile", "extractFiles", "filesToString", "filesToFile", "mkdirp", "rmdirp",
 
 // classical
-"fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "utimes", "write"].forEach(name => {
+"fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", // write
+"link", "lstat", "mkdtemp", "utimes", "write" // others
+
+].forEach(name => {
 
 	fs[name + "Prom"] = function () {
 		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {

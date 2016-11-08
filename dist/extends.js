@@ -333,7 +333,30 @@ fs.filesToFile = (files, target, separator, callback) => {
 				});
 			}).then(() => {
 
-				_concatContentStream(files, target, separator, callback);
+				let writeStream = fs.createWriteStream(target, { flags: "a" }),
+					error = false;
+
+				writeStream.once("error", err => {
+
+					error = true;
+					writeStream.close();
+					callback(err);
+				}).once("close", () => {
+
+					if (!error) {
+						callback(null);
+					}
+				});
+
+				_concatContentStream(writeStream, files, target, separator, err => {
+
+					if (err) {
+						error = true;
+						callback(err);
+					}
+
+					writeStream.close();
+				});
 			}).catch(callback);
 		}
 	}
@@ -341,7 +364,7 @@ fs.filesToFile = (files, target, separator, callback) => {
 
 // specific to "filesToFile" method
 
-function _concatContentStream(files, target, separator, callback) {
+function _concatContentStream(writeStream, files, target, separator, callback) {
 
 	if (0 >= files.length) {
 		callback(null);
@@ -357,70 +380,49 @@ function _concatContentStream(files, target, separator, callback) {
 				callback(new Error("\"" + file + "\" is not a valid file"));
 			} else {
 
-				let readStream = fs.createReadStream(file),
-					writeStream = fs.createWriteStream(target, { flags: "a" }),
-					error = false;
+				writeStream.write(-1 < separator.indexOf("{{filename}}") ? separator.replace("{{filename}}", path.basename(file)) : "", "utf8", err => {
 
-				writeStream.once("error", err => {
-
-					error = true;
-
-					readStream.close();
-					writeStream.close();
-
-					callback(err);
-				}).once("close", () => {
-
-					if (!error) {
-
-						if (0 >= files.length) {
-							callback(null);
-						} else {
-
-							if (-1 < separator.indexOf("{{filename}}")) {
-								_concatContentStream(files, target, separator, callback);
-							} else {
-
-								fs.appendFile(target, separator, err => {
-
-									if (err) {
-										callback(err);
-									} else {
-										_concatContentStream(files, target, separator, callback);
-									}
-								});
-							}
-						}
-					}
-				});
-
-				readStream.once("error", err => {
-
-					error = true;
-
-					readStream.close();
-					writeStream.close();
-
-					callback(err);
-				}).once("open", () => {
-
-					if (-1 >= separator.indexOf("{{filename}}")) {
-						readStream.pipe(writeStream);
+					if (err) {
+						callback(err);
 					} else {
 
-						fs.appendFile(target, separator.replace("{{filename}}", path.basename(file)), err => {
+						let readStream = fs.createReadStream(file),
+							error = false;
 
-							if (err) {
-								callback(err);
-							} else {
-								readStream.pipe(writeStream);
+						readStream.once("error", err => {
+
+							error = true;
+							readStream.close();
+							callback(err);
+						}).once("open", () => {
+							readStream.pipe(writeStream, { end: false });
+						}).once("close", () => {
+
+							if (!error) {
+
+								if (0 >= files.length) {
+									callback(null);
+								} else {
+
+									if (-1 < separator.indexOf("{{filename}}")) {
+										_concatContentStream(writeStream, files, target, separator, callback);
+									} else {
+
+										writeStream.write(separator, err => {
+
+											if (err) {
+												callback(err);
+											} else {
+												_concatContentStream(writeStream, files, target, separator, callback);
+											}
+										});
+									}
+								}
 							}
+						}).once("end", () => {
+							readStream.close();
 						});
 					}
-				}).once("close", () => {
-					writeStream.close();
-				}).once("end", () => {
-					readStream.close();
 				});
 			}
 		});
