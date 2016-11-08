@@ -14,7 +14,7 @@
 			v8::Persistent<v8::Promise::Resolver> persistent;
 
 			std::string filename;
-			boolean exists;
+			bool exists;
 			
 		};
 

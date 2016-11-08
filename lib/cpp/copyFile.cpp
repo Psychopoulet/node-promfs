@@ -19,7 +19,7 @@ namespace _extends {
 
 					std::string origin;
 					std::string target;
-					boolean copied;
+					bool copied;
 					
 				};
 
