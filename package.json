@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/main.js",
     "install": "node-gyp configure && node-gyp build",
-    "rebuild-all": "npm rebuild && node-gyp rebuild",
+    "rebuild-all": "node-gyp rebuild",
     "test": "gulp"
   },
   "repository": {
