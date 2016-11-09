@@ -53,6 +53,9 @@
 			.pipe(plumber())
 			.pipe(excludeGitignore())
 			.pipe(eslint({
+				"parserOptions": {
+					"ecmaVersion": 6
+				},
 				"rules": {
 					"linebreak-style": 0,
 					"quotes": [ 1, "double" ],
