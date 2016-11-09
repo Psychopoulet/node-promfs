@@ -288,7 +288,7 @@ fs.chownProm = (path, uid, gid) => {
 	}
 };
 
-fs.readdirProm = (path, options) => {
+fs.readdirProm = path => {
 
 	if ("undefined" === typeof path) {
 		return Promise.reject(new ReferenceError("missing 'path' argument"));
@@ -304,7 +304,7 @@ fs.readdirProm = (path, options) => {
 
 			return new Promise((resolve, reject) => {
 
-				fs.readdir(path, options ? options : null, (err, result) => {
+				fs.readdir(path, (err, result) => {
 
 					if (err) {
 						reject(err);
