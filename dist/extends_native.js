@@ -5,56 +5,66 @@
 
 const fs = require("fs");
 
-var _extends;
+var _extends = null;
 
 try {
-		_extends = require(require("path").join("..", "build", "Release", "_extends.node"));
+			_extends = require(require("path").join("..", "build", "Release", "_extends.node"));
 } catch (e) {
-		_extends = require(require("path").join("..", "build", "Debug", "_extends.node"));
+
+			try {
+						_extends = require(require("path").join("..", "build", "Debug", "_extends.node"));
+			} catch (e) {
+						_extends = null;
+			}
 }
 
-// module
+if (!_extends) {
+			throw new Error("'node-promfs' : Impossible to load native functions");
+} else {
 
-// copyFile
+			// module
 
-// sync version
+			// copyFile
 
-fs.copyFileSync = _extends.copyFileSync;
+			// sync version
 
-// async version
+			fs.copyFileSync = _extends.copyFileSync;
 
-fs.copyFile = _extends.copyFile;
+			// async version
 
-// promise version
+			fs.copyFile = _extends.copyFile;
 
-fs.copyFileProm = _extends.copyFileProm;
+			// promise version
 
-// isDirectory
+			fs.copyFileProm = _extends.copyFileProm;
 
-// sync version
+			// isDirectory
 
-fs.isDirectorySync = _extends.isDirectorySync;
+			// sync version
 
-// async version
+			fs.isDirectorySync = _extends.isDirectorySync;
 
-fs.isDirectory = _extends.isDirectory;
+			// async version
 
-// promise version
+			fs.isDirectory = _extends.isDirectory;
 
-fs.isDirectoryProm = _extends.isDirectoryProm;
+			// promise version
 
-// isFile
+			fs.isDirectoryProm = _extends.isDirectoryProm;
 
-// sync version
+			// isFile
 
-fs.isFileSync = _extends.isFileSync;
+			// sync version
 
-// async version
+			fs.isFileSync = _extends.isFileSync;
 
-fs.isFile = _extends.isFile;
+			// async version
 
-// promise version
+			fs.isFile = _extends.isFile;
 
-fs.isFileProm = _extends.isFileProm;
+			// promise version
 
-module.exports = fs;
+			fs.isFileProm = _extends.isFileProm;
+
+			module.exports = fs;
+}
