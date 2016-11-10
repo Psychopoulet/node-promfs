@@ -9,18 +9,8 @@ namespace _extends {
 
 			bool _isFile(const std::string &p_sFilename) {
 
-				bool bResult = false;
-
-					struct stat sb;
-					if (0 == stat(p_sFilename.c_str(), &sb)) {
-
-						if (S_IFREG == (sb.st_mode & S_IFMT)) {
-							bResult = true;
-						}
-
-					}
-
-				return bResult;
+				struct stat sb;
+				return (0 == stat(p_sFilename.c_str(), &sb) && S_IFREG == (sb.st_mode & S_IFMT));
 
 			}
 

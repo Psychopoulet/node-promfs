@@ -9,18 +9,8 @@ namespace _extends {
 
 			bool _isDirectory(const std::string &p_sDirname) {
 
-				bool bResult = false;
-
-					struct stat sb;
-					if (0 == stat(p_sDirname.c_str(), &sb)) {
-
-						if (S_IFDIR == (sb.st_mode & S_IFMT)) {
-							bResult = true;
-						}
-
-					}
-
-				return bResult;
+				struct stat sb;
+				return (0 == stat(p_sDirname.c_str(), &sb) && S_IFDIR == (sb.st_mode & S_IFMT));
 
 			}
 
