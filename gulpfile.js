@@ -8,48 +8,60 @@
 			gulp = require("gulp"),
 			plumber = require("gulp-plumber"),
 			excludeGitignore = require("gulp-exclude-gitignore"),
-			replace = require("gulp-replace"),
-
-			eslint = require("gulp-eslint"),
 
 			babel = require("gulp-babel"),
+			uglify = require("gulp-uglify"),
 
+			del = require("del"),
+
+			eslint = require("gulp-eslint"),
 			mocha = require("gulp-mocha");
-
-	require("babel-preset-es2015-node4");
 
 // private
 
 	var _gulpFile = path.join(__dirname, "gulpfile.js"),
-		_libFiles = path.join(__dirname, "lib", "**", "*.js"),
-		_distFiles = path.join(__dirname, "dist", "**", "*.js"),
-		_unitTestsFiles = path.join(__dirname, "tests", "**", "*.js"),
-		_allJSFiles = [_gulpFile, _libFiles, _distFiles, _unitTestsFiles];
+		_libDir = path.join(__dirname, "lib"),
+			_libFiles = path.join(_libDir, "*.js"),
+		_tmpDir = path.join(__dirname, "tmp"),
+			_tmpFiles = path.join(_tmpDir, "*.js"),
+		_distDir = path.join(__dirname, "dist"),
+			_distFiles = path.join(_distDir, "*.js"),
+		_unitTestsFiles = path.join(__dirname, "tests", "*.js"),
+		_toTestFiles = [_gulpFile, _libFiles, _unitTestsFiles];
 
 // tasks
 
-	gulp.task("babel", function () {
+	gulp.task("babel", () => {
 
 		return gulp.src(_libFiles)
 			.pipe(babel({
-				presets: ["es2015-node4"]
+				presets: ["es2015"]
 			}))
-			.pipe(gulp.dest("dist"));
+			.pipe(gulp.dest(_tmpDir));
 
 	});
 
-	gulp.task("replace", ["babel"], function () {
+	gulp.task("compress", ["babel"], () => {
 
-		return gulp.src(_distFiles)
-			.pipe(replace("    ", "	"))
-			.pipe(replace("  ", "	"))
-			.pipe(gulp.dest("dist"));
+		return gulp.src(_tmpFiles)
+			.pipe(uglify({
+
+			}).on("error", (err) => {
+				(0, console).log(err);
+			}))
+			.pipe(gulp.dest(_distDir));
 
 	});
 
-	gulp.task("eslint", ["replace"], function () {
+	gulp.task("clean", ["compress"], function () {
 
-		return gulp.src(_allJSFiles)
+		return del(_tmpDir);
+
+	});
+
+	gulp.task("eslint", ["clean"], () => {
+
+		return gulp.src(_toTestFiles)
 			.pipe(plumber())
 			.pipe(excludeGitignore())
 			.pipe(eslint({
@@ -73,7 +85,7 @@
 
 	});
 
-	gulp.task("mocha", ["eslint"], function () {
+	gulp.task("mocha", ["eslint"], () => {
 
 		return gulp.src(_unitTestsFiles)
 			.pipe(plumber())
@@ -83,8 +95,8 @@
 
 // watcher
 
-	gulp.task("watch", function () {
-		gulp.watch(_allJSFiles, ["mocha"]);
+	gulp.task("watch", () => {
+		gulp.watch(_toTestFiles, ["mocha"]);
 	});
 
 
