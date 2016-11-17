@@ -6,6 +6,7 @@
 	#include <string>
 	//#include <time.h>
 
+	// patch XP
 	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 		#include <windows.h>
 	#endif
@@ -16,15 +17,18 @@
 
 			// private
 
+			std::string trim(const std::string &s);
+			//void sleep(int milliseconds);
+
+			// patch XP
 			#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 
-				enum eIsWindowsVistaOrHigher { YES, NO, NOTTESTED };
+				enum eIsWindowsVistaOrHigherTested { YES, NO, NOTTESTED };
+				static int nIsWindowsVistaOrHigherTested = eIsWindowsVistaOrHigherTested::NOTTESTED;
+				
 				bool isWindowsVistaOrHigher();
 
 			#endif
-
-			std::string trim(const std::string &s);
-			//void sleep(int milliseconds);
 
 		}
 

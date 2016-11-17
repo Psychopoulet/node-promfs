@@ -25,20 +25,6 @@ namespace _extends {
 
 			}
 
-			#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-
-				bool isWindowsVistaOrHigher() {
-
-					#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-						return (5 < (DWORD)(LOBYTE(LOWORD(GetVersion()))));
-					#else
-						return false;
-					#endif
-
-				}
-
-			#endif
-
 			/*void sleep(int milliseconds) {
 
 				clock_t time_end;
@@ -47,6 +33,23 @@ namespace _extends {
 				while (clock() < time_end) { }
 
 			}*/
+
+			// patch XP
+			#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+
+				bool isWindowsVistaOrHigher() {
+
+					/*if (eIsWindowsVistaOrHigherTested::NOTTESTED == nIsWindowsVistaOrHigherTested) {
+						nIsWindowsVistaOrHigherTested = (5 < (DWORD)(LOBYTE(LOWORD(GetVersion())))) ? eIsWindowsVistaOrHigherTested::YES : eIsWindowsVistaOrHigherTested::NO;
+					}
+
+					return (eIsWindowsVistaOrHigherTested::YES);*/
+
+					return false;
+
+				}
+
+			#endif
 
 	}
 

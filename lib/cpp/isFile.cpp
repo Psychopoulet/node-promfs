@@ -9,6 +9,7 @@ namespace _extends {
 
 			bool _isFile(const std::string &p_sFilename) {
 
+				// patch XP
 				#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 
 					if (_extends::tools::isWindowsVistaOrHigher()) {
@@ -18,8 +19,28 @@ namespace _extends {
 
 					}
 					else {
+
 						DWORD dwAttrib = GetFileAttributes(p_sFilename.c_str());
-						return !((dwAttrib & FILE_ATTRIBUTE_DIRECTORY) || (INVALID_FILE_ATTRIBUTES == dwAttrib && ERROR_FILE_NOT_FOUND == GetLastError()));
+
+						if (dwAttrib & FILE_ATTRIBUTE_DIRECTORY) {
+							return false;
+						}
+						else if (INVALID_FILE_ATTRIBUTES == dwAttrib) {
+
+							DWORD lastError = GetLastError();
+
+							return !(
+								ERROR_PATH_NOT_FOUND == lastError ||
+								ERROR_FILE_NOT_FOUND == lastError ||
+								ERROR_INVALID_NAME == lastError ||
+								ERROR_BAD_NETPATH == lastError
+							);
+
+						}
+						else {
+							return true;
+						}
+
 					}
 
 				#else
