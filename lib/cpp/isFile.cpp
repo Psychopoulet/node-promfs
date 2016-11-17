@@ -9,8 +9,25 @@ namespace _extends {
 
 			bool _isFile(const std::string &p_sFilename) {
 
-				struct stat sb;
-				return (0 == stat(p_sFilename.c_str(), &sb) && S_IFREG == (sb.st_mode & S_IFMT));
+				#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+
+					if (_extends::tools::isWindowsVistaOrHigher()) {
+
+						struct stat sb;
+						return (0 == stat(p_sFilename.c_str(), &sb) && S_IFREG == (sb.st_mode & S_IFMT));
+
+					}
+					else {
+						DWORD dwAttrib = GetFileAttributes(p_sFilename.c_str());
+						return !((dwAttrib & FILE_ATTRIBUTE_DIRECTORY) || (INVALID_FILE_ATTRIBUTES == dwAttrib && ERROR_FILE_NOT_FOUND == GetLastError()));
+					}
+
+				#else
+
+					struct stat sb;
+					return (0 == stat(p_sFilename.c_str(), &sb) && S_IFREG == (sb.st_mode & S_IFMT));
+
+				#endif
 
 			}
 

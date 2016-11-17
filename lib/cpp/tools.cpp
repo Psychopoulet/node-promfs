@@ -25,6 +25,20 @@ namespace _extends {
 
 			}
 
+			#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+
+				bool isWindowsVistaOrHigher() {
+
+					#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+						return (5 < (DWORD)(LOBYTE(LOWORD(GetVersion()))));
+					#else
+						return false;
+					#endif
+
+				}
+
+			#endif
+
 			/*void sleep(int milliseconds) {
 
 				clock_t time_end;
