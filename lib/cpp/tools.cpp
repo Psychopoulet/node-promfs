@@ -39,13 +39,11 @@ namespace _extends {
 
 				bool isWindowsVistaOrHigher() {
 
-					/*if (eIsWindowsVistaOrHigherTested::NOTTESTED == nIsWindowsVistaOrHigherTested) {
+					if (eIsWindowsVistaOrHigherTested::NOTTESTED == nIsWindowsVistaOrHigherTested) {
 						nIsWindowsVistaOrHigherTested = (5 < (DWORD)(LOBYTE(LOWORD(GetVersion())))) ? eIsWindowsVistaOrHigherTested::YES : eIsWindowsVistaOrHigherTested::NO;
 					}
 
-					return (eIsWindowsVistaOrHigherTested::YES);*/
-
-					return false;
+					return (eIsWindowsVistaOrHigherTested::YES);
 
 				}
 
