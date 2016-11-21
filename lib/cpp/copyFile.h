@@ -3,12 +3,15 @@
 
 	#define EXTEND_COPYFILE
 
+	// node
 	#include <node.h>
 	#include <uv.h>
 
+	// std
 	#include <string>
 	#include <fstream>
 
+	// tools
 	#include "tools.h"
 	#include "isFile.h"
 

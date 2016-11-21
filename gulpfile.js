@@ -10,8 +10,7 @@
 			excludeGitignore = require("gulp-exclude-gitignore"),
 
 			babel = require("gulp-babel"),
-			uglify = require("gulp-uglify"),
-
+			
 			del = require("del"),
 
 			eslint = require("gulp-eslint"),
@@ -22,8 +21,6 @@
 	var _gulpFile = path.join(__dirname, "gulpfile.js"),
 		_libDir = path.join(__dirname, "lib"),
 			_libFiles = path.join(_libDir, "*.js"),
-		_tmpDir = path.join(__dirname, "tmp"),
-			_tmpFiles = path.join(_tmpDir, "*.js"),
 		_distDir = path.join(__dirname, "dist"),
 			_distFiles = path.join(_distDir, "*.js"),
 		_unitTestsFiles = path.join(__dirname, "tests", "*.js"),
@@ -37,29 +34,11 @@
 			.pipe(babel({
 				presets: ["es2015"]
 			}))
-			.pipe(gulp.dest(_tmpDir));
-
-	});
-
-	gulp.task("compress", ["babel"], () => {
-
-		return gulp.src(_tmpFiles)
-			.pipe(uglify({
-
-			}).on("error", (err) => {
-				(0, console).log(err);
-			}))
 			.pipe(gulp.dest(_distDir));
 
 	});
 
-	gulp.task("clean", ["compress"], function () {
-
-		return del(_tmpDir);
-
-	});
-
-	gulp.task("eslint", ["clean"], () => {
+	gulp.task("eslint", ["babel"], () => {
 
 		return gulp.src(_toTestFiles)
 			.pipe(plumber())

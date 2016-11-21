@@ -4,6 +4,7 @@
 #include "copyFile.h"
 #include "isDirectory.h"
 #include "isFile.h"
+#include "rmdirp.h"
 
 namespace _extends {
 
@@ -20,6 +21,10 @@ namespace _extends {
 		NODE_SET_METHOD(exports, "isFileSync", isFile::isFileSync);
 		NODE_SET_METHOD(exports, "isFile", isFile::isFile);
 		NODE_SET_METHOD(exports, "isFileProm", isFile::isFileProm);
+
+		NODE_SET_METHOD(exports, "rmdirpSync", rmdirp::rmdirpSync);
+		NODE_SET_METHOD(exports, "rmdirp", rmdirp::rmdirp);
+		NODE_SET_METHOD(exports, "rmdirpProm", rmdirp::rmdirpProm);
 
 	}
 

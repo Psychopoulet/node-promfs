@@ -27,11 +27,8 @@ namespace _extends {
 
 					bool bResult = false;
 
-						if (isFile::_isFile(p_sTarget)) {
-							std::remove(p_sTarget.c_str());
-						}
-						else {
-
+						if (tools::unlink(p_sTarget)) {
+							
 							std::ifstream originFileStream;
 							std::ofstream targetFileStream;
 

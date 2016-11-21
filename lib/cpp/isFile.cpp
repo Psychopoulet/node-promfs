@@ -9,27 +9,21 @@ namespace _extends {
 
 			bool _isFile(const std::string &p_sFilename) {
 
-				// patch XP
-				#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+				bool bResult = false;
 
-					if (_extends::tools::isWindowsVistaOrHigher()) {
-
-						struct stat sb;
-						return (0 == stat(p_sFilename.c_str(), &sb) && S_IFREG == (sb.st_mode & S_IFMT));
-
-					}
-					else {
+					// patch XP
+					#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 
 						DWORD dwAttrib = GetFileAttributes(p_sFilename.c_str());
 
 						if (dwAttrib & FILE_ATTRIBUTE_DIRECTORY) {
-							return false;
+							bResult = false;
 						}
 						else if (INVALID_FILE_ATTRIBUTES == dwAttrib) {
 
 							DWORD lastError = GetLastError();
 
-							return !(
+							bResult = !(
 								ERROR_PATH_NOT_FOUND == lastError ||
 								ERROR_FILE_NOT_FOUND == lastError ||
 								ERROR_INVALID_NAME == lastError ||
@@ -38,17 +32,17 @@ namespace _extends {
 
 						}
 						else {
-							return true;
+							bResult = true;
 						}
 
-					}
+					#else
 
-				#else
+						struct stat sb;
+						bResult = (0 == stat(p_sFilename.c_str(), &sb) && S_IFREG == (sb.st_mode & S_IFMT));
 
-					struct stat sb;
-					return (0 == stat(p_sFilename.c_str(), &sb) && S_IFREG == (sb.st_mode & S_IFMT));
+					#endif
 
-				#endif
+				return bResult;
 
 			}
 
