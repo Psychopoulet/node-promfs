@@ -146,7 +146,7 @@ namespace _extends {
 								statbuf = NULL;
 									
 								if (!bFailToDelete) {
-									bResult = rmdir(sDirname);
+									bResult = (rmdir(sDirname.c_str()));
 								}
 
 							}
