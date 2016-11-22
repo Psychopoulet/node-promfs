@@ -16,6 +16,7 @@
 					"lib/cpp/isFile.cpp",
 					
 					"lib/cpp/copyFile.cpp",
+					"lib/cpp/mkdirp.cpp",
 					"lib/cpp/rmdirp.cpp"
 
 					

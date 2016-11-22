@@ -49,7 +49,7 @@ namespace _extends {
 
 										if('.' != FindFileData.cFileName[0]) {
 
-											if (FILE_ATTRIBUTE_DIRECTORY & FindFileData.dwFileAttributes) {
+											if (isDirectory::_isDirectory(sDirname + FindFileData.cFileName)) {
 												
 												if (!_rmdirp(sDirname + FindFileData.cFileName)) {
 													bFailToDelete = true;
@@ -115,10 +115,8 @@ namespace _extends {
 
 										if("." !=entry->d_name && ".." !=entry->d_name) {
 
-											lstat(entry->d_name,&statbuf);
-
-											if(S_ISDIR(statbuf.st_mode)) {
-
+											if (isDirectory::_isDirectory(sDirname + entry->d_name)) {
+												
 												if (!_rmdirp(entry->d_name)) {
 													bFailToDelete = true;
 													break;
