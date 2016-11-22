@@ -92,7 +92,7 @@ namespace _extends {
 
 						bool bResult = false;
 
-							if (!isDirectory::_isDirectory(sDirname)) {
+							if (!isDirectory::_isDirectory(p_sDirname)) {
 								bResult = true;
 							}
 							else {
@@ -109,7 +109,7 @@ namespace _extends {
 								struct dirent *entry;
 								struct stat statbuf;
 
-								if(NULL != (dp = opendir(dir))) {
+								if(NULL != (dp = opendir(sDirname.c_str()))) {
 
 									while(NULL != (entry = readdir(dp))) {
 
