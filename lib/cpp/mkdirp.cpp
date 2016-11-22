@@ -1,9 +1,9 @@
 
-#include "rmdirp.h"
+#include "mkdirp.h"
 
 namespace _extends {
 
-	namespace rmdirp {
+	namespace mkdirp {
 
 		// private
 
@@ -16,154 +16,25 @@ namespace _extends {
 					v8::Persistent<v8::Promise::Resolver> persistent;
 
 					std::string directory;
-					bool removed;
+					bool created;
 					
 				};
 
 			// methods
 
-				#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-					
-					bool _rmdirp(const std::string &p_sDirname) {
+				bool _mkdirp(const std::string &p_sDirname) {
 
-						bool bResult = false;
+					bool bResult = false;
 
-							if (!isDirectory::_isDirectory(p_sDirname)) {
-								bResult = true;
-							}
-							else {
+					return bResult;
 
-								size_t length = p_sDirname.size();
-								std::string sDirname = (tools::DIRECTORY_SEPARATOR == p_sDirname.substr(length - 1, length))
-															? p_sDirname
-															: p_sDirname + tools::DIRECTORY_SEPARATOR;
-
-								bool bFailToDelete = false;
-
-								WIN32_FIND_DATA FindFileData;
-								HANDLE hFind = FindFirstFile((sDirname + "*").c_str(), &FindFileData);
-
-								if (INVALID_HANDLE_VALUE != hFind) {
-
-									do {
-
-										if('.' != FindFileData.cFileName[0]) {
-
-											if (FILE_ATTRIBUTE_DIRECTORY & FindFileData.dwFileAttributes) {
-												
-												if (!_rmdirp(sDirname + FindFileData.cFileName)) {
-													bFailToDelete = true;
-													break;
-												}
-
-											}
-											else {
-
-												if (!tools::unlink(sDirname + FindFileData.cFileName)) {
-													bFailToDelete = true;
-													break;
-												}
-												
-											}
-
-										}
-
-									} while(FindNextFile(hFind, &FindFileData));
-
-									FindClose(hFind);
-
-								}
-
-								hFind = NULL;
-
-								if (!bFailToDelete) {
-									bResult = (RemoveDirectory(sDirname.c_str()));
-								}
-
-							}
-
-						return bResult;
-
-					}
-
-				#else
-					
-					bool _rmdirp(const std::string &p_sDirname) {
-
-						bool bResult = false;
-
-							if (!isDirectory::_isDirectory(sDirname)) {
-								bResult = true;
-							}
-							else {
-
-								size_t length = p_sDirname.size();
-								std::string sDirname = (tools::DIRECTORY_SEPARATOR == p_sDirname.substr(length - 1, length))
-															? p_sDirname
-															: p_sDirname + tools::DIRECTORY_SEPARATOR;
-
-								bool bFailToDelete = false;
-
-								DIR *dp;
-
-								struct dirent *entry;
-								struct stat statbuf;
-
-								if(NULL != (dp = opendir(dir))) {
-
-									while(NULL != (entry = readdir(dp))) {
-
-										if("." !=entry->d_name && ".." !=entry->d_name) {
-
-											lstat(entry->d_name,&statbuf);
-
-											if(S_ISDIR(statbuf.st_mode)) {
-
-												if (!_rmdirp(entry->d_name)) {
-													bFailToDelete = true;
-													break;
-												}
-
-											}
-											else {
-
-												if (!tools::unlink(entry->d_name)) {
-													bFailToDelete = true;
-													break;
-												}
-
-											}
-
-										}
-
-									}
-
-									closedir(dp);
-									
-								}
-
-								dp = NULL;
-
-								entry = NULL;
-								statbuf = NULL;
-									
-								if (!bFailToDelete) {
-									bResult = rmdir(sDirname);
-								}
-
-							}
-
-						return bResult;
-
-					}
-
-				#endif
+				}
 
 				static void _workAsync(uv_work_t *req) {
 
 					_AsyncWork *work = static_cast<_AsyncWork *>(req->data);
 
-					work->removed = _rmdirp(work->directory);
+					work->created = _mkdirp(work->directory);
 
 				}
 
@@ -177,7 +48,7 @@ namespace _extends {
 						const unsigned argc = 1;
 						v8::Local<v8::Value> argv[argc];
 
-						if (!work->removed) {
+						if (!work->created) {
 							argv[0] = v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot remove 'directory'"));
 						}
 						else {
@@ -204,7 +75,7 @@ namespace _extends {
 
 						v8::Local<v8::Promise::Resolver> local = v8::Local<v8::Promise::Resolver>::New(isolate, work->persistent);
 
-						if (!work->removed) {
+						if (!work->created) {
 							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot remove 'directory'")));
 						}
 						else {
@@ -220,7 +91,7 @@ namespace _extends {
 
 		// public
 
-			void rmdirpSync(const v8::FunctionCallbackInfo<v8::Value>& args) {
+			void mkdirpSync(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 				v8::Isolate *isolate = args.GetIsolate();
 
@@ -247,7 +118,7 @@ namespace _extends {
 							if ("" == sDirname) {
 								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
 							}
-							else if (!_rmdirp(sDirname)) {
+							else if (!_mkdirp(sDirname)) {
 								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot remove 'path' recursively")));
 							}
 
@@ -258,7 +129,7 @@ namespace _extends {
 				
 			}
 
-			void rmdirp(const v8::FunctionCallbackInfo<v8::Value>& args) {
+			void mkdirp(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 				v8::Isolate *isolate = args.GetIsolate();
 
@@ -306,7 +177,7 @@ namespace _extends {
 
 									// data
 									work->directory = sDirname;
-									work->removed = false;
+									work->created = false;
 
 								// start asynchronous treatment
 								uv_queue_work(uv_default_loop(), &work->request, _workAsync, _workAsyncComplete);
@@ -320,7 +191,7 @@ namespace _extends {
 
 			}
 
-			void rmdirpProm(const v8::FunctionCallbackInfo<v8::Value>& args) {
+			void mkdirpProm(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 				v8::Isolate *isolate = args.GetIsolate();
 
@@ -363,7 +234,7 @@ namespace _extends {
 
 							// data
 							work->directory = sDirname;
-							work->removed = false;
+							work->created = false;
 
 							// start asynchronous treatment
 							uv_queue_work(uv_default_loop(), &work->request, _workAsync, _workPromiseComplete);

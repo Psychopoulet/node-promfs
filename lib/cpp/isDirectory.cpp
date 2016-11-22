@@ -7,12 +7,11 @@ namespace _extends {
 
 		// private
 
-			bool _isDirectory(const std::string &p_sDirname) {
+			#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+				
+				bool _isDirectory(const std::string &p_sDirname) {
 
-				bool bResult = false;
-
-					// patch XP
-					#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+					bool bResult = false;
 
 						DWORD dwAttrib = GetFileAttributes(p_sDirname.c_str());
 
@@ -35,16 +34,20 @@ namespace _extends {
 							bResult = false;
 						}
 
-					#else
+					return bResult;
 
-						struct stat sb;
-						bResult = (0 == stat(p_sDirname.c_str(), &sb) && S_IFDIR == (sb.st_mode & S_IFMT));
+				}
+		
+			#else
+				
+				bool _isDirectory(const std::string &p_sDirname) {
+					
+					struct stat sb;
+					return (0 == stat(p_sDirname.c_str(), &sb) && S_IFDIR == (sb.st_mode & S_IFMT));
 
-					#endif
-
-				return bResult;
-
-			}
+				}
+		
+			#endif
 
 			static void _workAsync(uv_work_t *req) {
 

@@ -7,12 +7,11 @@ namespace _extends {
 
 		// private
 
-			bool _isFile(const std::string &p_sFilename) {
+			#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+				
+				bool _isFile(const std::string &p_sFilename) {
 
-				bool bResult = false;
-
-					// patch XP
-					#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+					bool bResult = false;
 
 						DWORD dwAttrib = GetFileAttributes(p_sFilename.c_str());
 
@@ -35,16 +34,21 @@ namespace _extends {
 							bResult = true;
 						}
 
-					#else
+					return bResult;
 
-						struct stat sb;
-						bResult = (0 == stat(p_sFilename.c_str(), &sb) && S_IFREG == (sb.st_mode & S_IFMT));
 
-					#endif
+				}
 
-				return bResult;
+			#else
+				
+				bool _isFile(const std::string &p_sFilename) {
 
-			}
+					struct stat sb;
+					return (0 == stat(p_sFilename.c_str(), &sb) && S_IFREG == (sb.st_mode & S_IFMT));
+
+				}
+
+			#endif
 
 			static void _workAsync(uv_work_t *req) {
 
