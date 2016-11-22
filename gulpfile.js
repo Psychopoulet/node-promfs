@@ -7,7 +7,6 @@
 
 			gulp = require("gulp"),
 			plumber = require("gulp-plumber"),
-			excludeGitignore = require("gulp-exclude-gitignore"),
 
 			babel = require("gulp-babel"),
 			
@@ -42,7 +41,6 @@
 
 		return gulp.src(_toTestFiles)
 			.pipe(plumber())
-			.pipe(excludeGitignore())
 			.pipe(eslint({
 				"parserOptions": {
 					"ecmaVersion": 6
