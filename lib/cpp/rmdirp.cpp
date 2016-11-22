@@ -47,7 +47,7 @@ namespace _extends {
 
 									do {
 
-										if('.' != FindFileData.cFileName[0]) {
+										if(0 != strcmp(FindFileData.cFileName, ".") && 0 != strcmp(FindFileData.cFileName, "..")) {
 
 											if (isDirectory::_isDirectory(sDirname + FindFileData.cFileName)) {
 												
@@ -113,7 +113,7 @@ namespace _extends {
 
 									while(NULL != (entry = readdir(dp))) {
 
-										if("." !=entry->d_name && ".." !=entry->d_name) {
+										if(0 != strcmp(entry->d_name, ".") && 0 != strcmp(entry->d_name, "..")) {
 
 											if (isDirectory::_isDirectory(sDirname + entry->d_name)) {
 												
