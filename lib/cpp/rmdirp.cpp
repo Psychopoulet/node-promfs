@@ -147,7 +147,7 @@ namespace _extends {
 								entry = NULL;
 								
 								if (!bFailToDelete) {
-									bResult = (rmdir(sDirname.c_str()));
+									bResult = (0 == rmdir(sDirname.c_str()));
 								}
 
 							}
