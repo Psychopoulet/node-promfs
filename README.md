@@ -64,12 +64,13 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
    * ``` isFileSync(string path) : bool ```
    * ``` isFileProm(string path) : Promise ``` then(bool exists)
 
-  #### mkdirp : recursively create a directory
-   * ``` mkdirp(string path, function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` mkdirpSync(string path) : void ```
-   * ``` mkdirpProm(string path) : Promise ```
+  #### mkdirp : recursively create a directory -> native
+   * The arguments are the same as [the official documentation's ones for mkdir & mkdirSync](https://nodejs.org/api/fs.html#fs_fs_mkdir_path_mode_callback)
+   * ``` mkdirp(string path [, int mode], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` mkdirpSync(string path [, int mode]) : void ```
+   * ``` mkdirpProm(string path [, int mode]) : Promise ```
 
-  #### rmdirp : recursively delete a directory
+  #### rmdirp : recursively delete a directory -> native
    * ``` rmdirp(string path) ``` callback(ReferenceError|TypeError|Error|null err)
    * ``` rmdirpSync(string path) : void ```
    * ``` rmdirpProm(string path) : Promise ```

@@ -66,6 +66,20 @@ if (!_extends) {
 
 			fs.isFileProm = _extends.isFileProm;
 
+			// mkdirp
+
+			// sync version
+
+			fs.mkdirpSync = _extends.mkdirpSync;
+
+			// async version
+
+			fs.mkdirp = _extends.mkdirp;
+
+			// promise version
+
+			fs.mkdirpProm = _extends.mkdirpProm;
+
 			// rmdirp
 
 			// sync version

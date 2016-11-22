@@ -121,10 +121,11 @@ namespace _extends {
 
 			void copyFileSync(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
+				const int nArgsLength = args.Length();
 				v8::Isolate *isolate = args.GetIsolate();
 
 					// params treatment
-					if (0 >= args.Length()) {
+					if (0 >= nArgsLength) {
 						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'origin' argument")));
 						
 					}
@@ -134,7 +135,7 @@ namespace _extends {
 						else if (!args[0]->IsString()) {
 							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'origin' argument is not a string")));
 						}
-					else if (1 >= args.Length()) {
+					else if (1 >= nArgsLength) {
 						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'target' argument")));
 						
 					}
@@ -178,10 +179,11 @@ namespace _extends {
 
 			void copyFile(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
+				const int nArgsLength = args.Length();
 				v8::Isolate *isolate = args.GetIsolate();
 
 					// params treatment
-					if (0 >= args.Length()) {
+					if (0 >= nArgsLength) {
 						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'origin' argument")));
 					}
 						else if (args[0]->IsUndefined()) {
@@ -190,7 +192,7 @@ namespace _extends {
 						else if (!args[0]->IsString()) {
 							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'origin' argument is not a string")));
 						}
-					else if (1 >= args.Length()) {
+					else if (1 >= nArgsLength) {
 						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'target' argument")));
 					}
 						else if (args[1]->IsUndefined()) {
@@ -199,7 +201,7 @@ namespace _extends {
 						else if (!args[1]->IsString()) {
 							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'target' argument is not a string")));
 						}
-					else if (2 >= args.Length()) {
+					else if (2 >= nArgsLength) {
 						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
 					}
 						else if (args[2]->IsUndefined()) {
@@ -260,6 +262,7 @@ namespace _extends {
 
 			void copyFileProm(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
+				const int nArgsLength = args.Length();
 				v8::Isolate *isolate = args.GetIsolate();
 
 				// init promise
@@ -276,7 +279,7 @@ namespace _extends {
 				
 				// params treatment
 
-				if (0 >= args.Length()) {
+				if (0 >= nArgsLength) {
 					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'origin' argument")));
 				}
 					else if (args[0]->IsUndefined()) {
@@ -285,7 +288,7 @@ namespace _extends {
 					else if (!args[0]->IsString()) {
 						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'origin' argument is not a string")));
 					}
-				else if (1 >= args.Length()) {
+				else if (1 >= nArgsLength) {
 					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'target' argument")));
 				}
 					else if (args[1]->IsUndefined()) {

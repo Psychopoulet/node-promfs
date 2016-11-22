@@ -497,7 +497,7 @@ fs.writeFileProm = function (file, data, options) {
 [
 
 // extend
-"directoryToString", "directoryToFile", "extractFiles", "filesToString", "filesToFile", "mkdirp",
+"directoryToString", "directoryToFile", "extractFiles", "filesToString", "filesToFile",
 
 // classical
 "fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", // write

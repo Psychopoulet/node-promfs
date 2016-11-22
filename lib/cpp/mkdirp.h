@@ -14,6 +14,12 @@
 	#include "tools.h"
 	#include "isDirectory.h"
 
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+		#include <windows.h>
+	#else
+		#include <sys/stat.h>
+	#endif
+
 	namespace _extends {
 
 		namespace mkdirp {
