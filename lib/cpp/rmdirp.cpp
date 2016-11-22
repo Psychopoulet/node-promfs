@@ -103,21 +103,24 @@ namespace _extends {
 															: p_sDirname + tools::DIRECTORY_SEPARATOR;
 
 								bool bFailToDelete = false;
+								std::string sFilename = "";
 
 								DIR *dp;
-
 								struct dirent *entry;
-								struct stat statbuf;
 
 								if(NULL != (dp = opendir(sDirname.c_str()))) {
 
 									while(NULL != (entry = readdir(dp))) {
 
-										if(0 != strcmp(entry->d_name, ".") && 0 != strcmp(entry->d_name, "..")) {
+										sFilename = entry->d_name;
 
-											if (isDirectory::_isDirectory(sDirname + entry->d_name)) {
+										if("." != sFilename && ".." != sFilename ) {
+
+											sFilename = sDirname + sFilename;
+
+											if (isDirectory::_isDirectory(sFilename)) {
 												
-												if (!_rmdirp(entry->d_name)) {
+												if (!_rmdirp(sFilename)) {
 													bFailToDelete = true;
 													break;
 												}
@@ -125,7 +128,7 @@ namespace _extends {
 											}
 											else {
 
-												if (!tools::unlink(entry->d_name)) {
+												if (!tools::unlink(sFilename)) {
 													bFailToDelete = true;
 													break;
 												}
@@ -141,10 +144,8 @@ namespace _extends {
 								}
 
 								dp = NULL;
-
 								entry = NULL;
-								statbuf = NULL;
-									
+								
 								if (!bFailToDelete) {
 									bResult = (rmdir(sDirname.c_str()));
 								}
