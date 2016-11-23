@@ -5,6 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
+    "install": "node-gyp configure && node-gyp build",
     "preinstall": "npm install node-gyp -g",
     "test": "npm update && gulp"
   },
