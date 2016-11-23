@@ -10,8 +10,6 @@
 
 			babel = require("gulp-babel"),
 			
-			del = require("del"),
-
 			eslint = require("gulp-eslint"),
 			mocha = require("gulp-mocha");
 
