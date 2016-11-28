@@ -1,22 +1,26 @@
 {
   "name": "node-promfs",
-  "version": "1.0.3",
-  "description": "'fs' object extension & promisification",
+  "version": "2.0.0",
+  "description": "'fs' object native extensions & promisifications",
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
-    "test": "gulp"
+    "install": "node-gyp configure && node-gyp build",
+    "preinstall": "npm install node-gyp -g",
+    "rebuild-all": "node-gyp rebuild",
+    "test": "npm update && gulp"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/Psychopoulet/node-promfs.git"
   },
   "keywords": [
-    "fs", "file system",
-    "directory", "dir",
+    "fs", "file system", "filesystem",
+    "directory", "dir", "file",
     "exists", "create", "remove", "delete",
     "synchrone", "asynchrone", "promise",
-    "mkdirp", "rmdirp", "copy", "concat"
+    "mkdirp", "rmdirp", "copy", "concat",
+    "native"
   ],
   "author": "Sébastien VIDAL",
   "license": "ISC",
@@ -27,18 +31,16 @@
   "devDependencies": {
 
     "gulp": "^3.9.1",
-    "gulp-exclude-gitignore": "^1.0.0",
     "gulp-plumber": "^1.1.0",
 
-    "gulp-eslint": "^2.1.0",
-
     "gulp-babel": "^6.1.2",
-    "babel-preset-es2015-node4": "^2.1.0",
-    "gulp-replace": "^0.5.4",
+    "babel-preset-es2015": "^6.18.0",
 
-    "gulp-mocha": "^2.2.0"
+    "gulp-eslint": "^3.0.1",
+    "gulp-mocha": "^3.0.1"
 
   },
   "homepage": "https://github.com/Psychopoulet/node-promfs#readme",
-  "engines" : { "node" : ">=4.0.0" }
+  "engines" : { "node" : ">=0.11.15" },
+  "gypfile": true
 }

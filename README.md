@@ -1,6 +1,5 @@
 # node-promfs
-'fs' object extension & promisification
-
+'fs' object native extensions & promisifications
 
 ## Installation
 
@@ -25,88 +24,90 @@ $ npm install node-promfs
 note : in "separator" parameter, you can use "{{filename}}" pattern, it will be replaced by the file's basename
 (ex : separator = "\r\n\r\n--- {{filename}} ---\r\n\r\n")
 
-  #### copy : copy a file with streams
-   * ``` copy(string origin, string origin, function callback) ``` callback(string|null err)
-   * ``` copySync(string origin, string origin) ``` /!\ does not use streams /!\
-   * ``` copyProm(string origin, string origin) : return Promise ```
+  #### copyFile : copy a file with streams (copy then control with isFile) -> native
+   * ``` copyFile(string origin, string origin, function callback) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` copyFileSync(string origin, string origin) : void ```
+   * ``` copyFileProm(string origin, string origin) : Promise ```
 
-  #### directoryFilesToFile : concat directory's files content in a file
-   * ``` directoryFilesToFile(string path [ , string separator = " " ], function callback) ``` callback(string|null err)
-   * ``` directoryFilesToFileSync(string path [ , string separator = " " ]) ```
-   * ``` directoryFilesToFileProm(string path [ , string separator = " " ]) : return Promise ```
+  #### directoryToFile : concat directory's files content in a file (extractFilesSync && filesToFileSync)
+   * ``` directoryToFile(string path [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` directoryToFileSync(string path [ , string separator = " " ]) : void ```
+   * ``` directoryToFileProm(string path [ , string separator = " " ]) : Promise ```
 
-  #### directoryFilesToString : concat directory's files content in a string
-   * ``` directoryFilesToString(string path [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(string|null err, string content)
-   * ``` directoryFilesToStringSync(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : return string ```
-   * ``` directoryFilesToStringProm(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : return Promise ``` then(string content)
+  #### directoryToString : concat directory's files content in a string (extractFilesSync && filesToStringSync)
+   * ``` directoryToString(string path [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
+   * ``` directoryToStringSync(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
+   * ``` directoryToStringProm(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
 
-  #### extractDirectoryRealFiles : return only files from directory
-   * ``` extractDirectoryRealFiles(string directory, function callback) ``` callback(string|null err, array files)
-   * ``` extractDirectoryRealFilesSync(string directory) : return array ```
-   * ``` extractDirectoryRealFilesProm(string directory) : return Promise ``` then(array files)
+  #### extractFiles : return only files from a directory
+   * ``` extractFiles(string directory, function callback) ``` callback(ReferenceError|TypeError|Error|null err, array files)
+   * ``` extractFilesSync(string directory) : array ```
+   * ``` extractFilesProm(string directory) : Promise ``` then(array files)
 
-  #### filesToFile : concat files content in a file
-   * ``` filesToFile(array files, string targetPath [ , string separator = " " ], function callback) ``` callback(string|null err)
-   * ``` filesToFileSync(array files, string targetPath [ , string separator = " " ]) ```
-   * ``` filesToFileProm(array files, string targetPath [ , string separator = " " ]) : return Promise ```
+  #### filesToFile : concat files content in a file with streams
+   * ``` filesToFile(array files, string targetPath [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` filesToFileSync(array files, string targetPath [ , string separator = " " ]) : void ```
+   * ``` filesToFileProm(array files, string targetPath [ , string separator = " " ]) : Promise ```
 
   #### filesToString : concat files content in a string
-   * ``` filesToString(array files [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(string|null err, string content)
-   * ``` filesToStringSync(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : return string ```
-   * ``` filesToStringProm(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : return Promise ``` then(string content)
+   * ``` filesToString(array files [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
+   * ``` filesToStringSync(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
+   * ``` filesToStringProm(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
 
-  #### isDirectory
-   * ``` isDirectory(string path) ``` callback(string|null err, bool exists)
-   * ``` isDirectorySync(string path) : return bool ```
-   * ``` isDirectoryProm(string path) : return Promise ``` then(bool exists)
+  #### isDirectory : does the file exists and is a directory ? -> native
+   * ``` isDirectory(string path) ``` callback(ReferenceError|TypeError|Error|null err, bool exists)
+   * ``` isDirectorySync(string path) : bool ```
+   * ``` isDirectoryProm(string path) : Promise ``` then(bool exists)
 
-  #### isFile
-   * ``` isFile(string path) ``` callback(string|null err, bool exists)
-   * ``` isFileSync(string path) : return bool ```
-   * ``` isFileProm(string path) : return Promise ``` then(bool exists)
+  #### isFile : does the file exists and is a regular file ? -> native
+   * ``` isFile(string path) ``` callback(ReferenceError|TypeError|Error|null err, bool exists)
+   * ``` isFileSync(string path) : bool ```
+   * ``` isFileProm(string path) : Promise ``` then(bool exists)
 
-  #### mkdirp : recursively create a directory
-   * ``` mkdirp(string path, function callback) ``` callback(string|null err)
-   * ``` mkdirpSync(string path) ```
-   * ``` mkdirpProm(string path) : return Promise ```
+  #### mkdirp : recursively create a directory -> native
+   * The arguments are the same as [the official documentation's ones for mkdir & mkdirSync](https://nodejs.org/api/fs.html#fs_fs_mkdir_path_mode_callback)
+   * ``` mkdirp(string path [, int mode], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` mkdirpSync(string path [, int mode]) : void ```
+   * ``` mkdirpProm(string path [, int mode]) : Promise ```
 
-  #### rmdirp : recursively delete a directory
-   * ``` rmdirp(string path) ``` callback(string|null err)=
-   * ``` rmdirpSync(string path) ```
-   * ``` rmdirpProm(string path) : return Promise ```
+  #### rmdirp : recursively delete a directory -> native
+   * ``` rmdirp(string path) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` rmdirpSync(string path) : void ```
+   * ``` rmdirpProm(string path) : Promise ```
 
 ### -- Classical --
 
   * The arguments are the same as [the official documentation's ones](https://nodejs.org/api/fs.html)
   * "then" data are the same as the callbacks' ones
-  * ``` accessProm() : return Promise ```
-  * ``` appendFileProm() : return Promise ```
-  * ``` chmodProm() : return Promise ```
-  * ``` chownProm() : return Promise ```
-  * ``` closeProm() : return Promise ```
-  * ``` fchmodProm() : return Promise ```
-  * ``` fchownProm() : return Promise ```
-  * ``` fdatasyncProm() : return Promise ```
-  * ``` fstatProm() : return Promise ```
-  * ``` fsyncProm() : return Promise ```
-  * ``` ftruncateProm() : return Promise ```
-  * ``` futimesProm() : return Promise ```
-  * ``` linkProm() : return Promise ```
-  * ``` lstatProm() : return Promise ```
-  * ``` mkdirProm() : return Promise ```
-  * ``` mkdtempProm() : return Promise ```
-  * ``` openProm() : return Promise ```
-  * ``` readdirProm() : return Promise ```
-  * ``` readFileProm() : return Promise ```
-  * ``` realpathProm() : return Promise ```
-  * ``` renameProm() : return Promise ```
-  * ``` rmdirProm() : return Promise ```
-  * ``` statProm() : return Promise ```
-  * ``` truncateProm() : return Promise ```
-  * ``` unlinkProm() : return Promise ```
-  * ``` utimesProm() : return Promise ```
-  * ``` writeProm() : return Promise ```
-  * ``` writeFileProm() : return Promise```
+  * all the methods cannot be tested (too much arguments)
+  * ``` accessProm() : Promise ``` -> tested
+  * ``` appendFileProm() : Promise ``` -> tested
+  * ``` chmodProm() : Promise ``` -> tested
+  * ``` chownProm() : Promise ``` -> tested
+  * ``` closeProm() : Promise ``` -> tested
+  * ``` fchmodProm() : Promise ```
+  * ``` fchownProm() : Promise ```
+  * ``` fdatasyncProm() : Promise ```
+  * ``` fstatProm() : Promise ```
+  * ``` fsyncProm() : Promise ```
+  * ``` ftruncateProm() : Promise ```
+  * ``` futimesProm() : Promise ```
+  * ``` linkProm() : Promise ```
+  * ``` lstatProm() : Promise ```
+  * ``` mkdirProm() : Promise ``` -> tested
+  * ``` mkdtempProm() : Promise ```
+  * ``` openProm() : Promise ``` -> tested
+  * ``` readdirProm() : Promise ``` -> tested
+  * ``` readFileProm() : Promise ``` -> tested
+  * ``` realpathProm() : Promise ``` -> tested
+  * ``` renameProm() : Promise ``` -> tested
+  * ``` rmdirProm() : Promise ``` -> tested
+  * ``` statProm() : Promise ```
+  * ``` truncateProm() : Promise ```
+  * ``` unlinkProm() : Promise ``` -> tested
+  * ``` utimesProm() : Promise ```
+  * ``` writeProm() : Promise ```
+  * ``` writeFileProm() : Promise``` -> tested
 
 ## Tests
 

@@ -3,31 +3,521 @@
 
 // deps
 
-const fs = require(require("path").join(__dirname, "extends.js"));
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var fs = require(require("path").join(__dirname, "extends.js"));
 
 // promises
+
+// write
+
+fs.mkdirProm = function (dir) {
+
+	return new Promise(function (resolve, reject) {
+
+		fs.isDirectoryProm(dir).then(function (exists) {
+			resolve(exists);
+		}).catch(function (err) {
+			reject(err);
+		});
+	}).then(function (exists) {
+
+		if (exists) {
+			return Promise.resolve();
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.mkdir(dir, function (err) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve();
+					}
+				});
+			});
+		}
+	});
+};
+
+fs.rmdirProm = function (dir) {
+
+	return new Promise(function (resolve, reject) {
+
+		fs.isDirectoryProm(dir).then(function (exists) {
+			resolve(exists);
+		}).catch(function (err) {
+			reject(err);
+		});
+	}).then(function (exists) {
+
+		if (!exists) {
+			return Promise.resolve();
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.rmdir(dir, function (err) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve();
+					}
+				});
+			});
+		}
+	});
+};
+
+fs.unlinkProm = function (file) {
+
+	return new Promise(function (resolve, reject) {
+
+		fs.isFileProm(file).then(function (exists) {
+			resolve(exists);
+		}).catch(function (err) {
+			reject(err);
+		});
+	}).then(function (exists) {
+
+		if (!exists) {
+			return Promise.resolve();
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.unlink(file, function (err) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve();
+					}
+				});
+			});
+		}
+	});
+};
+
+// stream
+
+fs.openProm = function (path, flags, mode) {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else if ("undefined" === typeof flags) {
+		return Promise.reject(new ReferenceError("missing 'flags' argument"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.open(path, flags, mode ? mode : null, function (err, fd) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(fd);
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.closeProm = function (fd) {
+
+	if ("undefined" === typeof fd) {
+		return Promise.reject(new ReferenceError("missing 'fd' argument"));
+	} else if ("number" !== typeof fd) {
+		return Promise.reject(new TypeError("'fd' argument is not a number"));
+	} else {
+
+		return new Promise(function (resolve, reject) {
+
+			fs.close(fd, function (err) {
+
+				if (err) {
+					reject(err);
+				} else {
+					resolve();
+				}
+			});
+		});
+	}
+};
+
+// others
+
+fs.accessProm = function (path, mode) {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.access(path, mode ? mode : null, function (err, result) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.appendFileProm = function (file, data, options) {
+
+	if ("undefined" === typeof file) {
+		return Promise.reject(new ReferenceError("missing 'file' argument"));
+	} else if ("string" !== typeof file) {
+		return Promise.reject(new TypeError("'file' argument is not a string"));
+	} else if ("undefined" === typeof data) {
+		return Promise.reject(new ReferenceError("missing 'data' argument"));
+	} else if ("string" !== typeof data && ("object" !== (typeof data === "undefined" ? "undefined" : _typeof(data)) || !(data instanceof Buffer))) {
+		return Promise.reject(new TypeError("'data' argument is not a string or a Buffer"));
+	} else {
+
+		file = file.trim();
+
+		if ("" === file) {
+			return Promise.reject(new Error("'file' argument is empty"));
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.appendFile(file, data, options ? options : null, function (err) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve();
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.chmodProm = function (path, mode) {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else if ("undefined" === typeof mode) {
+		return Promise.reject(new ReferenceError("missing 'mode' argument"));
+	} else if ("number" !== typeof mode) {
+		return Promise.reject(new TypeError("'mode' argument is not a number"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			new Promise(function (resolve, reject) {
+
+				fs.chmod(path, mode, function (err) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve();
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.chownProm = function (path, uid, gid) {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else if ("undefined" === typeof uid) {
+		return Promise.reject(new ReferenceError("missing 'uid' argument"));
+	} else if ("number" !== typeof uid) {
+		return Promise.reject(new TypeError("'uid' argument is not a number"));
+	} else if ("undefined" === typeof gid) {
+		return Promise.reject(new ReferenceError("missing 'gid' argument"));
+	} else if ("number" !== typeof gid) {
+		return Promise.reject(new TypeError("'gid' argument is not a number"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.chown(path, uid, gid, function (err) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve();
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.readdirProm = function (path) {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.readdir(path, function (err, result) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.readFileProm = function (file, options) {
+
+	if ("undefined" === typeof file) {
+		return Promise.reject(new ReferenceError("missing 'file' argument"));
+	} else if ("string" !== typeof file && "number" !== typeof file && ("object" !== (typeof file === "undefined" ? "undefined" : _typeof(file)) || !(file instanceof Buffer))) {
+		return Promise.reject(new TypeError("'file' argument is not a string, a number or a Buffer"));
+	} else {
+
+		return new Promise(function (resolve, reject) {
+
+			fs.readFile(file, options ? options : null, function (err, result) {
+
+				if (err) {
+					reject(err);
+				} else {
+					resolve(result);
+				}
+			});
+		});
+	}
+};
+
+fs.realpathProm = function (path, options) {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.realpath(path, options ? options : null, function (err, result) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.renameProm = function (oldPath, newPath) {
+
+	if ("undefined" === typeof oldPath) {
+		return Promise.reject(new ReferenceError("missing 'oldPath' argument"));
+	} else if ("string" !== typeof oldPath) {
+		return Promise.reject(new TypeError("'oldPath' argument is not a string"));
+	} else if ("undefined" === typeof newPath) {
+		return Promise.reject(new ReferenceError("missing 'newPath' argument"));
+	} else if ("string" !== typeof newPath) {
+		return Promise.reject(new TypeError("'newPath' argument is not a string"));
+	} else {
+
+		oldPath = oldPath.trim();
+		newPath = newPath.trim();
+
+		if ("" === oldPath) {
+			return Promise.reject(new Error("'oldPath' argument is empty"));
+		} else if ("" === newPath) {
+			return Promise.reject(new Error("'newPath' argument is empty"));
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.rename(oldPath, newPath, function (err, result) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.statProm = function (path) {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.stat(path, function (err, result) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.truncateProm = function (path, len) {
+
+	if ("undefined" === typeof path) {
+		return Promise.reject(new ReferenceError("missing 'path' argument"));
+	} else if ("string" !== typeof path) {
+		return Promise.reject(new TypeError("'path' argument is not a string"));
+	} else if ("undefined" === typeof len) {
+		return Promise.reject(new ReferenceError("missing 'len' argument"));
+	} else if ("number" !== typeof len) {
+		return Promise.reject(new TypeError("'len' argument is not a number"));
+	} else {
+
+		path = path.trim();
+
+		if ("" === path) {
+			return Promise.reject(new Error("'path' argument is empty"));
+		} else {
+
+			return new Promise(function (resolve, reject) {
+
+				fs.truncate(path, len, function (err, result) {
+
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+			});
+		}
+	}
+};
+
+fs.writeFileProm = function (file, data, options) {
+
+	if ("undefined" === typeof file) {
+		return Promise.reject(new ReferenceError("missing 'file' argument"));
+	} else if ("string" !== typeof file && "number" !== typeof file && ("object" !== (typeof file === "undefined" ? "undefined" : _typeof(file)) || !(file instanceof Buffer))) {
+		return Promise.reject(new TypeError("'file' argument is not a string, a number or a Buffer"));
+	} else if ("undefined" === typeof data) {
+		return Promise.reject(new ReferenceError("missing 'data' argument"));
+	} else if ("string" !== typeof data && ("object" !== (typeof data === "undefined" ? "undefined" : _typeof(data)) || !(data instanceof Buffer))) {
+		return Promise.reject(new TypeError("'data' argument is not a string or a Buffer"));
+	} else {
+
+		return new Promise(function (resolve, reject) {
+
+			fs.writeFile(file, data, options ? options : null, function (err, result) {
+
+				if (err) {
+					reject(err);
+				} else {
+					resolve(result);
+				}
+			});
+		});
+	}
+};
 
 [
 
 // extend
-"extractDirectoryRealFiles", "filesToString", "filesToFile", "directoryFilesToString", "directoryFilesToFile", "copy", "isDirectory", "isFile", "mkdirp", "rmdirp",
+"directoryToString", "directoryToFile", "extractFiles", "filesToString", "filesToFile",
 
 // classical
-"access", "appendFile", "chmod", "chown", "close", "fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", "link", "lstat", "mkdtemp", "open", "readdir", "readFile", "rename", "stat", "truncate", "utimes", "write", "writeFile"].forEach(name => {
+"fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", // write
+"link", "lstat", "mkdtemp", "utimes", "write" // others
+
+].forEach(function (name) {
 
 	fs[name + "Prom"] = function () {
 		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 			args[_key] = arguments[_key];
 		}
 
-		return new Promise((resolve, reject) => {
+		return new Promise(function (resolve, reject) {
 
 			fs[name].apply(fs, args.concat([function () {
 				for (var _len2 = arguments.length, subargs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
 					subargs[_key2] = arguments[_key2];
 				}
 
-				let err = subargs.shift();
+				var err = subargs.shift();
 
 				if (err) {
 					reject(err);
@@ -35,103 +525,9 @@ const fs = require(require("path").join(__dirname, "extends.js"));
 					resolve.apply(undefined, subargs);
 				}
 			}]));
-		}).catch(err => {
-			return Promise.reject(err.message ? err.message : err);
 		});
 	};
 });
-
-fs.mkdirProm = dir => {
-
-	return fs.isDirectoryProm(dir).then(exists => {
-
-		if (exists) {
-			return Promise.resolve();
-		} else {
-
-			return new Promise((resolve, reject) => {
-
-				fs.mkdir(dir, err => {
-
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
-			});
-		}
-	}).catch(err => {
-		return Promise.reject(err.message ? err.message : err);
-	});
-};
-
-fs.rmdirProm = dir => {
-
-	return fs.isDirectoryProm(dir).then(exists => {
-
-		if (!exists) {
-			return Promise.resolve();
-		} else {
-
-			return new Promise((resolve, reject) => {
-
-				fs.rmdir(dir, err => {
-
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
-			});
-		}
-	}).catch(err => {
-		return Promise.reject(err.message ? err.message : err);
-	});
-};
-
-fs.unlinkProm = file => {
-
-	return fs.isFileProm(file).then(exists => {
-
-		if (!exists) {
-			return Promise.resolve();
-		} else {
-
-			return new Promise((resolve, reject) => {
-
-				fs.unlink(file, err => {
-
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
-			});
-		}
-	}).catch(err => {
-		return Promise.reject(err.message ? err.message : err);
-	});
-};
-
-fs.realpathProm = (path, options) => {
-
-	return new Promise((resolve, reject) => {
-
-		fs.realpath(path, options ? options : null, (err, result) => {
-
-			if (err) {
-				reject(err);
-			} else {
-				resolve(result);
-			}
-		});
-	}).catch(err => {
-		return Promise.reject(err.message ? err.message : err);
-	});
-};
 
 // module
 

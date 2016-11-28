@@ -7,52 +7,42 @@
 
 			gulp = require("gulp"),
 			plumber = require("gulp-plumber"),
-			excludeGitignore = require("gulp-exclude-gitignore"),
-			replace = require("gulp-replace"),
-
-			eslint = require("gulp-eslint"),
 
 			babel = require("gulp-babel"),
-
+			
+			eslint = require("gulp-eslint"),
 			mocha = require("gulp-mocha");
-
-	require("babel-preset-es2015-node4");
 
 // private
 
 	var _gulpFile = path.join(__dirname, "gulpfile.js"),
-		_libFiles = path.join(__dirname, "lib", "**", "*.js"),
-		_distFiles = path.join(__dirname, "dist", "**", "*.js"),
-		_unitTestsFiles = path.join(__dirname, "tests", "**", "*.js"),
-		_allJSFiles = [_gulpFile, _libFiles, _distFiles, _unitTestsFiles];
+		_libDir = path.join(__dirname, "lib"),
+			_libFiles = path.join(_libDir, "*.js"),
+		_distDir = path.join(__dirname, "dist"),
+			_distFiles = path.join(_distDir, "*.js"),
+		_unitTestsFiles = path.join(__dirname, "tests", "*.js"),
+		_toTestFiles = [_gulpFile, _libFiles, _unitTestsFiles];
 
 // tasks
 
-	gulp.task("babel", function () {
+	gulp.task("babel", () => {
 
 		return gulp.src(_libFiles)
 			.pipe(babel({
-				presets: ["es2015-node4"]
+				presets: ["es2015"]
 			}))
-			.pipe(gulp.dest("dist"));
+			.pipe(gulp.dest(_distDir));
 
 	});
 
-	gulp.task("replace", ["babel"], function () {
+	gulp.task("eslint", ["babel"], () => {
 
-		return gulp.src(_distFiles)
-			.pipe(replace("    ", "	"))
-			.pipe(replace("  ", "	"))
-			.pipe(gulp.dest("dist"));
-
-	});
-
-	gulp.task("eslint", ["replace"], function () {
-
-		return gulp.src(_allJSFiles)
+		return gulp.src(_toTestFiles)
 			.pipe(plumber())
-			.pipe(excludeGitignore())
 			.pipe(eslint({
+				"parserOptions": {
+					"ecmaVersion": 6
+				},
 				"rules": {
 					"linebreak-style": 0,
 					"quotes": [ 1, "double" ],
@@ -70,7 +60,7 @@
 
 	});
 
-	gulp.task("mocha", ["eslint"], function () {
+	gulp.task("mocha", ["eslint"], () => {
 
 		return gulp.src(_unitTestsFiles)
 			.pipe(plumber())
@@ -80,8 +70,8 @@
 
 // watcher
 
-	gulp.task("watch", function () {
-		gulp.watch(_allJSFiles, ["mocha"]);
+	gulp.task("watch", () => {
+		gulp.watch(_toTestFiles, ["mocha"]);
 	});
 
 
