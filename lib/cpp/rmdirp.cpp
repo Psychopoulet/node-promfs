@@ -44,13 +44,37 @@ namespace _extends {
 
 										if(0 != strcmp(FindFileData.cFileName, ".") && 0 != strcmp(FindFileData.cFileName, "..")) {
 
-											if (isDirectory::_isDirectory(sDirname + FindFileData.cFileName)) {
-												sResult = _rmdirp(sDirname + FindFileData.cFileName);
-												if ("" != sResult) { break; }
+											// remove blocking attributes
+
+											int attr = GetFileAttributes((sDirname + FindFileData.cFileName).c_str());
+											if (FILE_ATTRIBUTE_HIDDEN == (attr & FILE_ATTRIBUTE_HIDDEN)) {
+
+												if (!SetFileAttributes((sDirname + FindFileData.cFileName).c_str(), attr & ~FILE_ATTRIBUTE_HIDDEN)) {
+													sResult = (sDirname + FindFileData.cFileName).c_str();
+												}
+
 											}
-											else if (!tools::unlink(sDirname + FindFileData.cFileName)) {
-												sResult = sDirname + FindFileData.cFileName;
-												break;
+											if ("" == sResult && FILE_ATTRIBUTE_READONLY == (attr & FILE_ATTRIBUTE_READONLY)) {
+
+												if (!SetFileAttributes((sDirname + FindFileData.cFileName).c_str(), attr & ~FILE_ATTRIBUTE_READONLY)) {
+													sResult = (sDirname + FindFileData.cFileName).c_str();
+												}
+
+											}
+
+											// remove file/directory
+
+											if ("" == sResult) {
+
+												if (isDirectory::_isDirectory(sDirname + FindFileData.cFileName)) {
+													sResult = _rmdirp(sDirname + FindFileData.cFileName);
+													if ("" != sResult) { break; }
+												}
+												else if (!tools::unlink(sDirname + FindFileData.cFileName)) {
+													sResult = sDirname + FindFileData.cFileName;
+													break;
+												}
+
 											}
 
 										}
