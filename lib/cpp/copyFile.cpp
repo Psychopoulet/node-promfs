@@ -77,7 +77,7 @@ namespace _extends {
 						v8::Local<v8::Value> argv[argc];
 
 						if (!work->copied) {
-							argv[0] = v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot copy 'origin' into 'target'"));
+							argv[0] = v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot copy \"origin\" into \"target\""));
 						}
 						else {
 							argv[0] = v8::Null(isolate);
@@ -104,7 +104,7 @@ namespace _extends {
 						v8::Local<v8::Promise::Resolver> local = v8::Local<v8::Promise::Resolver>::New(isolate, work->persistent);
 
 						if (!work->copied) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot copy 'origin' into 'target'")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot copy \"origin\" into \"target\"")));
 						}
 						else {
 							local->Resolve(v8::Undefined(isolate));
@@ -126,24 +126,24 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'origin' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"origin\" argument")));
 						
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'origin' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"origin\" argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'origin' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"origin\" argument is not a string")));
 						}
 					else if (1 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'target' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"target\" argument")));
 						
 					}
 						else if (args[1]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'target' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"target\" argument")));
 						}
 						else if (!args[1]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'target' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"target\" argument is not a string")));
 						}
 					else {
 
@@ -158,16 +158,16 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sOrigin) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'origin' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"origin\" argument is empty")));
 							}
 							else if ("" == sTarget) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'target' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"target\" argument is empty")));
 							}
 							else if (!isFile::_isFile(sOrigin)) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'origin' is not a valid file")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"origin\" is not a valid file")));
 							}
 							else if (!_copyFile(sOrigin, sTarget)) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot copy 'origin' into 'target'")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot copy \"origin\" into \"target\"")));
 							}
 
 					}
@@ -184,31 +184,31 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'origin' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"origin\" argument")));
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'origin' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"origin\" argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'origin' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"origin\" argument is not a string")));
 						}
 					else if (1 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'target' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"target\" argument")));
 					}
 						else if (args[1]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'target' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"target\" argument")));
 						}
 						else if (!args[1]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'target' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"target\" argument is not a string")));
 						}
 					else if (2 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"callback\" argument")));
 					}
 						else if (args[2]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"callback\" argument")));
 						}
 						else if (!args[2]->IsFunction()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'callback' argument is not a function")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"callback\" argument is not a function")));
 						}
 					else {
 
@@ -225,13 +225,13 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sOrigin) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'origin' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"origin\" argument is empty")));
 							}
 							else if ("" == sTarget) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'target' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"target\" argument is empty")));
 							}
 							else if (!isFile::_isFile(sOrigin)) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'origin' is not a valid file")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"origin\" is not a valid file")));
 							}
 							else {
 
@@ -280,22 +280,22 @@ namespace _extends {
 				// params treatment
 
 				if (0 >= nArgsLength) {
-					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'origin' argument")));
+					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"origin\" argument")));
 				}
 					else if (args[0]->IsUndefined()) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'origin' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"origin\" argument")));
 					}
 					else if (!args[0]->IsString()) {
-						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'origin' argument is not a string")));
+						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"origin\" argument is not a string")));
 					}
 				else if (1 >= nArgsLength) {
-					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'target' argument")));
+					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"target\" argument")));
 				}
 					else if (args[1]->IsUndefined()) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'target' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"target\" argument")));
 					}
 					else if (!args[1]->IsString()) {
-						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'target' argument is not a string")));
+						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"target\" argument is not a string")));
 					}
 				else {
 
@@ -310,13 +310,13 @@ namespace _extends {
 					// function treatment
 
 						if ("" == sOrigin) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'origin' argument is empty")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"origin\" argument is empty")));
 						}
 						else if ("" == sTarget) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'target' argument is empty")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"target\" argument is empty")));
 						}
 						else if (!isFile::_isFile(sOrigin)) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'origin' is not a valid file")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"origin\" is not a valid file")));
 						}
 						else {
 

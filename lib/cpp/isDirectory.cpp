@@ -106,14 +106,14 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= args.Length()) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 						
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"path\" argument is not a string")));
 						}
 					else {
 
@@ -125,7 +125,7 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sDirname) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"path\" argument is empty")));
 							}
 							else {
 
@@ -149,22 +149,22 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"path\" argument is not a string")));
 						}
 					else if (1 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"callback\" argument")));
 					}
 						else if (args[1]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"callback\" argument")));
 						}
 						else if (!args[1]->IsFunction()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'callback' argument is not a function")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"callback\" argument is not a function")));
 						}
 					else {
 
@@ -177,7 +177,7 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sDirname) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"path\" argument is empty")));
 							}
 							else {
 
@@ -224,13 +224,13 @@ namespace _extends {
 				// params treatment
 
 				if (0 >= args.Length()) {
-					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 				}
 					else if (args[0]->IsUndefined()) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 					}
 					else if (!args[0]->IsString()) {
-						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
+						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"path\" argument is not a string")));
 					}
 				else {
 
@@ -242,7 +242,7 @@ namespace _extends {
 					// function treatment
 
 						if ("" == sDirname) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"path\" argument is empty")));
 						}
 						else {
 

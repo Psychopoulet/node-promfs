@@ -106,17 +106,17 @@ fs.unlinkProm = function (file) {
 fs.openProm = function (path, flags, mode) {
 
 	if ("undefined" === typeof path) {
-		return Promise.reject(new ReferenceError("missing 'path' argument"));
+		return Promise.reject(new ReferenceError("missing \"path\" argument"));
 	} else if ("string" !== typeof path) {
-		return Promise.reject(new TypeError("'path' argument is not a string"));
+		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else if ("undefined" === typeof flags) {
-		return Promise.reject(new ReferenceError("missing 'flags' argument"));
+		return Promise.reject(new ReferenceError("missing \"flags\" argument"));
 	} else {
 
 		path = path.trim();
 
 		if ("" === path) {
-			return Promise.reject(new Error("'path' argument is empty"));
+			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
@@ -137,9 +137,9 @@ fs.openProm = function (path, flags, mode) {
 fs.closeProm = function (fd) {
 
 	if ("undefined" === typeof fd) {
-		return Promise.reject(new ReferenceError("missing 'fd' argument"));
+		return Promise.reject(new ReferenceError("missing \"fd\" argument"));
 	} else if ("number" !== typeof fd) {
-		return Promise.reject(new TypeError("'fd' argument is not a number"));
+		return Promise.reject(new TypeError("\"fd\" argument is not a number"));
 	} else {
 
 		return new Promise(function (resolve, reject) {
@@ -161,15 +161,15 @@ fs.closeProm = function (fd) {
 fs.accessProm = function (path, mode) {
 
 	if ("undefined" === typeof path) {
-		return Promise.reject(new ReferenceError("missing 'path' argument"));
+		return Promise.reject(new ReferenceError("missing \"path\" argument"));
 	} else if ("string" !== typeof path) {
-		return Promise.reject(new TypeError("'path' argument is not a string"));
+		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else {
 
 		path = path.trim();
 
 		if ("" === path) {
-			return Promise.reject(new Error("'path' argument is empty"));
+			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
@@ -190,19 +190,19 @@ fs.accessProm = function (path, mode) {
 fs.appendFileProm = function (file, data, options) {
 
 	if ("undefined" === typeof file) {
-		return Promise.reject(new ReferenceError("missing 'file' argument"));
+		return Promise.reject(new ReferenceError("missing \"file\" argument"));
 	} else if ("string" !== typeof file) {
-		return Promise.reject(new TypeError("'file' argument is not a string"));
+		return Promise.reject(new TypeError("\"file\" argument is not a string"));
 	} else if ("undefined" === typeof data) {
-		return Promise.reject(new ReferenceError("missing 'data' argument"));
+		return Promise.reject(new ReferenceError("missing \"data\" argument"));
 	} else if ("string" !== typeof data && ("object" !== (typeof data === "undefined" ? "undefined" : _typeof(data)) || !(data instanceof Buffer))) {
-		return Promise.reject(new TypeError("'data' argument is not a string or a Buffer"));
+		return Promise.reject(new TypeError("\"data\" argument is not a string or a Buffer"));
 	} else {
 
 		file = file.trim();
 
 		if ("" === file) {
-			return Promise.reject(new Error("'file' argument is empty"));
+			return Promise.reject(new Error("\"file\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
@@ -223,19 +223,19 @@ fs.appendFileProm = function (file, data, options) {
 fs.chmodProm = function (path, mode) {
 
 	if ("undefined" === typeof path) {
-		return Promise.reject(new ReferenceError("missing 'path' argument"));
+		return Promise.reject(new ReferenceError("missing \"path\" argument"));
 	} else if ("string" !== typeof path) {
-		return Promise.reject(new TypeError("'path' argument is not a string"));
+		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else if ("undefined" === typeof mode) {
-		return Promise.reject(new ReferenceError("missing 'mode' argument"));
+		return Promise.reject(new ReferenceError("missing \"mode\" argument"));
 	} else if ("number" !== typeof mode) {
-		return Promise.reject(new TypeError("'mode' argument is not a number"));
+		return Promise.reject(new TypeError("\"mode\" argument is not a number"));
 	} else {
 
 		path = path.trim();
 
 		if ("" === path) {
-			return Promise.reject(new Error("'path' argument is empty"));
+			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			new Promise(function (resolve, reject) {
@@ -256,23 +256,23 @@ fs.chmodProm = function (path, mode) {
 fs.chownProm = function (path, uid, gid) {
 
 	if ("undefined" === typeof path) {
-		return Promise.reject(new ReferenceError("missing 'path' argument"));
+		return Promise.reject(new ReferenceError("missing \"path\" argument"));
 	} else if ("string" !== typeof path) {
-		return Promise.reject(new TypeError("'path' argument is not a string"));
+		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else if ("undefined" === typeof uid) {
-		return Promise.reject(new ReferenceError("missing 'uid' argument"));
+		return Promise.reject(new ReferenceError("missing \"uid\" argument"));
 	} else if ("number" !== typeof uid) {
-		return Promise.reject(new TypeError("'uid' argument is not a number"));
+		return Promise.reject(new TypeError("\"uid\" argument is not a number"));
 	} else if ("undefined" === typeof gid) {
-		return Promise.reject(new ReferenceError("missing 'gid' argument"));
+		return Promise.reject(new ReferenceError("missing \"gid\" argument"));
 	} else if ("number" !== typeof gid) {
-		return Promise.reject(new TypeError("'gid' argument is not a number"));
+		return Promise.reject(new TypeError("\"gid\" argument is not a number"));
 	} else {
 
 		path = path.trim();
 
 		if ("" === path) {
-			return Promise.reject(new Error("'path' argument is empty"));
+			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
@@ -293,15 +293,15 @@ fs.chownProm = function (path, uid, gid) {
 fs.readdirProm = function (path) {
 
 	if ("undefined" === typeof path) {
-		return Promise.reject(new ReferenceError("missing 'path' argument"));
+		return Promise.reject(new ReferenceError("missing \"path\" argument"));
 	} else if ("string" !== typeof path) {
-		return Promise.reject(new TypeError("'path' argument is not a string"));
+		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else {
 
 		path = path.trim();
 
 		if ("" === path) {
-			return Promise.reject(new Error("'path' argument is empty"));
+			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
@@ -322,9 +322,9 @@ fs.readdirProm = function (path) {
 fs.readFileProm = function (file, options) {
 
 	if ("undefined" === typeof file) {
-		return Promise.reject(new ReferenceError("missing 'file' argument"));
+		return Promise.reject(new ReferenceError("missing \"file\" argument"));
 	} else if ("string" !== typeof file && "number" !== typeof file && ("object" !== (typeof file === "undefined" ? "undefined" : _typeof(file)) || !(file instanceof Buffer))) {
-		return Promise.reject(new TypeError("'file' argument is not a string, a number or a Buffer"));
+		return Promise.reject(new TypeError("\"file\" argument is not a string, a number or a Buffer"));
 	} else {
 
 		return new Promise(function (resolve, reject) {
@@ -344,15 +344,15 @@ fs.readFileProm = function (file, options) {
 fs.realpathProm = function (path, options) {
 
 	if ("undefined" === typeof path) {
-		return Promise.reject(new ReferenceError("missing 'path' argument"));
+		return Promise.reject(new ReferenceError("missing \"path\" argument"));
 	} else if ("string" !== typeof path) {
-		return Promise.reject(new TypeError("'path' argument is not a string"));
+		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else {
 
 		path = path.trim();
 
 		if ("" === path) {
-			return Promise.reject(new Error("'path' argument is empty"));
+			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
@@ -373,22 +373,22 @@ fs.realpathProm = function (path, options) {
 fs.renameProm = function (oldPath, newPath) {
 
 	if ("undefined" === typeof oldPath) {
-		return Promise.reject(new ReferenceError("missing 'oldPath' argument"));
+		return Promise.reject(new ReferenceError("missing \"oldPath\" argument"));
 	} else if ("string" !== typeof oldPath) {
-		return Promise.reject(new TypeError("'oldPath' argument is not a string"));
+		return Promise.reject(new TypeError("\"oldPath\" argument is not a string"));
 	} else if ("undefined" === typeof newPath) {
-		return Promise.reject(new ReferenceError("missing 'newPath' argument"));
+		return Promise.reject(new ReferenceError("missing \"newPath\" argument"));
 	} else if ("string" !== typeof newPath) {
-		return Promise.reject(new TypeError("'newPath' argument is not a string"));
+		return Promise.reject(new TypeError("\"newPath\" argument is not a string"));
 	} else {
 
 		oldPath = oldPath.trim();
 		newPath = newPath.trim();
 
 		if ("" === oldPath) {
-			return Promise.reject(new Error("'oldPath' argument is empty"));
+			return Promise.reject(new Error("\"oldPath\" argument is empty"));
 		} else if ("" === newPath) {
-			return Promise.reject(new Error("'newPath' argument is empty"));
+			return Promise.reject(new Error("\"newPath\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
@@ -409,15 +409,15 @@ fs.renameProm = function (oldPath, newPath) {
 fs.statProm = function (path) {
 
 	if ("undefined" === typeof path) {
-		return Promise.reject(new ReferenceError("missing 'path' argument"));
+		return Promise.reject(new ReferenceError("missing \"path\" argument"));
 	} else if ("string" !== typeof path) {
-		return Promise.reject(new TypeError("'path' argument is not a string"));
+		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else {
 
 		path = path.trim();
 
 		if ("" === path) {
-			return Promise.reject(new Error("'path' argument is empty"));
+			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
@@ -438,19 +438,19 @@ fs.statProm = function (path) {
 fs.truncateProm = function (path, len) {
 
 	if ("undefined" === typeof path) {
-		return Promise.reject(new ReferenceError("missing 'path' argument"));
+		return Promise.reject(new ReferenceError("missing \"path\" argument"));
 	} else if ("string" !== typeof path) {
-		return Promise.reject(new TypeError("'path' argument is not a string"));
+		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else if ("undefined" === typeof len) {
-		return Promise.reject(new ReferenceError("missing 'len' argument"));
+		return Promise.reject(new ReferenceError("missing \"len\" argument"));
 	} else if ("number" !== typeof len) {
-		return Promise.reject(new TypeError("'len' argument is not a number"));
+		return Promise.reject(new TypeError("\"len\" argument is not a number"));
 	} else {
 
 		path = path.trim();
 
 		if ("" === path) {
-			return Promise.reject(new Error("'path' argument is empty"));
+			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
@@ -471,13 +471,13 @@ fs.truncateProm = function (path, len) {
 fs.writeFileProm = function (file, data, options) {
 
 	if ("undefined" === typeof file) {
-		return Promise.reject(new ReferenceError("missing 'file' argument"));
+		return Promise.reject(new ReferenceError("missing \"file\" argument"));
 	} else if ("string" !== typeof file && "number" !== typeof file && ("object" !== (typeof file === "undefined" ? "undefined" : _typeof(file)) || !(file instanceof Buffer))) {
-		return Promise.reject(new TypeError("'file' argument is not a string, a number or a Buffer"));
+		return Promise.reject(new TypeError("\"file\" argument is not a string, a number or a Buffer"));
 	} else if ("undefined" === typeof data) {
-		return Promise.reject(new ReferenceError("missing 'data' argument"));
+		return Promise.reject(new ReferenceError("missing \"data\" argument"));
 	} else if ("string" !== typeof data && ("object" !== (typeof data === "undefined" ? "undefined" : _typeof(data)) || !(data instanceof Buffer))) {
-		return Promise.reject(new TypeError("'data' argument is not a string or a Buffer"));
+		return Promise.reject(new TypeError("\"data\" argument is not a string or a Buffer"));
 	} else {
 
 		return new Promise(function (resolve, reject) {

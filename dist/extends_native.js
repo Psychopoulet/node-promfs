@@ -19,7 +19,7 @@ try {
 }
 
 if (!_extends) {
-			throw new Error("'node-promfs' : Impossible to load native functions");
+			throw new Error("\"node-promfs\" : Impossible to load native functions");
 } else {
 
 			// module

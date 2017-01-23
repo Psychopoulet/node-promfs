@@ -96,7 +96,7 @@ namespace _extends {
 						v8::Local<v8::Value> argv[argc];
 
 						if (!work->created) {
-							argv[0] = v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot create 'directory'"));
+							argv[0] = v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot create \"directory\""));
 						}
 						else {
 							argv[0] = v8::Null(isolate);
@@ -123,7 +123,7 @@ namespace _extends {
 						v8::Local<v8::Promise::Resolver> local = v8::Local<v8::Promise::Resolver>::New(isolate, work->persistent);
 
 						if (!work->created) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot create 'directory'")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot create \"directory\"")));
 						}
 						else {
 							local->Resolve(v8::Undefined(isolate));
@@ -145,17 +145,17 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 						
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"path\" argument is not a string")));
 						}
 					else if (1 < nArgsLength && !args[1]->IsUndefined() && !args[1]->IsNumber()) {
-						isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'mode' argument is not an integer")));
+						isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"mode\" argument is not an integer")));
 					}
 					else {
 
@@ -167,19 +167,19 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sDirname) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"path\" argument is empty")));
 							}
 							else {
 
 								if (1 < nArgsLength) {
 
 									if (!_mkdirp(sDirname, args[1]->Uint32Value())) {
-										isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot create 'path' recursively")));
+										isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot create \"path\" recursively")));
 									}
 
 								}
 								else if (!_mkdirp(sDirname)) {
-									isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot create 'path' recursively")));
+									isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot create \"path\" recursively")));
 								}
 
 							}
@@ -198,32 +198,32 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"path\" argument is not a string")));
 						}
 					else if (1 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"callback\" argument")));
 					}
 
 						// callback without options
 						else if (args[1]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"callback\" argument")));
 						}
 						else if (2 == nArgsLength && !args[1]->IsFunction()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'callback' argument is not a function")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"callback\" argument is not a function")));
 						}
 
 						// callback & options
 						else if (2 < nArgsLength && !args[1]->IsNumber()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'mode' argument is not an integer")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"mode\" argument is not an integer")));
 						}
 						else if (2 < nArgsLength && !args[2]->IsFunction()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'callback' argument is not a function")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"callback\" argument is not a function")));
 						}
 
 					else {
@@ -237,7 +237,7 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sDirname) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"path\" argument is empty")));
 							}
 							else {
 
@@ -286,16 +286,16 @@ namespace _extends {
 				// params treatment
 
 				if (0 >= nArgsLength) {
-					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 				}
 					else if (args[0]->IsUndefined()) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 					}
 					else if (!args[0]->IsString()) {
-						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
+						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"path\" argument is not a string")));
 					}
 				else if (1 < nArgsLength && !args[1]->IsUndefined() && !args[1]->IsNumber()) {
-					local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'mode' argument is not an integer")));
+					local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"mode\" argument is not an integer")));
 				}
 				else {
 
@@ -307,7 +307,7 @@ namespace _extends {
 					// function treatment
 
 						if ("" == sDirname) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"path\" argument is empty")));
 						}
 						else {
 

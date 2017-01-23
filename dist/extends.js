@@ -17,15 +17,15 @@ var path = require("path"),
 fs.extractFilesSync = function (dir) {
 
 	if ("undefined" === typeof dir) {
-		throw new ReferenceError("missing 'directory' argument");
+		throw new ReferenceError("missing \"directory\" argument");
 	} else if ("string" !== typeof dir) {
-		throw new TypeError("'directory' argument is not a string");
+		throw new TypeError("\"directory\" argument is not a string");
 	} else {
 
 		dir = dir.trim();
 
 		if (!fs.isDirectorySync(dir)) {
-			throw new Error("'" + dir + "' is not a valid directory");
+			throw new Error("\"" + dir + "\" is not a valid directory");
 		} else {
 			var _ret = function () {
 
@@ -55,13 +55,13 @@ fs.extractFilesSync = function (dir) {
 fs.extractFiles = function (dir, callback) {
 
 	if ("undefined" === typeof dir) {
-		throw new ReferenceError("missing 'directory' argument");
+		throw new ReferenceError("missing \"directory\" argument");
 	} else if ("string" !== typeof dir) {
-		throw new TypeError("'directory' argument is not a string");
+		throw new TypeError("\"directory\" argument is not a string");
 	} else if ("undefined" === typeof callback) {
-		throw new ReferenceError("missing 'callback' argument");
+		throw new ReferenceError("missing \"callback\" argument");
 	} else if ("function" !== typeof callback) {
-		throw new TypeError("'callback' argument is not a function");
+		throw new TypeError("\"callback\" argument is not a function");
 	} else {
 
 		dir = dir.trim();
@@ -71,7 +71,7 @@ fs.extractFiles = function (dir, callback) {
 			if (err) {
 				callback(err);
 			} else if (!exists) {
-				callback(new Error("'" + dir + "' is not a valid directory"));
+				callback(new Error("\"" + dir + "\" is not a valid directory"));
 			} else {
 
 				fs.readdir(dir, function (err, files) {
@@ -130,9 +130,9 @@ function _extractRealFiles(dir, givenFiles, realFiles, callback) {
 fs.filesToStringSync = function (files, encoding, separator) {
 
 	if ("undefined" === typeof files) {
-		throw new ReferenceError("missing 'files' argument");
+		throw new ReferenceError("missing \"files\" argument");
 	} else if ("object" !== (typeof files === "undefined" ? "undefined" : _typeof(files)) || !(files instanceof Array)) {
-		throw new TypeError("'files' argument is not an Array");
+		throw new TypeError("\"files\" argument is not an Array");
 	} else {
 		var _ret3 = function () {
 
@@ -168,13 +168,13 @@ fs.filesToStringSync = function (files, encoding, separator) {
 fs.filesToString = function (files, encoding, separator, callback) {
 
 	if ("undefined" === typeof files) {
-		throw new ReferenceError("missing 'files' argument");
+		throw new ReferenceError("missing \"files\" argument");
 	} else if ("object" !== (typeof files === "undefined" ? "undefined" : _typeof(files)) || !(files instanceof Array)) {
-		throw new TypeError("'files' argument is not an Array");
+		throw new TypeError("\"files\" argument is not an Array");
 	} else if ("undefined" === typeof callback && "undefined" === typeof separator && "undefined" === typeof encoding) {
-		throw new ReferenceError("missing 'callback' argument");
+		throw new ReferenceError("missing \"callback\" argument");
 	} else if ("function" !== typeof callback && "function" !== typeof separator && "function" !== typeof encoding) {
-		throw new TypeError("'callback' argument is not a function");
+		throw new TypeError("\"callback\" argument is not a function");
 	} else {
 
 		if ("undefined" === typeof callback) {
@@ -247,19 +247,19 @@ function _readContent(files, encoding, separator, content, callback) {
 fs.filesToFileSync = function (files, target, separator) {
 
 	if ("undefined" === typeof files) {
-		throw new ReferenceError("missing 'files' argument");
+		throw new ReferenceError("missing \"files\" argument");
 	} else if ("object" !== (typeof files === "undefined" ? "undefined" : _typeof(files)) || !(files instanceof Array)) {
-		throw new TypeError("'files' argument is not an Array");
+		throw new TypeError("\"files\" argument is not an Array");
 	} else if ("undefined" === typeof target) {
-		throw new ReferenceError("missing 'target' argument");
+		throw new ReferenceError("missing \"target\" argument");
 	} else if ("string" !== typeof target) {
-		throw new TypeError("'target' argument is not a string");
+		throw new TypeError("\"target\" argument is not a string");
 	} else {
 
 		target = target.trim();
 
 		if ("" === target) {
-			throw new Error("'target' argument is empty");
+			throw new Error("\"target\" argument is empty");
 		} else {
 
 			separator = "string" === typeof separator ? separator : " ";
@@ -291,17 +291,17 @@ fs.filesToFileSync = function (files, target, separator) {
 fs.filesToFile = function (files, target, separator, callback) {
 
 	if ("undefined" === typeof files) {
-		throw new ReferenceError("missing 'files' argument");
+		throw new ReferenceError("missing \"files\" argument");
 	} else if ("object" !== (typeof files === "undefined" ? "undefined" : _typeof(files)) || !(files instanceof Array)) {
-		throw new TypeError("'files' argument is not an Array");
+		throw new TypeError("\"files\" argument is not an Array");
 	} else if ("undefined" === typeof target) {
-		throw new ReferenceError("missing 'target' argument");
+		throw new ReferenceError("missing \"target\" argument");
 	} else if ("string" !== typeof target) {
-		throw new TypeError("'target' argument is not a string");
+		throw new TypeError("\"target\" argument is not a string");
 	} else if ("undefined" === typeof callback && "undefined" === typeof separator) {
-		throw new ReferenceError("missing 'callback' argument");
+		throw new ReferenceError("missing \"callback\" argument");
 	} else if ("function" !== typeof callback && "function" !== typeof separator) {
-		throw new TypeError("'callback' argument is not a function");
+		throw new TypeError("\"callback\" argument is not a function");
 	} else {
 
 		if ("undefined" === typeof callback) {
@@ -311,7 +311,7 @@ fs.filesToFile = function (files, target, separator, callback) {
 		target = target.trim();
 
 		if ("" === target) {
-			throw new Error("'target' argument is empty");
+			throw new Error("\"target\" argument is empty");
 		} else {
 
 			separator = "string" === typeof separator ? separator : " ";
@@ -458,9 +458,9 @@ function _concatContentStream(writeStream, files, target, separator, callback) {
 fs.directoryToStringSync = function (dir, encoding, separator) {
 
 	if ("undefined" === typeof dir) {
-		throw new ReferenceError("missing 'directory' argument");
+		throw new ReferenceError("missing \"directory\" argument");
 	} else if ("string" !== typeof dir) {
-		throw new TypeError("'directory' argument is not a string");
+		throw new TypeError("\"directory\" argument is not a string");
 	} else {
 		return fs.filesToStringSync(fs.extractFilesSync(dir), encoding, separator);
 	}
@@ -471,13 +471,13 @@ fs.directoryToStringSync = function (dir, encoding, separator) {
 fs.directoryToString = function (dir, encoding, separator, callback) {
 
 	if ("undefined" === typeof dir) {
-		throw new ReferenceError("missing 'directory' argument");
+		throw new ReferenceError("missing \"directory\" argument");
 	} else if ("string" !== typeof dir) {
-		throw new TypeError("'directory' argument is not a string");
+		throw new TypeError("\"directory\" argument is not a string");
 	} else if ("undefined" === typeof callback && "undefined" === typeof separator && "undefined" === typeof encoding) {
-		throw new ReferenceError("missing 'callback' argument");
+		throw new ReferenceError("missing \"callback\" argument");
 	} else if ("function" !== typeof callback && "function" !== typeof separator && "function" !== typeof encoding) {
-		throw new TypeError("'callback' argument is not a function");
+		throw new TypeError("\"callback\" argument is not a function");
 	} else {
 
 		if ("undefined" === typeof callback) {
@@ -515,19 +515,19 @@ fs.directoryToString = function (dir, encoding, separator, callback) {
 fs.directoryToFileSync = function (dir, target, separator) {
 
 	if ("undefined" === typeof dir) {
-		throw new ReferenceError("missing 'directory' argument");
+		throw new ReferenceError("missing \"directory\" argument");
 	} else if ("string" !== typeof dir) {
-		throw new TypeError("'directory' argument is not a string");
+		throw new TypeError("\"directory\" argument is not a string");
 	} else if ("undefined" === typeof target) {
-		throw new ReferenceError("missing 'target' argument");
+		throw new ReferenceError("missing \"target\" argument");
 	} else if ("string" !== typeof target) {
-		throw new TypeError("'target' argument is not a string");
+		throw new TypeError("\"target\" argument is not a string");
 	} else {
 
 		target = target.trim();
 
 		if ("" === target) {
-			throw new Error("'target' argument is empty");
+			throw new Error("\"target\" argument is empty");
 		} else {
 
 			return fs.filesToFileSync(fs.extractFilesSync(dir), target, separator);
@@ -540,23 +540,23 @@ fs.directoryToFileSync = function (dir, target, separator) {
 fs.directoryToFile = function (dir, target, separator, callback) {
 
 	if ("undefined" === typeof dir) {
-		throw new ReferenceError("missing 'directory' argument");
+		throw new ReferenceError("missing \"directory\" argument");
 	} else if ("string" !== typeof dir) {
-		throw new TypeError("'directory' argument is not a string");
+		throw new TypeError("\"directory\" argument is not a string");
 	} else if ("undefined" === typeof target) {
-		throw new ReferenceError("missing 'target' argument");
+		throw new ReferenceError("missing \"target\" argument");
 	} else if ("string" !== typeof target) {
-		throw new TypeError("'target' argument is not a string");
+		throw new TypeError("\"target\" argument is not a string");
 	} else if ("undefined" === typeof callback && "undefined" === typeof separator) {
-		throw new ReferenceError("missing 'callback' argument");
+		throw new ReferenceError("missing \"callback\" argument");
 	} else if ("function" !== typeof callback && "function" !== typeof separator) {
-		throw new TypeError("'callback' argument is not a function");
+		throw new TypeError("\"callback\" argument is not a function");
 	} else {
 
 		target = target.trim();
 
 		if ("" === target) {
-			throw new Error("'target' argument is empty");
+			throw new Error("\"target\" argument is empty");
 		} else {
 
 			if ("undefined" === typeof callback) {
