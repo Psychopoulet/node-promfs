@@ -16,7 +16,7 @@ namespace _extends {
 					v8::Persistent<v8::Promise::Resolver> persistent;
 
 					std::string directory;
-					bool removed;
+					std::string notremoved;
 					
 				};
 
@@ -24,21 +24,16 @@ namespace _extends {
 
 				#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 					
-					bool _rmdirp(const std::string &p_sDirname) {
+					std::string _rmdirp(const std::string &p_sDirname) {
 
-						bool bResult = false;
+						std::string sResult = "";
 
-							if (!isDirectory::_isDirectory(p_sDirname)) {
-								bResult = true;
-							}
-							else {
+							if (isDirectory::_isDirectory(p_sDirname)) {
 
 								std::size_t length = p_sDirname.size();
 								std::string sDirname = (tools::DIRECTORY_SEPARATOR == p_sDirname.substr(length - 1, length))
 															? p_sDirname
 															: p_sDirname + tools::DIRECTORY_SEPARATOR;
-
-								bool bFailToDelete = false;
 
 								WIN32_FIND_DATA FindFileData;
 								HANDLE hFind = FindFirstFile((sDirname + "*").c_str(), &FindFileData);
@@ -50,20 +45,12 @@ namespace _extends {
 										if(0 != strcmp(FindFileData.cFileName, ".") && 0 != strcmp(FindFileData.cFileName, "..")) {
 
 											if (isDirectory::_isDirectory(sDirname + FindFileData.cFileName)) {
-												
-												if (!_rmdirp(sDirname + FindFileData.cFileName)) {
-													bFailToDelete = true;
-													break;
-												}
-
+												sResult = _rmdirp(sDirname + FindFileData.cFileName);
+												if ("" != sResult) { break; }
 											}
-											else {
-
-												if (!tools::unlink(sDirname + FindFileData.cFileName)) {
-													bFailToDelete = true;
-													break;
-												}
-												
+											else if (!tools::unlink(sDirname + FindFileData.cFileName)) {
+												sResult = sDirname + FindFileData.cFileName;
+												break;
 											}
 
 										}
@@ -76,33 +63,29 @@ namespace _extends {
 
 								hFind = NULL;
 
-								if (!bFailToDelete) {
-									bResult = (RemoveDirectory(sDirname.c_str()));
+								if ("" == sResult && !RemoveDirectory(sDirname.c_str())) {
+									sResult = sDirname;
 								}
 
 							}
 
-						return bResult;
+						return sResult;
 
 					}
 
 				#else
 					
-					bool _rmdirp(const std::string &p_sDirname) {
+					std::string _rmdirp(const std::string &p_sDirname) {
 
-						bool bResult = false;
+						std::string sResult = "";
 
-							if (!isDirectory::_isDirectory(p_sDirname)) {
-								bResult = true;
-							}
-							else {
+							if (isDirectory::_isDirectory(p_sDirname)) {
 
 								std::size_t length = p_sDirname.size();
 								std::string sDirname = (tools::DIRECTORY_SEPARATOR == p_sDirname.substr(length - 1, length))
 															? p_sDirname
 															: p_sDirname + tools::DIRECTORY_SEPARATOR;
 
-								bool bFailToDelete = false;
 								std::string sFilename = "";
 
 								DIR *dp;
@@ -119,20 +102,12 @@ namespace _extends {
 											sFilename = sDirname + sFilename;
 
 											if (isDirectory::_isDirectory(sFilename)) {
-												
-												if (!_rmdirp(sFilename)) {
-													bFailToDelete = true;
-													break;
-												}
-
+												sResult = sFilename;
+												if ("" != sResult) { break; }
 											}
-											else {
-
-												if (!tools::unlink(sFilename)) {
-													bFailToDelete = true;
-													break;
-												}
-
+											else if (!tools::unlink(sFilename)) {
+												sResult = sFilename;
+												break;
 											}
 
 										}
@@ -146,13 +121,13 @@ namespace _extends {
 								dp = NULL;
 								entry = NULL;
 								
-								if (!bFailToDelete) {
-									bResult = (0 == rmdir(sDirname.c_str()));
+								if ("" == sResult && 0 != rmdir(sDirname.c_str())) {
+									sResult = sDirname;
 								}
 
 							}
 
-						return bResult;
+						return sResult;
 
 					}
 
@@ -162,7 +137,7 @@ namespace _extends {
 
 					_AsyncWork *work = static_cast<_AsyncWork *>(req->data);
 
-					work->removed = _rmdirp(work->directory);
+					work->notremoved = _rmdirp(work->directory);
 
 				}
 
@@ -176,8 +151,9 @@ namespace _extends {
 						const unsigned argc = 1;
 						v8::Local<v8::Value> argv[argc];
 
-						if (!work->removed) {
-							argv[0] = v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot remove 'directory'"));
+						if ("" != work->notremoved) {
+							work->notremoved = "cannot remove \"" + work->notremoved + "\"";
+							argv[0] = v8::Exception::Error(v8::String::NewFromUtf8(isolate, work->notremoved.c_str()));
 						}
 						else {
 							argv[0] = v8::Null(isolate);
@@ -203,8 +179,9 @@ namespace _extends {
 
 						v8::Local<v8::Promise::Resolver> local = v8::Local<v8::Promise::Resolver>::New(isolate, work->persistent);
 
-						if (!work->removed) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot remove 'directory'")));
+						if ("" != work->notremoved) {
+							work->notremoved = "cannot remove \"" + work->notremoved + "\"";
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, work->notremoved.c_str())));
 						}
 						else {
 							local->Resolve(v8::Undefined(isolate));
@@ -225,14 +202,14 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= args.Length()) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 						
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"path\" argument is not a string")));
 						}
 					else {
 
@@ -244,10 +221,17 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sDirname) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"path\" argument is empty")));
 							}
-							else if (!_rmdirp(sDirname)) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "cannot remove 'path' recursively")));
+							else {
+
+								std::string sResult = _rmdirp(sDirname);
+
+								if ("" != sResult) {
+									sResult = "cannot remove \"" + sResult + "\"";
+									isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, sResult.c_str())));
+								}
+
 							}
 
 					}
@@ -264,22 +248,22 @@ namespace _extends {
 
 					// params treatment
 					if (0 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 					}
 						else if (args[0]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 						}
 						else if (!args[0]->IsString()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"path\" argument is not a string")));
 						}
 					else if (1 >= nArgsLength) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"callback\" argument")));
 					}
 						else if (args[1]->IsUndefined()) {
-							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'callback' argument")));
+							isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"callback\" argument")));
 						}
 						else if (!args[1]->IsFunction()) {
-							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'callback' argument is not a function")));
+							isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"callback\" argument is not a function")));
 						}
 					else {
 
@@ -292,7 +276,7 @@ namespace _extends {
 						// function treatment
 
 							if ("" == sDirname) {
-								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
+								isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"path\" argument is empty")));
 							}
 							else {
 
@@ -306,7 +290,7 @@ namespace _extends {
 
 									// data
 									work->directory = sDirname;
-									work->removed = false;
+									work->notremoved = "";
 
 								// start asynchronous treatment
 								uv_queue_work(uv_default_loop(), &work->request, _workAsync, _workAsyncComplete);
@@ -339,13 +323,13 @@ namespace _extends {
 				// params treatment
 
 				if (0 >= args.Length()) {
-					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+					local->Reject(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 				}
 					else if (args[0]->IsUndefined()) {
-						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing 'path' argument")));
+						isolate->ThrowException(v8::Exception::ReferenceError(v8::String::NewFromUtf8(isolate, "missing \"path\" argument")));
 					}
 					else if (!args[0]->IsString()) {
-						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "'path' argument is not a string")));
+						local->Reject(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "\"path\" argument is not a string")));
 					}
 				else {
 
@@ -357,13 +341,13 @@ namespace _extends {
 					// function treatment
 
 						if ("" == sDirname) {
-							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "'path' argument is empty")));
+							local->Reject(v8::Exception::Error(v8::String::NewFromUtf8(isolate, "\"path\" argument is empty")));
 						}
 						else {
 
 							// data
 							work->directory = sDirname;
-							work->removed = false;
+							work->notremoved = "";
 
 							// start asynchronous treatment
 							uv_queue_work(uv_default_loop(), &work->request, _workAsync, _workPromiseComplete);
