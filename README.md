@@ -1,5 +1,7 @@
 # node-promfs
-'fs' object native extensions & promisifications
+'fs' object extensions & promisifications
+
+[![Build Status](https://api.travis-ci.org/Psychopoulet/node-promfs.svg)](https://travis-ci.org/Psychopoulet/node-promfs)
 
 ## Installation
 
@@ -24,7 +26,7 @@ $ npm install node-promfs
 note : in "separator" parameter, you can use "{{filename}}" pattern, it will be replaced by the file's basename
 (ex : separator = "\r\n\r\n--- {{filename}} ---\r\n\r\n")
 
-  #### copyFile : copy a file with streams (copy then control with isFile) -> native
+  #### copyFile : copy a file with streams (copy then control with isFile)
    * ``` copyFile(string origin, string origin, function callback) ``` callback(ReferenceError|TypeError|Error|null err)
    * ``` copyFileSync(string origin, string origin) : void ```
    * ``` copyFileProm(string origin, string origin) : Promise ```
@@ -54,23 +56,23 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
    * ``` filesToStringSync(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
    * ``` filesToStringProm(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
 
-  #### isDirectory : does the file exists and is a directory ? -> native
+  #### isDirectory : does the file exists and is a directory ?
    * ``` isDirectory(string path) ``` callback(ReferenceError|TypeError|Error|null err, bool exists)
    * ``` isDirectorySync(string path) : bool ```
    * ``` isDirectoryProm(string path) : Promise ``` then(bool exists)
 
-  #### isFile : does the file exists and is a regular file ? -> native
+  #### isFile : does the file exists and is a regular file ?
    * ``` isFile(string path) ``` callback(ReferenceError|TypeError|Error|null err, bool exists)
    * ``` isFileSync(string path) : bool ```
    * ``` isFileProm(string path) : Promise ``` then(bool exists)
 
-  #### mkdirp : recursively create a directory -> native
+  #### mkdirp : recursively create a directory
    * The arguments are the same as [the official documentation's ones for mkdir & mkdirSync](https://nodejs.org/api/fs.html#fs_fs_mkdir_path_mode_callback)
    * ``` mkdirp(string path [, int mode], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
    * ``` mkdirpSync(string path [, int mode]) : void ```
    * ``` mkdirpProm(string path [, int mode]) : Promise ```
 
-  #### rmdirp : recursively delete a directory -> native
+  #### rmdirp : recursively delete a directory
    * ``` rmdirp(string path) ``` callback(ReferenceError|TypeError|Error|null err)
    * ``` rmdirpSync(string path) : void ```
    * ``` rmdirpProm(string path) : Promise ```

@@ -1,0 +1,16 @@
+[
+	"after",
+	"afterEach",
+	"angular",
+	"before",
+	"beforeEach",
+	"console",
+	"describe",
+	"it",
+	"jQuery",
+	"Promise",
+	"module",
+	"require",
+	"__dirname",
+	"__filename"
+]
