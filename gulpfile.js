@@ -31,7 +31,7 @@
 
 	gulp.task("eslint", () => {
 
-		return gulp.src(TOTESTFILES)
+		return gulp.src([])
 			.pipe(plumber())
 			.pipe(eslint({
 				"env": require(path.join(__dirname, "gulpfile", "eslint", "env.json")),
