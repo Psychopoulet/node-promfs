@@ -1,6 +1,9 @@
 [
 	"after",
+	"afterEach",
 	"angular",
+	"before",
+	"beforeEach",
 	"console",
 	"describe",
 	"it",
@@ -8,5 +11,6 @@
 	"Promise",
 	"module",
 	"require",
-	"__dirname"
+	"__dirname",
+	"__filename"
 ]

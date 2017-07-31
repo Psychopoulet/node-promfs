@@ -135,7 +135,7 @@
 	"no-process-env": "error",
 	"no-process-exit": "error",
 	"no-restricted-modules": "error",
-	"no-sync": "error",
+	"no-sync": 0,
 
 
 	"array-bracket-newline": [ "error", { "multiline": true } ],
@@ -168,7 +168,7 @@
 	"max-depth": "error",
 	"max-len": [ "error", 150 ],
 	"max-lines": 0,
-	"max-nested-callbacks": [ "error", 5 ],
+	"max-nested-callbacks": [ "error", 7 ],
 	"max-params": [ "error", 4 ],
 	"max-statements": 0,
 	"max-statements-per-line": [ "error", { "max": 2 } ],
