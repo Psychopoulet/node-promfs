@@ -7,16 +7,31 @@
     "test": "gulp eslint",
     "test-travis": "gulp mocha"
   },
+  "pre-commit": [
+    "test"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/Psychopoulet/node-promfs.git"
   },
   "keywords": [
-    "fs", "file system", "filesystem",
-    "directory", "dir", "file",
-    "exists", "create", "remove", "delete",
-    "synchrone", "asynchrone", "promise",
-    "mkdirp", "rmdirp", "copy", "concat"
+    "fs",
+    "file system",
+    "filesystem",
+    "directory",
+    "dir",
+    "file",
+    "exists",
+    "create",
+    "remove",
+    "delete",
+    "synchrone",
+    "asynchrone",
+    "promise",
+    "mkdirp",
+    "rmdirp",
+    "copy",
+    "concat"
   ],
   "author": "Sébastien VIDAL",
   "license": "ISC",
@@ -40,5 +55,7 @@
 
   },
   "homepage": "https://github.com/Psychopoulet/node-promfs#readme",
-  "engines" : { "node" : ">=0.11.15" }
+  "engines": {
+    "node": ">=0.11.15"
+  }
 }
