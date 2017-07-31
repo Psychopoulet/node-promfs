@@ -2,10 +2,10 @@
 
 // deps
 
-	const 	path = require("path"),
-			assert = require("assert"),
-			
-			fs = require(path.join(__dirname, "..", "dist", "main.js"));
+	const path = require("path");
+	const assert = require("assert");
+
+	const fs = require(path.join(__dirname, "..", "dist", "main.js"));
 
 // tests
 
