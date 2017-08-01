@@ -16,7 +16,7 @@
 
 	// compilation
 	const babel = require("gulp-babel");
-	
+
 // consts
 
 	const UNITTESTSFILES = path.join(__dirname, "tests", "*.js");
@@ -69,7 +69,7 @@
 
 		return gulp.src(path.join(__dirname, "lib", "*.js"))
 			.pipe(babel({
-				presets: ["es2015"]
+				"presets": [ "es2015" ]
 			}))
 			.pipe(gulp.dest(path.join(__dirname, "dist")));
 
@@ -78,11 +78,10 @@
 // watcher
 
 	gulp.task("watch", () => {
-		gulp.watch(TOTESTFILES, ["eslint"]);
+		gulp.watch(TOTESTFILES, [ "eslint" ]);
 	});
 
 
 // default
 
-	gulp.task("default", ["mocha"]);
-	
+	gulp.task("default", [ "mocha" ]);
