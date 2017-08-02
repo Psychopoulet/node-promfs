@@ -22,11 +22,8 @@ describe("copy", () => {
 
 	after(() => {
 
-		try {
+		if (!fs.isFileSync(FILE_TEST)) {
 			fs.unlinkSync(FILE_TEST);
-		}
-		catch (e) {
-			// nothing to do here
 		}
 
 	});
@@ -104,11 +101,8 @@ describe("copy", () => {
 
 		after(() => {
 
-			try {
+			if (!fs.isFileSync(FILE_TEST2)) {
 				fs.unlinkSync(FILE_TEST2);
-			}
-			catch (e) {
-				// nothing to do here
 			}
 
 		});
@@ -198,11 +192,8 @@ describe("copy", () => {
 
 		after(() => {
 
-			try {
+			if (!fs.isFileSync(FILE_TEST2)) {
 				fs.unlinkSync(FILE_TEST2);
-			}
-			catch (e) {
-				// nothing to do here
 			}
 
 		});
