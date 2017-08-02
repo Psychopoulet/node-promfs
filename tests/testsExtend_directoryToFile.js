@@ -2,17 +2,17 @@
 
 // deps
 
-	const path = require("path");
+	const { join } = require("path");
 	const assert = require("assert");
 
-	const fs = require(path.join(__dirname, "..", "dist", "main.js"));
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
 
-	const DIR_TESTBASE = path.join(__dirname, "testlvl1");
-	const DIR_TESTBASE2 = path.join(__dirname, "testlvl2");
-	const FILE_TEST = path.join(DIR_TESTBASE, "test.txt");
-	const FILE_TEST2 = path.join(DIR_TESTBASE, "test2.txt");
+	const DIR_TESTBASE = join(__dirname, "testlvl1");
+	const DIR_TESTBASE2 = join(__dirname, "testlvl2");
+	const FILE_TEST = join(DIR_TESTBASE, "test.txt");
+	const FILE_TEST2 = join(DIR_TESTBASE, "test2.txt");
 
 // tests
 
@@ -24,9 +24,9 @@ describe("directoryToFile", () => {
 			fs.mkdirSync(DIR_TESTBASE);
 		}
 
-		if (!fs.isFileSync(FILE_TEST)) {
-			fs.writeFileSync(FILE_TEST, "test", "utf8");
-		}
+			if (!fs.isFileSync(FILE_TEST)) {
+				fs.writeFileSync(FILE_TEST, "test", "utf8");
+			}
 
 		if (!fs.isDirectorySync(DIR_TESTBASE2)) {
 			fs.mkdirSync(DIR_TESTBASE2);
@@ -70,11 +70,11 @@ describe("directoryToFile", () => {
 
 			assert.throws(() => {
 				fs.directoryToFileSync();
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"directory\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.directoryToFileSync(__dirname);
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"file\" value does not throw an error");
 
 		});
 
@@ -82,11 +82,11 @@ describe("directoryToFile", () => {
 
 			assert.throws(() => {
 				fs.directoryToFileSync(false, __filename);
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"directory\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.directoryToFileSync(__dirname, false);
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"file\" value does not throw an error");
 
 		});
 
@@ -94,11 +94,11 @@ describe("directoryToFile", () => {
 
 			assert.throws(() => {
 				fs.directoryToFileSync("", __filename);
-			}, Error, "check empty content value does not throw an error");
+			}, Error, "check empty \"directory\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.directoryToFileSync(__dirname, "");
-			}, Error, "check empty content value does not throw an error");
+			}, Error, "check empty \"file\" value does not throw an error");
 
 		});
 
@@ -148,11 +148,11 @@ describe("directoryToFile", () => {
 
 			assert.throws(() => {
 				fs.directoryToFile();
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"directory\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.directoryToFile(__dirname);
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"file\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.directoryToFile(__dirname, __filename);
@@ -166,13 +166,13 @@ describe("directoryToFile", () => {
 				fs.directoryToFile(false, __filename, () => {
 					// nothing to do here
 				});
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"directory\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.directoryToFile(__dirname, false, () => {
 					// nothing to do here
 				});
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"file\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.directoryToFile(__dirname, __filename, false);
@@ -186,13 +186,13 @@ describe("directoryToFile", () => {
 				fs.directoryToFile("", __filename, () => {
 					// nothing to do here
 				});
-			}, Error, "check empty content value does not throw an error");
+			}, Error, "check empty \"directory\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.directoryToFile(__dirname, "", () => {
 					// nothing to do here
 				});
-			}, Error, "check empty content value does not throw an error");
+			}, Error, "check empty \"file\" value does not throw an error");
 
 		});
 
@@ -250,18 +250,18 @@ describe("directoryToFile", () => {
 		it("should check missing value", (done) => {
 
 			fs.directoryToFileProm().then(() => {
-				done("check missing value does not generate an error");
+				done("check missing \"directory\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+				assert.strictEqual(true, err instanceof TypeError, "check missing \"directory\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check missing \"directory\" value does not generate a valid error");
 
 				fs.directoryToFileProm(__dirname).then(() => {
-					done("check missing value does not generate an error");
+					done("check missing \"file\" value does not generate an error");
 				}).catch((_err) => {
 
-					assert.strictEqual(true, _err instanceof TypeError, "check missing value does not generate a valid error");
-					assert.strictEqual("string", typeof _err.message, "check missing value does not generate a valid error");
+					assert.strictEqual(true, _err instanceof TypeError, "check missing \"file\"  value does not generate a valid error");
+					assert.strictEqual("string", typeof _err.message, "check missing \"file\"  value does not generate a valid error");
 
 					done();
 
@@ -274,18 +274,42 @@ describe("directoryToFile", () => {
 		it("should check invalid value", (done) => {
 
 			fs.directoryToFileProm(false, __filename).then(() => {
-				done("check invalid value does not generate an error");
+				done("check invalid \"directory\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check invalid value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check invalid value does not generate a valid error");
+				assert.strictEqual(true, err instanceof TypeError, "check invalid \"directory\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check invalid \"directory\" value does not generate a valid error");
 
 				fs.directoryToFileProm(__dirname, false).then(() => {
-					done("check invalid value does not generate an error");
+					done("check invalid \"file\" value does not generate an error");
 				}).catch((_err) => {
 
-					assert.strictEqual(true, _err instanceof TypeError, "check invalid value does not generate a valid error");
-					assert.strictEqual("string", typeof _err.message, "check invalid value does not generate a valid error");
+					assert.strictEqual(true, _err instanceof TypeError, "check invalid \"file\" value does not generate a valid error");
+					assert.strictEqual("string", typeof _err.message, "check invalid \"file\" value does not generate a valid error");
+
+					done();
+
+				});
+
+			});
+
+		});
+
+		it("should check empty value", (done) => {
+
+			fs.directoryToFileProm("", __filename).then(() => {
+				done("check empty \"directory\" value does not generate an error");
+			}).catch((err) => {
+
+				assert.strictEqual(true, err instanceof TypeError, "check empty \"directory\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check empty \"directory\" value does not generate a valid error");
+
+				fs.directoryToFileProm(__dirname, "").then(() => {
+					done("check empty \"file\" value does not generate an error");
+				}).catch((_err) => {
+
+					assert.strictEqual(true, _err instanceof TypeError, "check empty \"file\" value does not generate a valid error");
+					assert.strictEqual("string", typeof _err.message, "check empty \"file\" value does not generate a valid error");
 
 					done();
 
