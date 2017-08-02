@@ -23,7 +23,7 @@
 
 	const TOTESTFILES = [
 		path.join(__dirname, "gulpfile.js"),
-		path.join(__dirname, "lib", "*.js"),
+		path.join(__dirname, "lib", "**", "*.js"),
 		UNITTESTSFILES
 	];
 
