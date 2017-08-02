@@ -64,7 +64,7 @@
 	"no-floating-decimal": "error",
 	"no-global-assign": "error",
 	"no-implicit-coercion": "error",
-	"no-implicit-globals": "error",
+	"no-implicit-globals": 0,
 	"no-implied-eval": "error",
 	"no-invalid-this": "error",
 	"no-iterator": "error",

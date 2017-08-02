@@ -2,14 +2,15 @@
 
 // deps
 
-	const 	path = require("path"),
-			assert = require("assert"),
-			
-			fs = require(path.join(__dirname, "..", "dist", "main.js"));
+	const path = require("path");
+	const assert = require("assert");
 
-// private
+	const fs = require(path.join(__dirname, "..", "dist", "main.js"));
 
-	var _dirtest = path.join(__dirname, "testlvl1"), _filetest = path.join(_dirtest, "test.txt");
+// consts
+
+	const DIR_TESTBASE = path.join(__dirname, "testlvl1");
+	const FILE_TEST = path.join(DIR_TESTBASE, "test.txt");
 
 // tests
 
@@ -17,25 +18,25 @@ describe("filesToString", () => {
 
 	before(() => {
 
-		if (!fs.isDirectorySync(_dirtest)) {
-			fs.mkdirSync(_dirtest);
+		if (!fs.isDirectorySync(DIR_TESTBASE)) {
+			fs.mkdirSync(DIR_TESTBASE);
 		}
 
-		if (!fs.isFileSync(_filetest)) {
-			fs.writeFileSync(_filetest, "test", "utf8");
+		if (!fs.isFileSync(FILE_TEST)) {
+			fs.writeFileSync(FILE_TEST, "test", "utf8");
 		}
 
 	});
 
 	after(() => {
 
-		if (fs.isDirectorySync(_dirtest)) {
+		if (fs.isDirectorySync(DIR_TESTBASE)) {
 
-			if (fs.isFileSync(_filetest)) {
-				fs.unlinkSync(_filetest);
+			if (fs.isFileSync(FILE_TEST)) {
+				fs.unlinkSync(FILE_TEST);
 			}
 
-			fs.rmdirSync(_dirtest);
+			fs.rmdirSync(DIR_TESTBASE);
 
 		}
 
@@ -44,11 +45,19 @@ describe("filesToString", () => {
 	describe("sync", () => {
 
 		it("should check missing value", () => {
-			assert.throws(() => { fs.filesToStringSync(); }, ReferenceError, "check missing value does not throw an error");
+
+			assert.throws(() => {
+				fs.filesToStringSync();
+			}, ReferenceError, "check missing value does not throw an error");
+
 		});
 
 		it("should check invalid value", () => {
-			assert.throws(() => { fs.filesToStringSync(false); }, TypeError, "check invalid value does not throw an error");
+
+			assert.throws(() => {
+				fs.filesToStringSync(false);
+			}, TypeError, "check invalid value does not throw an error");
+
 		});
 
 		it("should concat nothing", () => {
@@ -56,15 +65,31 @@ describe("filesToString", () => {
 		});
 
 		it("should concat wrong file", () => {
-			assert.throws(() => { fs.filesToStringSync([_filetest + "t"]); }, Error, "concat wrong file does not throw an error");
+
+			assert.throws(() => {
+				fs.filesToStringSync([ FILE_TEST + "t" ]);
+			}, Error, "concat wrong file does not throw an error");
+
 		});
 
 		it("should concat test files", () => {
-			assert.strictEqual("test test test", fs.filesToStringSync([_filetest, _filetest, _filetest], "utf8"), "test files cannot be concatened");
+
+			assert.strictEqual(
+				"test test test",
+				fs.filesToStringSync([ FILE_TEST, FILE_TEST, FILE_TEST ], "utf8"),
+				"test files cannot be concatened"
+			);
+
 		});
 
 		it("should concat test files with pattern", () => {
-			assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", fs.filesToStringSync([_filetest, _filetest, _filetest], "utf8", " -- [{{filename}}] -- "), "test files with pattern cannot be concatened");
+
+			assert.strictEqual(
+				" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test",
+				fs.filesToStringSync([ FILE_TEST, FILE_TEST, FILE_TEST ], "utf8", " -- [{{filename}}] -- "),
+				"test files with pattern cannot be concatened"
+			);
+
 		});
 
 	});
@@ -72,13 +97,29 @@ describe("filesToString", () => {
 	describe("async", () => {
 
 		it("should check missing value", () => {
-			assert.throws(() => { fs.filesToString(); }, ReferenceError, "check missing value does not throw an error");
-			assert.throws(() => { fs.filesToString([]); }, ReferenceError, "check missing value does not throw an error");
+
+			assert.throws(() => {
+				fs.filesToString();
+			}, ReferenceError, "check missing value does not throw an error");
+
+			assert.throws(() => {
+				fs.filesToString([]);
+			}, ReferenceError, "check missing value does not throw an error");
+
 		});
 
 		it("should check invalid value", () => {
-			assert.throws(() => { fs.filesToString(false, () => {}); }, TypeError, "check invalid value does not throw an error");
-			assert.throws(() => { fs.filesToString([], false); }, TypeError, "check invalid value does not throw an error");
+
+			assert.throws(() => {
+				fs.filesToString(false, () => {
+					// nothing to do here
+				});
+			}, TypeError, "check invalid value does not throw an error");
+
+			assert.throws(() => {
+				fs.filesToString([], false);
+			}, TypeError, "check invalid value does not throw an error");
+
 		});
 
 		it("should concat nothing", (done) => {
@@ -89,14 +130,14 @@ describe("filesToString", () => {
 				assert.strictEqual("", data, "empty array cannot be concatened");
 
 				done();
-				
+
 			});
 
 		});
 
 		it("should concat wrong file", (done) => {
 
-			fs.filesToString([_filetest + "t"], (err) => {
+			fs.filesToString([ FILE_TEST + "t" ], (err) => {
 
 				assert.strictEqual(true, err instanceof Error, "concat wrong file does not generate a valid error");
 				assert.strictEqual("string", typeof err.message, "concat wrong file does not generate a valid error");
@@ -109,7 +150,7 @@ describe("filesToString", () => {
 
 		it("should concat test files", (done) => {
 
-			fs.filesToString([_filetest, _filetest, _filetest], (err, data) => {
+			fs.filesToString([ FILE_TEST, FILE_TEST, FILE_TEST ], (err, data) => {
 
 				assert.strictEqual(null, err, "concat test files generate an error");
 				assert.strictEqual("test test test", data, "test files cannot be concatened");
@@ -122,10 +163,15 @@ describe("filesToString", () => {
 
 		it("should concat test files with pattern", (done) => {
 
-			fs.filesToString([_filetest, _filetest, _filetest], "utf8", " -- [{{filename}}] -- ", (err, data) => {
+			fs.filesToString([ FILE_TEST, FILE_TEST, FILE_TEST ], "utf8", " -- [{{filename}}] -- ", (err, data) => {
 
 				assert.strictEqual(null, err, "concat test files with pattern generate an error");
-				assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", data, "test files with pattern cannot be concatened");
+
+				assert.strictEqual(
+					" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test",
+					data,
+					"test files with pattern cannot be concatened"
+				);
 
 				done();
 
@@ -177,7 +223,7 @@ describe("filesToString", () => {
 
 		it("should concat wrong file", (done) => {
 
-			fs.filesToStringProm([_filetest + "t"]).then(() => {
+			fs.filesToStringProm([ FILE_TEST + "t" ]).then(() => {
 				done("concat wrong file does not generate an error");
 			}).catch((err) => {
 
@@ -192,16 +238,25 @@ describe("filesToString", () => {
 
 		it("should concat test files", () => {
 
-			return fs.filesToStringProm([_filetest, _filetest, _filetest]).then((data) => {
+			return fs.filesToStringProm([ FILE_TEST, FILE_TEST, FILE_TEST ]).then((data) => {
 				assert.strictEqual("test test test", data, "test files cannot be concatened");
+				return Promise.resolve();
 			});
 
 		});
 
 		it("should concat test files with pattern", () => {
 
-			return fs.filesToStringProm([_filetest, _filetest, _filetest], "utf8", " -- [{{filename}}] -- ").then((data) => {
-				assert.strictEqual(" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test", data, "test files with pattern cannot be concatened");
+			return fs.filesToStringProm([ FILE_TEST, FILE_TEST, FILE_TEST ], "utf8", " -- [{{filename}}] -- ").then((data) => {
+
+				assert.strictEqual(
+					" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test",
+					data,
+					"test files with pattern cannot be concatened"
+				);
+
+				return Promise.resolve();
+
 			});
 
 		});

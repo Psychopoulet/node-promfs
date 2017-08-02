@@ -28,10 +28,10 @@ note : in "separator" parameter, you can use "{{filename}}" pattern, it will be 
 
   #### copyFile : copy a file with streams (copy then control with isFile)
    * ``` copyFile(string origin, string origin, function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` copyFileSync(string origin, string origin) : void ```
-   * ``` copyFileProm(string origin, string origin) : Promise ```
+   * ``` copyFileSync(string origin, string origin [, options ]) : void ``` options : for fs.createReadStream & fs.createWriteStream
+   * ``` copyFileProm(string origin, string origin [, options ]) : Promise ``` options : for fs.createReadStream & fs.createWriteStream
 
-  #### directoryToFile : concat directory's files content in a file (extractFilesSync && filesToFileSync)
+  #### directoryToFile : concat directory's files content in a file (extractFiles && filesToFile)
    * ``` directoryToFile(string path [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
    * ``` directoryToFileSync(string path [ , string separator = " " ]) : void ```
    * ``` directoryToFileProm(string path [ , string separator = " " ]) : Promise ```
