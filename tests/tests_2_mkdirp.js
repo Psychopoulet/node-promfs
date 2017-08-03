@@ -125,7 +125,6 @@ describe("mkdirp", () => {
 
 	describe("async", () => {
 
-/*
 		it("should check missing value", () => {
 
 			assert.throws(() => {
@@ -178,7 +177,6 @@ describe("mkdirp", () => {
 			});
 
 		});
-*/
 
 		it("should create real new directory", (done) => {
 
@@ -220,7 +218,6 @@ describe("mkdirp", () => {
 
 	});
 
-/*
 	describe("promise", () => {
 
 		it("should check missing value", (done) => {
@@ -229,8 +226,8 @@ describe("mkdirp", () => {
 				done("check missing value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+				assert.strictEqual(true, err instanceof ReferenceError, "check missing \"directory\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check missing value \"directory\" does not generate a valid error");
 
 				done();
 
@@ -241,22 +238,13 @@ describe("mkdirp", () => {
 		it("should check invalid value", (done) => {
 
 			fs.mkdirpProm(false).then(() => {
-				done("check invalid value does not generate an error");
+				done("check invalid \"directory\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+				assert.strictEqual(true, err instanceof TypeError, "check invalid \"directory\" value does not generate a valid error");
 				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
 
-				fs.mkdirpProm(__dirname, false).then(() => {
-					done("check invalid value does not generate an error");
-				}).catch((_err) => {
-
-					assert.strictEqual(true, _err instanceof TypeError, "check missing value does not generate a valid error");
-					assert.strictEqual("string", typeof _err.message, "check missing value does not generate a valid error");
-
-					done();
-
-				});
+				done();
 
 			});
 
@@ -332,6 +320,5 @@ describe("mkdirp", () => {
 		});
 
 	});
-*/
 
 });
