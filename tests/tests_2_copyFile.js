@@ -14,16 +14,24 @@
 
 // tests
 
-describe("copy", () => {
+describe("copyFile", () => {
 
 	before(() => {
-		fs.writeFileSync(FILE_TEST, "test", "utf8");
+
+		if (!fs.isFileSync(FILE_TEST)) {
+			fs.writeFileSync(FILE_TEST, "test", "utf8");
+		}
+
 	});
 
 	after(() => {
 
-		if (!fs.isFileSync(FILE_TEST)) {
+		if (fs.isFileSync(FILE_TEST)) {
 			fs.unlinkSync(FILE_TEST);
+		}
+
+		if (fs.isFileSync(FILE_TEST2)) {
+			fs.unlinkSync(FILE_TEST2);
 		}
 
 	});
@@ -32,11 +40,8 @@ describe("copy", () => {
 
 		after(() => {
 
-			try {
+			if (fs.isFileSync(FILE_TEST2)) {
 				fs.unlinkSync(FILE_TEST2);
-			}
-			catch (e) {
-				// nothing to do here
 			}
 
 		});
@@ -101,7 +106,7 @@ describe("copy", () => {
 
 		after(() => {
 
-			if (!fs.isFileSync(FILE_TEST2)) {
+			if (fs.isFileSync(FILE_TEST2)) {
 				fs.unlinkSync(FILE_TEST2);
 			}
 
@@ -192,7 +197,7 @@ describe("copy", () => {
 
 		after(() => {
 
-			if (!fs.isFileSync(FILE_TEST2)) {
+			if (fs.isFileSync(FILE_TEST2)) {
 				fs.unlinkSync(FILE_TEST2);
 			}
 
