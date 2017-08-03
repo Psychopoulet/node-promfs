@@ -31,14 +31,14 @@ $ npm install node-promfs
    * ``` copyFileProm(string origin, string origin [, options ]) : Promise ``` options : for fs.createReadStream & fs.createWriteStream
 
    [directoryToFile] : concat directory's files content in a file (extractFiles && filesToFile)
-   * ``` directoryToFile(string path [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` directoryToFileSync(string path [ , string separator = " " ]) : void ```
-   * ``` directoryToFileProm(string path [ , string separator = " " ]) : Promise ```
+   * ``` directoryToFile(string directory, string file [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` directoryToFileSync(string directory, string file [ , string separator = " " ]) : void ```
+   * ``` directoryToFileProm(string directory, string file [ , string separator = " " ]) : Promise ```
 
    [directoryToString] : concat directory's files content in a string (extractFilesSync && filesToStringSync)
-   * ``` directoryToString(string path [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
-   * ``` directoryToStringSync(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
-   * ``` directoryToStringProm(string path [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
+   * ``` directoryToString(string directory [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
+   * ``` directoryToStringSync(string directory [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
+   * ``` directoryToStringProm(string directory [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
 
    [extractFiles] : return only files from a directory
    * ``` extractFiles(string directory, function callback) ``` callback(ReferenceError|TypeError|Error|null err, array files)
