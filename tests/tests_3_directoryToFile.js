@@ -90,7 +90,7 @@ describe("directoryToFile", () => {
 
 		});
 
-		it("should check empty content value", () => {
+		it("should check empty value", () => {
 
 			assert.throws(() => {
 				fs.directoryToFileSync("", __filename);
@@ -180,7 +180,7 @@ describe("directoryToFile", () => {
 
 		});
 
-		it("should check empty content value", () => {
+		it("should check empty value", () => {
 
 			assert.throws(() => {
 				fs.directoryToFile("", __filename, () => {
@@ -253,14 +253,14 @@ describe("directoryToFile", () => {
 				done("check missing \"directory\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check missing \"directory\" value does not generate a valid error");
+				assert.strictEqual(true, err instanceof ReferenceError, "check missing \"directory\" value does not generate a valid error");
 				assert.strictEqual("string", typeof err.message, "check missing \"directory\" value does not generate a valid error");
 
 				fs.directoryToFileProm(__dirname).then(() => {
 					done("check missing \"file\" value does not generate an error");
 				}).catch((_err) => {
 
-					assert.strictEqual(true, _err instanceof TypeError, "check missing \"file\"  value does not generate a valid error");
+					assert.strictEqual(true, _err instanceof ReferenceError, "check missing \"file\"  value does not generate a valid error");
 					assert.strictEqual("string", typeof _err.message, "check missing \"file\"  value does not generate a valid error");
 
 					done();
@@ -301,14 +301,14 @@ describe("directoryToFile", () => {
 				done("check empty \"directory\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check empty \"directory\" value does not generate a valid error");
+				assert.strictEqual(true, err instanceof Error, "check empty \"directory\" value does not generate a valid error");
 				assert.strictEqual("string", typeof err.message, "check empty \"directory\" value does not generate a valid error");
 
 				fs.directoryToFileProm(__dirname, "").then(() => {
 					done("check empty \"file\" value does not generate an error");
 				}).catch((_err) => {
 
-					assert.strictEqual(true, _err instanceof TypeError, "check empty \"file\" value does not generate a valid error");
+					assert.strictEqual(true, _err instanceof Error, "check empty \"file\" value does not generate a valid error");
 					assert.strictEqual("string", typeof _err.message, "check empty \"file\" value does not generate a valid error");
 
 					done();
