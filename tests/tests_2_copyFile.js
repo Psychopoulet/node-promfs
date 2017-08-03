@@ -9,8 +9,9 @@
 
 // private
 
-	const FILE_TEST = join(__dirname, "test.txt");
-	const FILE_TEST2 = join(__dirname, "test2.txt");
+	const DIR_TESTBASE = join(__dirname, "testlvl1");
+		const FILE_TEST = join(DIR_TESTBASE, "test.txt");
+		const FILE_TEST2 = join(DIR_TESTBASE, "test2.txt");
 
 // tests
 
@@ -18,20 +19,30 @@ describe("copyFile", () => {
 
 	before(() => {
 
-		if (!fs.isFileSync(FILE_TEST)) {
-			fs.writeFileSync(FILE_TEST, "test", "utf8");
+		if (!fs.isDirectorySync(DIR_TESTBASE)) {
+			fs.mkdirSync(DIR_TESTBASE);
 		}
+
+			if (!fs.isFileSync(FILE_TEST)) {
+				fs.writeFileSync(FILE_TEST, "test", "utf8");
+			}
 
 	});
 
 	after(() => {
 
-		if (fs.isFileSync(FILE_TEST)) {
-			fs.unlinkSync(FILE_TEST);
-		}
+		if (fs.isDirectorySync(DIR_TESTBASE)) {
 
-		if (fs.isFileSync(FILE_TEST2)) {
-			fs.unlinkSync(FILE_TEST2);
+			if (fs.isFileSync(FILE_TEST)) {
+				fs.unlinkSync(FILE_TEST);
+			}
+
+			if (fs.isFileSync(FILE_TEST2)) {
+				fs.unlinkSync(FILE_TEST2);
+			}
+
+			fs.rmdirSync(DIR_TESTBASE);
+
 		}
 
 	});
