@@ -2,15 +2,15 @@
 
 // deps
 
-	const path = require("path");
+	const { join } = require("path");
 	const assert = require("assert");
 
-	const fs = require(path.join(__dirname, "..", "lib", "main.js"));
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
-// consts
+// private
 
-	const DIR_TESTBASE = path.join(__dirname, "testlvl1");
-	const FILE_TEST = path.join(DIR_TESTBASE, "test.txt");
+	const DIR_TESTBASE = join(__dirname, "testlvl1");
+		const FILE_TEST = join(DIR_TESTBASE, "test.txt");
 
 // tests
 
@@ -22,9 +22,9 @@ describe("filesToString", () => {
 			fs.mkdirSync(DIR_TESTBASE);
 		}
 
-		if (!fs.isFileSync(FILE_TEST)) {
-			fs.writeFileSync(FILE_TEST, "test", "utf8");
-		}
+			if (!fs.isFileSync(FILE_TEST)) {
+				fs.writeFileSync(FILE_TEST, "test", "utf8");
+			}
 
 	});
 
@@ -48,7 +48,7 @@ describe("filesToString", () => {
 
 			assert.throws(() => {
 				fs.filesToStringSync();
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"files\" value does not throw an error");
 
 		});
 
@@ -56,7 +56,7 @@ describe("filesToString", () => {
 
 			assert.throws(() => {
 				fs.filesToStringSync(false);
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"files\" value does not throw an error");
 
 		});
 
@@ -65,11 +65,7 @@ describe("filesToString", () => {
 		});
 
 		it("should concat wrong file", () => {
-
-			assert.throws(() => {
-				fs.filesToStringSync([ FILE_TEST + "t" ]);
-			}, Error, "concat wrong file does not throw an error");
-
+			assert.strictEqual("", fs.filesToStringSync([ FILE_TEST + "t" ]), "concat wrong file does not throw an error");
 		});
 
 		it("should concat test files", () => {
@@ -100,11 +96,11 @@ describe("filesToString", () => {
 
 			assert.throws(() => {
 				fs.filesToString();
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"files\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.filesToString([]);
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"callback\" value does not throw an error");
 
 		});
 
@@ -114,11 +110,11 @@ describe("filesToString", () => {
 				fs.filesToString(false, () => {
 					// nothing to do here
 				});
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"files\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.filesToString([], false);
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"callback\" value does not throw an error");
 
 		});
 
@@ -186,10 +182,10 @@ describe("filesToString", () => {
 		it("should check missing value", (done) => {
 
 			fs.filesToStringProm().then(() => {
-				done("check missing value does not generate an error");
+				done("check missing \"files\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
+				assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
 				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
 
 				done();
@@ -201,7 +197,7 @@ describe("filesToString", () => {
 		it("should check invalid value", (done) => {
 
 			fs.filesToStringProm(false).then(() => {
-				done("check invalid value does not generate an error");
+				done("check invalid \"files\" value does not generate an error");
 			}).catch((err) => {
 
 				assert.strictEqual(true, err instanceof TypeError, "check invalid value does not generate a valid error");
