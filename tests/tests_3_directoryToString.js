@@ -7,7 +7,7 @@
 
 	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
-// private
+// consts
 
 	const DIR_TESTBASE = join(__dirname, "testlvl1");
 	const DIR_TESTBASE2 = join(__dirname, "testlvl2");
