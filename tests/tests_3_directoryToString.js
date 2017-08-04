@@ -2,16 +2,16 @@
 
 // deps
 
-	const path = require("path");
+	const { join } = require("path");
 	const assert = require("assert");
 
-	const fs = require(path.join(__dirname, "..", "dist", "main.js"));
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
 
-	const DIR_TESTBASE = path.join(__dirname, "testlvl1");
-	const DIR_TESTBASE2 = path.join(__dirname, "testlvl2");
-	const FILE_TEST = path.join(DIR_TESTBASE, "test.txt");
+	const DIR_TESTBASE = join(__dirname, "testlvl1");
+	const DIR_TESTBASE2 = join(__dirname, "testlvl2");
+	const FILE_TEST = join(DIR_TESTBASE, "test.txt");
 
 // tests
 
@@ -57,7 +57,7 @@ describe("directoryToString", () => {
 
 			assert.throws(() => {
 				fs.directoryToStringSync();
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"path\" value does not throw an error");
 
 		});
 
@@ -65,15 +65,15 @@ describe("directoryToString", () => {
 
 			assert.throws(() => {
 				fs.directoryToStringSync(false);
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"path\" value does not throw an error");
 
 		});
 
-		it("should check empty content value", () => {
+		it("should check empty value", () => {
 
 			assert.throws(() => {
 				fs.directoryToStringSync("");
-			}, Error, "check empty content value does not throw an error");
+			}, Error, "check empty \"path\" value does not throw an error");
 
 		});
 
@@ -111,7 +111,7 @@ describe("directoryToString", () => {
 
 			assert.throws(() => {
 				fs.directoryToString();
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"path\" value does not throw an error");
 
 		});
 
@@ -119,15 +119,15 @@ describe("directoryToString", () => {
 
 			assert.throws(() => {
 				fs.directoryToString(false);
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"path\" value does not throw an error");
 
 		});
 
-		it("should check empty content value", () => {
+		it("should check empty value", () => {
 
 			assert.throws(() => {
 				fs.directoryToString("");
-			}, Error, "check empty content value does not throw an error");
+			}, Error, "check empty \"path\" value does not throw an error");
 
 		});
 
@@ -188,11 +188,11 @@ describe("directoryToString", () => {
 		it("should check missing value", (done) => {
 
 			fs.directoryToStringProm().then(() => {
-				done("check missing value does not generate an error");
+				done("check missing \"path\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+				assert.strictEqual(true, err instanceof ReferenceError, "check missing \"path\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check missing \"path\" value does not generate a valid error");
 
 				done();
 
@@ -203,11 +203,26 @@ describe("directoryToString", () => {
 		it("should check invalid value", (done) => {
 
 			fs.directoryToStringProm(false).then(() => {
-				done("check invalid value does not generate an error");
+				done("check invalid \"path\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check invalid value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check invalid value does not generate a valid error");
+				assert.strictEqual(true, err instanceof TypeError, "check invalid \"path\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check invalid \"path\" value does not generate a valid error");
+
+				done();
+
+			});
+
+		});
+
+		it("should check empty value", (done) => {
+
+			fs.directoryToStringProm("").then(() => {
+				done("check empty \"path\" value does not generate an error");
+			}).catch((err) => {
+
+				assert.strictEqual(true, err instanceof Error, "check empty \"path\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check empty \"path\" value does not generate a valid error");
 
 				done();
 

@@ -125,7 +125,7 @@
 	"no-use-before-define": "error",
 
 
-	"callback-return": [ "error", [ "done", "send.error", "send.success" ] ],
+	"callback-return": 0,
 	"global-require": 0,
 	"handle-callback-err": "error",
 	"no-buffer-constructor": "error",
@@ -169,7 +169,7 @@
 	"max-len": [ "error", 150 ],
 	"max-lines": 0,
 	"max-nested-callbacks": [ "error", 7 ],
-	"max-params": [ "error", 4 ],
+	"max-params": [ "error", 5 ],
 	"max-statements": 0,
 	"max-statements-per-line": [ "error", { "max": 2 } ],
 	"multiline-ternary": 0,

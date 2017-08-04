@@ -2,17 +2,17 @@
 
 // deps
 
-	const path = require("path");
+	const { join } = require("path");
 	const assert = require("assert");
 
-	const fs = require(path.join(__dirname, "..", "dist", "main.js"));
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
 
-	const DIR_TESTBASE = path.join(__dirname, "testlvl1");
-	const FILE_TEST = path.join(DIR_TESTBASE, "test.txt");
-	const FILE_TEST2 = path.join(__dirname, "test2.txt");
-	const FILE_TEST3 = path.join(__dirname, "test3.txt");
+	const DIR_TESTBASE = join(__dirname, "testlvl1");
+		const FILE_TEST = join(DIR_TESTBASE, "test.txt");
+		const FILE_TEST2 = join(DIR_TESTBASE, "test2.txt");
+		const FILE_TEST3 = join(DIR_TESTBASE, "test3.txt");
 
 // tests
 
@@ -24,9 +24,9 @@ describe("filesToFile", () => {
 			fs.mkdirSync(DIR_TESTBASE);
 		}
 
-		if (!fs.isFileSync(FILE_TEST)) {
-			fs.writeFileSync(FILE_TEST, "test", "utf8");
-		}
+			if (!fs.isFileSync(FILE_TEST)) {
+				fs.writeFileSync(FILE_TEST, "test", "utf8");
+			}
 
 	});
 
@@ -60,41 +60,41 @@ describe("filesToFile", () => {
 				fs.unlinkSync(FILE_TEST2);
 			}
 
+			if (fs.isFileSync(FILE_TEST3)) {
+				fs.unlinkSync(FILE_TEST3);
+			}
+
 		});
 
 		it("should check missing value", () => {
 
 			assert.throws(() => {
 				fs.filesToFileSync();
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"files\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.filesToFileSync([]);
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"target\" value does not throw an error");
 
 		});
 
 		it("should check invalid value", () => {
 
 			assert.throws(() => {
-				fs.filesToFileSync(false, []);
-			}, TypeError, "check invalid value does not throw an error");
+				fs.filesToFileSync(false, __filename);
+			}, TypeError, "check invalid \"files\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.filesToFileSync([], false);
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"target\" value does not throw an error");
 
 		});
 
-		it("should check empty content value", () => {
-
-			assert.throws(() => {
-				fs.filesToFileSync("", __filename);
-			}, Error, "check empty content value does not throw an error");
+		it("should check empty value", () => {
 
 			assert.throws(() => {
 				fs.filesToFileSync([], "");
-			}, Error, "check empty content value does not throw an error");
+			}, Error, "check empty \"files\" value does not throw an error");
 
 		});
 
@@ -103,6 +103,8 @@ describe("filesToFile", () => {
 			assert.doesNotThrow(() => {
 				fs.filesToFileSync([], FILE_TEST2);
 			}, "empty array cannot be concatened");
+
+			assert.strictEqual("", fs.readFileSync(FILE_TEST2, "utf8"), "empty array cannot be concatened");
 
 		});
 
@@ -118,10 +120,16 @@ describe("filesToFile", () => {
 
 		it("should concat test files with pattern into a file", () => {
 
-			fs.filesToFileSync([ FILE_TEST, FILE_TEST, FILE_TEST ], FILE_TEST2, " -- [{{filename}}] -- ");
+			assert.doesNotThrow(() => {
+				fs.writeFileSync(FILE_TEST3, "test3", "utf8");
+			}, Error, "test files with pattern cannot be concatened");
+
+			assert.doesNotThrow(() => {
+				fs.filesToFileSync([ FILE_TEST, FILE_TEST, FILE_TEST3 ], FILE_TEST2, " -- [{{filename}}] -- ");
+			}, Error, "test files with pattern cannot be concatened");
 
 			assert.strictEqual(
-				" -- [test.txt] -- test -- [test.txt] -- test -- [test.txt] -- test",
+				" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
 				fs.readFileSync(FILE_TEST2, "utf8"),
 				"test files with pattern cannot be concatened"
 			);
@@ -132,10 +140,14 @@ describe("filesToFile", () => {
 
 	describe("async", () => {
 
-		afterEach(() => {
+		after(() => {
 
-			if (fs.isFileSync(FILE_TEST2)) {
+			if (!fs.isFileSync(FILE_TEST2)) {
 				fs.unlinkSync(FILE_TEST2);
+			}
+
+			if (fs.isFileSync(FILE_TEST3)) {
+				fs.unlinkSync(FILE_TEST3);
 			}
 
 		});
@@ -144,23 +156,31 @@ describe("filesToFile", () => {
 
 			assert.throws(() => {
 				fs.filesToFile();
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"files\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.filesToFile([]);
-			}, ReferenceError, "check missing value does not throw an error");
+			}, ReferenceError, "check missing \"target\" value does not throw an error");
 
 		});
 
 		it("should check invalid value", () => {
 
 			assert.throws(() => {
-				fs.filesToFile(false, []);
-			}, TypeError, "check invalid value does not throw an error");
+				fs.filesToFile(false, __filename);
+			}, TypeError, "check invalid \"files\" value does not throw an error");
 
 			assert.throws(() => {
 				fs.filesToFile([], false);
-			}, TypeError, "check invalid value does not throw an error");
+			}, TypeError, "check invalid \"target\" value does not throw an error");
+
+		});
+
+		it("should check empty value", () => {
+
+			assert.throws(() => {
+				fs.filesToFile([], "");
+			}, Error, "check empty \"files\" value does not throw an error");
 
 		});
 
@@ -178,16 +198,7 @@ describe("filesToFile", () => {
 		});
 
 		it("should concat wrong file", (done) => {
-
-			fs.filesToFile([ FILE_TEST + "t" ], FILE_TEST2, (err) => {
-
-				assert.strictEqual(true, err instanceof Error, "concat wrong file does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "concat wrong file does not generate a valid error");
-
-				done();
-
-			});
-
+			fs.filesToFile([ FILE_TEST + "t" ], FILE_TEST2, done);
 		});
 
 		it("should concat test files into a file", (done) => {
@@ -213,19 +224,13 @@ describe("filesToFile", () => {
 
 					assert.strictEqual(null, _err, "test files with pattern cannot be concatened");
 
-					fs.unlink(FILE_TEST3, (__err) => {
+					assert.strictEqual(
+						" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
+						fs.readFileSync(FILE_TEST2, "utf8"),
+						"test files with pattern cannot be concatened"
+					);
 
-						assert.strictEqual(null, __err, "test files with pattern cannot be concatened");
-
-						assert.strictEqual(
-							" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
-							fs.readFileSync(FILE_TEST2, "utf8"),
-							"test files with pattern cannot be concatened"
-						);
-
-						done();
-
-					});
+					done();
 
 				});
 
@@ -237,24 +242,37 @@ describe("filesToFile", () => {
 
 	describe("promise", () => {
 
-		afterEach(() => {
+		after(() => {
 
-			if (fs.isFileSync(FILE_TEST2)) {
+			if (!fs.isFileSync(FILE_TEST2)) {
 				fs.unlinkSync(FILE_TEST2);
+			}
+
+			if (fs.isFileSync(FILE_TEST3)) {
+				fs.unlinkSync(FILE_TEST3);
 			}
 
 		});
 
-		it("should check missing value", (done) => {
+		it("should check missing \"files\" value", (done) => {
 
 			fs.filesToFileProm().then(() => {
-				done("check missing value does not generate an error");
+				done("check missing \"files\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+				assert.strictEqual(true, err instanceof ReferenceError, "check missing \"files\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check missing \"files\" value does not generate a valid error");
 
-				done();
+				fs.filesToFileProm([]).then(() => {
+					done("check missing value does not generate an error");
+				}).catch((_err) => {
+
+					assert.strictEqual(true, _err instanceof ReferenceError, "check missing \"target\" value does not generate a valid error");
+					assert.strictEqual("string", typeof _err.message, "check missing \"target\" value does not generate a valid error");
+
+					done();
+
+				});
 
 			});
 
@@ -263,17 +281,21 @@ describe("filesToFile", () => {
 		it("should check invalid value", (done) => {
 
 			fs.filesToFileProm(false, false).then(() => {
-				done("check invalid value does not generate an error");
+				done("check invalid \"files\" value does not generate an error");
 			}).catch((err) => {
 
-				assert.strictEqual(true, err instanceof TypeError, "check missing value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
+				assert.strictEqual(true, err instanceof TypeError, "check invalid \"files\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check invalid \"files\" value does not generate a valid error");
 
 				fs.filesToFileProm([], false).then(() => {
-					done("check invalid value does not generate an error");
+					done("check invalid \"target\" value does not generate an error");
 				}).catch((_err) => {
-					assert.notStrictEqual(null, _err, "check type \"targetPath\" value does not throw an error");
+
+					assert.strictEqual(true, _err instanceof TypeError, "check invalid \"target\" value does not generate a valid error");
+					assert.strictEqual("string", typeof _err.message, "check invalid \"target\" value does not generate a valid error");
+
 					done();
+
 				});
 
 			});
@@ -306,24 +328,17 @@ describe("filesToFile", () => {
 
 				fs.filesToFileProm([ FILE_TEST, FILE_TEST, FILE_TEST3 ], FILE_TEST2, " -- [{{filename}}] -- ").then(() => {
 
-					fs.unlink(FILE_TEST3, (_err) => {
+					assert.strictEqual(
+						" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
+						fs.readFileSync(FILE_TEST2, "utf8"),
+						"test files with pattern cannot be concatened"
+					);
 
-						assert.strictEqual(null, _err, "test files with pattern cannot be concatened");
-
-						assert.strictEqual(
-							" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
-							fs.readFileSync(FILE_TEST2, "utf8"),
-							"test files with pattern cannot be concatened"
-						);
-
-						done();
-
-					});
+					done();
 
 				}).catch(done);
 
 			});
-
 
 		});
 
