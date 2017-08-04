@@ -67,7 +67,7 @@
 
 	gulp.task("babel", [ "mocha" ], () => {
 
-		return gulp.src(path.join(__dirname, "lib", "*.js"))
+		return gulp.src(path.join(__dirname, "lib", "**", "*.js"))
 			.pipe(babel({
 				"presets": [ "es2015" ]
 			}))
