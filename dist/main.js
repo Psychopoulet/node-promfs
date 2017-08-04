@@ -5,7 +5,7 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var fs = require(require("path").join(__dirname, "extends.js"));
+var fs = require(require("path").join(__dirname, "extends", "extends.js"));
 
 // promises
 
@@ -113,15 +113,15 @@ fs.openProm = function (path, flags, mode) {
 		return Promise.reject(new ReferenceError("missing \"flags\" argument"));
 	} else {
 
-		path = path.trim();
+		var _path = path.trim();
 
-		if ("" === path) {
+		if ("" === _path) {
 			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
 
-				fs.open(path, flags, mode ? mode : null, function (err, fd) {
+				fs.open(_path, flags, mode ? mode : null, function (err, fd) {
 
 					if (err) {
 						reject(err);
@@ -166,15 +166,15 @@ fs.accessProm = function (path, mode) {
 		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else {
 
-		path = path.trim();
+		var _path = path.trim();
 
-		if ("" === path) {
+		if ("" === _path) {
 			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
 
-				fs.access(path, mode ? mode : null, function (err, result) {
+				fs.access(_path, mode ? mode : null, function (err, result) {
 
 					if (err) {
 						reject(err);
@@ -199,15 +199,15 @@ fs.appendFileProm = function (file, data, options) {
 		return Promise.reject(new TypeError("\"data\" argument is not a string or a Buffer"));
 	} else {
 
-		file = file.trim();
+		var _file = file.trim();
 
-		if ("" === file) {
+		if ("" === _file) {
 			return Promise.reject(new Error("\"file\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
 
-				fs.appendFile(file, data, options ? options : null, function (err) {
+				fs.appendFile(_file, data, options ? options : null, function (err) {
 
 					if (err) {
 						reject(err);
@@ -232,15 +232,15 @@ fs.chmodProm = function (path, mode) {
 		return Promise.reject(new TypeError("\"mode\" argument is not a number"));
 	} else {
 
-		path = path.trim();
+		var _path = path.trim();
 
-		if ("" === path) {
+		if ("" === _path) {
 			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
-			new Promise(function (resolve, reject) {
+			return new Promise(function (resolve, reject) {
 
-				fs.chmod(path, mode, function (err) {
+				fs.chmod(_path, mode, function (err) {
 
 					if (err) {
 						reject(err);
@@ -269,15 +269,15 @@ fs.chownProm = function (path, uid, gid) {
 		return Promise.reject(new TypeError("\"gid\" argument is not a number"));
 	} else {
 
-		path = path.trim();
+		var _path = path.trim();
 
-		if ("" === path) {
+		if ("" === _path) {
 			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
 
-				fs.chown(path, uid, gid, function (err) {
+				fs.chown(_path, uid, gid, function (err) {
 
 					if (err) {
 						reject(err);
@@ -298,15 +298,15 @@ fs.readdirProm = function (path) {
 		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else {
 
-		path = path.trim();
+		var _path = path.trim();
 
-		if ("" === path) {
+		if ("" === _path) {
 			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
 
-				fs.readdir(path, function (err, result) {
+				fs.readdir(_path, function (err, result) {
 
 					if (err) {
 						reject(err);
@@ -349,15 +349,15 @@ fs.realpathProm = function (path, options) {
 		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else {
 
-		path = path.trim();
+		var _path = path.trim();
 
-		if ("" === path) {
+		if ("" === _path) {
 			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
 
-				fs.realpath(path, options ? options : null, function (err, result) {
+				fs.realpath(_path, options ? options : null, function (err, result) {
 
 					if (err) {
 						reject(err);
@@ -382,18 +382,18 @@ fs.renameProm = function (oldPath, newPath) {
 		return Promise.reject(new TypeError("\"newPath\" argument is not a string"));
 	} else {
 
-		oldPath = oldPath.trim();
-		newPath = newPath.trim();
+		var _oldPath = oldPath.trim();
+		var _newPath = newPath.trim();
 
-		if ("" === oldPath) {
+		if ("" === _oldPath) {
 			return Promise.reject(new Error("\"oldPath\" argument is empty"));
-		} else if ("" === newPath) {
+		} else if ("" === _newPath) {
 			return Promise.reject(new Error("\"newPath\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
 
-				fs.rename(oldPath, newPath, function (err, result) {
+				fs.rename(_oldPath, _newPath, function (err, result) {
 
 					if (err) {
 						reject(err);
@@ -414,15 +414,15 @@ fs.statProm = function (path) {
 		return Promise.reject(new TypeError("\"path\" argument is not a string"));
 	} else {
 
-		path = path.trim();
+		var _path = path.trim();
 
-		if ("" === path) {
+		if ("" === _path) {
 			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
 
-				fs.stat(path, function (err, result) {
+				fs.stat(_path, function (err, result) {
 
 					if (err) {
 						reject(err);
@@ -447,15 +447,15 @@ fs.truncateProm = function (path, len) {
 		return Promise.reject(new TypeError("\"len\" argument is not a number"));
 	} else {
 
-		path = path.trim();
+		var _path = path.trim();
 
-		if ("" === path) {
+		if ("" === _path) {
 			return Promise.reject(new Error("\"path\" argument is empty"));
 		} else {
 
 			return new Promise(function (resolve, reject) {
 
-				fs.truncate(path, len, function (err, result) {
+				fs.truncate(_path, len, function (err, result) {
 
 					if (err) {
 						reject(err);
@@ -496,14 +496,10 @@ fs.writeFileProm = function (file, data, options) {
 
 [
 
-// extend
-"directoryToString", "directoryToFile", "extractFiles", "filesToString", "filesToFile",
-
-// classical
-"fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes", // write
-"link", "lstat", "mkdtemp", "utimes", "write" // others
-
-].forEach(function (name) {
+// write
+"fchmod", "fchown", "fdatasync", "fstat", "fsync", "ftruncate", "futimes",
+// others
+"link", "lstat", "mkdtemp", "utimes", "write"].forEach(function (name) {
 
 	fs[name + "Prom"] = function () {
 		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
