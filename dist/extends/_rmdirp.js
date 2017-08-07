@@ -23,14 +23,88 @@ var _require3 = require(join(__dirname, "_isDirectory.js")),
 // methods
 
 /**
-/**
-* Async rmdirp
+* Async empty directory
 * @param {string} directory : directory path
 * @param {function|null} callback : operation's result
 * @returns {void}
 */
 
 
+function _emptyDirectory(directory, callback) {
+
+	process.nextTick(function () {
+
+		readdir(directory, function (err, files) {
+
+			if (err) {
+				callback(err);
+			} else if (!files.length) {
+				callback(null);
+			} else {
+
+				var countFilesDeleted = 0;
+
+				files.forEach(function (_file) {
+
+					var file = join(directory, _file);
+
+					isDirectory(file, function (_err, exists) {
+
+						if (countFilesDeleted >= files.length) {
+							// nothing to do here
+						} else if (_err) {
+							countFilesDeleted = files.length;
+							callback(_err);
+						} else if (exists) {
+
+							_rmdirp(file, function (__err) {
+
+								if (countFilesDeleted >= files.length) {
+									// nothing to do here
+								} else if (__err) {
+									countFilesDeleted = files.length;
+									callback(__err);
+								} else {
+
+									++countFilesDeleted;
+
+									if (countFilesDeleted >= files.length) {
+										callback(null);
+									}
+								}
+							});
+						} else {
+
+							unlink(file, function (__err) {
+
+								if (countFilesDeleted >= files.length) {
+									// nothing to do here
+								} else if (__err) {
+									countFilesDeleted = files.length;
+									callback(__err);
+								} else {
+
+									++countFilesDeleted;
+
+									if (countFilesDeleted >= files.length) {
+										callback(null);
+									}
+								}
+							});
+						}
+					});
+				});
+			}
+		});
+	});
+}
+
+/**
+* Async rmdirp
+* @param {string} directory : directory path
+* @param {function|null} callback : operation's result
+* @returns {void}
+*/
 function _rmdirp(directory, callback) {
 
 	if ("undefined" === typeof directory) {
@@ -55,66 +129,12 @@ function _rmdirp(directory, callback) {
 					callback(null);
 				} else {
 
-					readdir(directory, function (err, files) {
+					_emptyDirectory(directory, function (err) {
 
 						if (err) {
 							callback(err);
-						} else if (!files.length) {
-							callback(null);
 						} else {
-
-							var countFilesDeleted = 0;
-
-							files.forEach(function (_file) {
-
-								var file = join(directory, _file);
-
-								isDirectory(file, function (_err, exists) {
-
-									if (countFilesDeleted >= files.length) {
-										// nothing to do here
-									} else if (_err) {
-										countFilesDeleted = files.length;
-										callback(_err);
-									} else if (exists) {
-
-										_rmdirp(file, function (__err) {
-
-											if (countFilesDeleted >= files.length) {
-												// nothing to do here
-											} else if (__err) {
-												countFilesDeleted = files.length;
-												callback(__err);
-											} else {
-
-												++countFilesDeleted;
-
-												if (countFilesDeleted >= files.length) {
-													rmdir(file, callback);
-												}
-											}
-										});
-									} else {
-
-										unlink(file, function (__err) {
-
-											if (countFilesDeleted >= files.length) {
-												// nothing to do here
-											} else if (__err) {
-												countFilesDeleted = files.length;
-												callback(__err);
-											} else {
-
-												++countFilesDeleted;
-
-												if (countFilesDeleted >= files.length) {
-													callback(null);
-												}
-											}
-										});
-									}
-								});
-							});
+							rmdir(directory, callback);
 						}
 					});
 				}
