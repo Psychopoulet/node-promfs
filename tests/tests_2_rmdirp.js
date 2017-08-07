@@ -148,7 +148,7 @@ describe("rmdirp", () => {
 				fs.isDirectory(DIR_TESTBASE, (_err, exists) => {
 
 					assert.strictEqual(null, _err, "\"" + DIR_TESTBASE + "\" cannot be removed");
-					assert.strictEqual(true, exists, "\"" + DIR_TESTBASE + "\" was not removed");
+					assert.strictEqual(false, exists, "\"" + DIR_TESTBASE + "\" was not removed");
 
 					done();
 
