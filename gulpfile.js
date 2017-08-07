@@ -48,7 +48,17 @@
 
 	});
 
-	gulp.task("istanbul", [ "eslint" ], () => {
+	gulp.task("babel", [ "eslint" ], () => {
+
+		return gulp.src(path.join(__dirname, "lib", "**", "*.js"))
+			.pipe(babel({
+				"presets": [ "es2015" ]
+			}))
+			.pipe(gulp.dest(path.join(__dirname, "dist")));
+
+	});
+
+	gulp.task("istanbul", [ "babel" ], () => {
 
 		return gulp.src(TOTESTFILES)
 			.pipe(istanbul())
@@ -62,16 +72,6 @@
 			.pipe(plumber())
 			.pipe(mocha())
 			.pipe(istanbul.writeReports());
-
-	});
-
-	gulp.task("babel", [ "mocha" ], () => {
-
-		return gulp.src(path.join(__dirname, "lib", "**", "*.js"))
-			.pipe(babel({
-				"presets": [ "es2015" ]
-			}))
-			.pipe(gulp.dest(path.join(__dirname, "dist")));
 
 	});
 
