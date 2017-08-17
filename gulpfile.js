@@ -58,7 +58,7 @@
 	gulp.task("istanbul", [ "babel" ], () => {
 
 		return gulp.src(APP_FILES)
-			.pipe(istanbul())
+			.pipe(plumber())
 			.pipe(istanbul({ "includeUntested": true }))
 			.pipe(istanbul.hookRequire());
 
