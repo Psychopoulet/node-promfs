@@ -59,6 +59,7 @@
 
 		return gulp.src(APP_FILES)
 			.pipe(istanbul())
+			.pipe(istanbul({ "includeUntested": true }))
 			.pipe(istanbul.hookRequire());
 
 	});
