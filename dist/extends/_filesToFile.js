@@ -225,7 +225,6 @@ function _filesToFile(files, target, separator, callback) {
 				}).then(function () {
 					_callback(null);
 				}).catch(function (err) {
-					(0, console).log(err);
 					return Promise.reject(err);
 				});
 			});
@@ -248,12 +247,7 @@ module.exports = {
 		return new Promise(function (resolve, reject) {
 
 			_filesToFile(files, target, separator, function (err) {
-
-				if (err) {
-					reject(err);
-				} else {
-					resolve();
-				}
+				return err ? reject(err) : resolve();
 			});
 		});
 	},

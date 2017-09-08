@@ -1,6 +1,6 @@
 {
   "name": "node-promfs",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "'fs' object extensions & promisifications",
   "main": "dist/main.js",
   "scripts": {

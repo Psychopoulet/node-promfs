@@ -5,7 +5,7 @@
 	const { join } = require("path");
 	const assert = require("assert");
 
-	const fs = require(join(__dirname, "..", "dist", "main.js"));
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
 
@@ -116,6 +116,10 @@ describe("filesToString", () => {
 				fs.filesToString([], false);
 			}, TypeError, "check invalid \"callback\" value does not throw an error");
 
+			assert.throws(() => {
+				fs.filesToString([], "utf8", false);
+			}, TypeError, "check invalid \"callback\" value does not throw an error");
+
 		});
 
 		it("should concat nothing", (done) => {
@@ -147,6 +151,19 @@ describe("filesToString", () => {
 		it("should concat test files", (done) => {
 
 			fs.filesToString([ FILE_TEST, FILE_TEST, FILE_TEST ], (err, data) => {
+
+				assert.strictEqual(null, err, "concat test files generate an error");
+				assert.strictEqual("test test test", data, "test files cannot be concatened");
+
+				done();
+
+			});
+
+		});
+
+		it("should concat test files with encoding", (done) => {
+
+			fs.filesToString([ FILE_TEST, FILE_TEST, FILE_TEST ], "utf8", (err, data) => {
 
 				assert.strictEqual(null, err, "concat test files generate an error");
 				assert.strictEqual("test test test", data, "test files cannot be concatened");

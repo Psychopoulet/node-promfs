@@ -65,12 +65,7 @@ function _directoryToFile(directory, target, separator, callback) {
 				} else {
 
 					filesToFile(files, target, _separator, function (_err) {
-
-						if (_err) {
-							_callback(_err);
-						} else {
-							_callback(null);
-						}
+						_callback(_err ? _err : null);
 					});
 				}
 			});
@@ -93,12 +88,7 @@ module.exports = {
 		return new Promise(function (resolve, reject) {
 
 			_directoryToFile(directory, target, separator, function (err) {
-
-				if (err) {
-					reject(err);
-				} else {
-					resolve();
-				}
+				return err ? reject(err) : resolve();
 			});
 		});
 	},

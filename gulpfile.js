@@ -19,19 +19,16 @@
 
 // consts
 
-	const UNITTESTSFILES = path.join(__dirname, "tests", "*.js");
+	const APP_FILES = [ path.join(__dirname, "lib", "**", "*.js") ];
+	const UNITTESTS_FILES = [ path.join(__dirname, "tests", "*.js") ];
 
-	const TOTESTFILES = [
-		path.join(__dirname, "gulpfile.js"),
-		path.join(__dirname, "lib", "**", "*.js"),
-		UNITTESTSFILES
-	];
+	const ALL_FILES = [ path.join(__dirname, "gulpfile.js") ].concat(APP_FILES).concat(UNITTESTS_FILES);
 
 // tasks
 
 	gulp.task("eslint", () => {
 
-		return gulp.src(TOTESTFILES)
+		return gulp.src(ALL_FILES)
 			.pipe(plumber())
 			.pipe(eslint({
 				"env": require(path.join(__dirname, "gulpfile", "eslint", "env.json")),
@@ -48,9 +45,18 @@
 
 	});
 
-	gulp.task("babel", [ "eslint" ], () => {
+	gulp.task("istanbul", [ "eslint" ], () => {
 
-		return gulp.src(path.join(__dirname, "lib", "**", "*.js"))
+		return gulp.src(APP_FILES.concat([ "!" + path.join(__dirname, "lib", "main.js") ]))
+			.pipe(plumber())
+			.pipe(istanbul({ "includeUntested": true }))
+			.pipe(istanbul.hookRequire());
+
+	});
+
+	gulp.task("babel", () => {
+
+		return gulp.src(APP_FILES)
 			.pipe(babel({
 				"presets": [ "es2015" ]
 			}))
@@ -58,27 +64,20 @@
 
 	});
 
-	gulp.task("istanbul", [ "babel" ], () => {
+	gulp.task("mocha", [ "istanbul", "babel" ], () => {
 
-		return gulp.src(TOTESTFILES)
-			.pipe(istanbul())
-			.pipe(istanbul.hookRequire());
-
-	});
-
-	gulp.task("mocha", [ "istanbul" ], () => {
-
-		return gulp.src(UNITTESTSFILES)
+		return gulp.src(UNITTESTS_FILES)
 			.pipe(plumber())
 			.pipe(mocha())
-			.pipe(istanbul.writeReports());
+			.pipe(istanbul.writeReports())
+			.pipe(istanbul.enforceThresholds({ "thresholds": { "global": 85 } }));
 
 	});
 
 // watcher
 
 	gulp.task("watch", () => {
-		gulp.watch(TOTESTFILES, [ "eslint" ]);
+		gulp.watch(ALL_FILES, [ "eslint" ]);
 	});
 
 

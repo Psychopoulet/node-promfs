@@ -5,7 +5,7 @@
 	const { join } = require("path");
 	const assert = require("assert");
 
-	const fs = require(join(__dirname, "..", "dist", "main.js"));
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
 
@@ -113,6 +113,10 @@ describe("directoryToString", () => {
 				fs.directoryToString();
 			}, ReferenceError, "check missing \"path\" value does not throw an error");
 
+			assert.throws(() => {
+				fs.directoryToString("rgvservseqrvserv");
+			}, ReferenceError, "check missing \"path\" value does not throw an error");
+
 		});
 
 		it("should check invalid value", () => {
@@ -120,6 +124,10 @@ describe("directoryToString", () => {
 			assert.throws(() => {
 				fs.directoryToString(false);
 			}, TypeError, "check invalid \"path\" value does not throw an error");
+
+			assert.throws(() => {
+				fs.directoryToString("rgvservseqrvserv", false);
+			}, TypeError, "check missing \"path\" value does not throw an error");
 
 		});
 
@@ -156,6 +164,20 @@ describe("directoryToString", () => {
 		it("should concat test directory files", (done) => {
 
 			fs.directoryToString(DIR_TESTBASE, (err, content) => {
+
+				assert.strictEqual(null, err, "test directory files cannot be concatened");
+				assert.strictEqual("string", typeof content, "test directory files cannot be concatened");
+				assert.strictEqual("test", content, "test directory files cannot be concatened");
+
+				done();
+
+			});
+
+		});
+
+		it("should concat test directory files with encoding", (done) => {
+
+			fs.directoryToString(DIR_TESTBASE, "utf8", (err, content) => {
 
 				assert.strictEqual(null, err, "test directory files cannot be concatened");
 				assert.strictEqual("string", typeof content, "test directory files cannot be concatened");

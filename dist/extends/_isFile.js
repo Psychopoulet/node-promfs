@@ -62,12 +62,7 @@ module.exports = {
 		return new Promise(function (resolve, reject) {
 
 			_isFile(file, function (err, exists) {
-
-				if (err) {
-					reject(err);
-				} else {
-					resolve(exists);
-				}
+				return err ? reject(err) : resolve(exists);
 			});
 		});
 	},

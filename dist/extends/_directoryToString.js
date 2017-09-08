@@ -62,12 +62,7 @@ function _directoryToString(directory, encoding, separator, callback) {
 				} else {
 
 					filesToString(files, encoding, separator, function (_err, content) {
-
-						if (_err) {
-							_callback(_err);
-						} else {
-							_callback(null, content);
-						}
+						_callback(_err ? _err : null, _err ? null : content);
 					});
 				}
 			});
@@ -90,12 +85,7 @@ module.exports = {
 		return new Promise(function (resolve, reject) {
 
 			_directoryToString(directory, encoding, separator, function (err, content) {
-
-				if (err) {
-					reject(err);
-				} else {
-					resolve(content);
-				}
+				return err ? reject(err) : resolve(content);
 			});
 		});
 	},
