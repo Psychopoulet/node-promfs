@@ -4,7 +4,7 @@
 
 	const assert = require("assert");
 
-	const fs = require(require("path").join(__dirname, "..", "dist", "main.js"));
+	const fs = require(require("path").join(__dirname, "..", "lib", "main.js"));
 
 // tests
 

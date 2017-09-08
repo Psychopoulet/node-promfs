@@ -5,7 +5,7 @@
 	const { join } = require("path");
 	const assert = require("assert");
 
-	const fs = require(join(__dirname, "..", "dist", "main.js"));
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
 
@@ -126,7 +126,12 @@ describe("rmdirp", () => {
 				fs.rmdirp(false, () => {
 					// nothing to do here
 				});
-			}, Error, "check invalid \"directory\" value does not throw an error");
+			}, TypeError, "check invalid \"directory\" value does not throw an error");
+
+			assert.throws(() => {
+				fs.rmdirp(DIR_TESTBASE, false);
+			}, TypeError, "check invalid \"directory\" value does not throw an error");
+
 		});
 
 		it("should check empty content value", () => {

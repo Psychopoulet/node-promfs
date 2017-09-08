@@ -5,7 +5,7 @@
 	const { join } = require("path");
 	const assert = require("assert");
 
-	const fs = require(join(__dirname, "..", "dist", "main.js"));
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
 
@@ -147,6 +147,12 @@ describe("mkdirp", () => {
 
 			assert.throws(() => {
 				fs.mkdirp(__dirname, false);
+			}, Error, "check invalid \"callback\" value does not throw an error");
+
+			assert.throws(() => {
+				fs.mkdirp(__dirname, false, () => {
+					// nothing to do here
+				});
 			}, Error, "check invalid \"callback\" value does not throw an error");
 
 		});

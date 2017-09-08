@@ -45,7 +45,16 @@
 
 	});
 
-	gulp.task("babel", [ "eslint" ], () => {
+	gulp.task("istanbul", [ "eslint" ], () => {
+
+		return gulp.src(APP_FILES.concat([ "!" + path.join(__dirname, "lib", "main.js") ]))
+			.pipe(plumber())
+			.pipe(istanbul({ "includeUntested": true }))
+			.pipe(istanbul.hookRequire());
+
+	});
+
+	gulp.task("babel", () => {
 
 		return gulp.src(APP_FILES)
 			.pipe(babel({
@@ -55,16 +64,7 @@
 
 	});
 
-	gulp.task("istanbul", [ "babel" ], () => {
-
-		return gulp.src(APP_FILES)
-			.pipe(plumber())
-			.pipe(istanbul({ "includeUntested": true }))
-			.pipe(istanbul.hookRequire());
-
-	});
-
-	gulp.task("mocha", [ "istanbul" ], () => {
+	gulp.task("mocha", [ "istanbul", "babel" ], () => {
 
 		return gulp.src(UNITTESTS_FILES)
 			.pipe(plumber())

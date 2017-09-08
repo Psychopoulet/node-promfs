@@ -109,12 +109,7 @@ module.exports = {
 		return new Promise(function (resolve, reject) {
 
 			_copyFile(origin, target, options, function (err) {
-
-				if (err) {
-					reject(err);
-				} else {
-					resolve();
-				}
+				return err ? reject(err) : resolve();
 			});
 		});
 	},

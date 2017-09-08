@@ -73,12 +73,7 @@ function _mkdirp(directory, mode, callback) {
 						} else if (_exists) {
 
 							mkdir(directory, _mode, function (__err) {
-
-								if (__err) {
-									_callback(__err);
-								} else {
-									_callback(null);
-								}
+								_callback(__err ? __err : null);
 							});
 						} else {
 
@@ -89,12 +84,7 @@ function _mkdirp(directory, mode, callback) {
 								} else {
 
 									mkdir(directory, _mode, function (___err) {
-
-										if (___err) {
-											_callback(___err);
-										} else {
-											_callback(null);
-										}
+										_callback(___err ? ___err : null);
 									});
 								}
 							});
@@ -149,12 +139,7 @@ module.exports = {
 		return new Promise(function (resolve, reject) {
 
 			_mkdirp(directory, mode ? mode : 511, function (err) {
-
-				if (err) {
-					reject(err);
-				} else {
-					resolve();
-				}
+				return err ? reject(err) : resolve();
 			});
 		});
 	},
