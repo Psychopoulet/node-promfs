@@ -134,6 +134,18 @@ describe("filesToFile", () => {
 				"test files with pattern cannot be concatened"
 			);
 
+			// check using already used file
+
+			assert.doesNotThrow(() => {
+				fs.filesToFileSync([ FILE_TEST, FILE_TEST, FILE_TEST3 ], FILE_TEST2, " -- [{{filename}}] -- ");
+			}, Error, "test files with pattern cannot be concatened");
+
+			assert.strictEqual(
+				" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
+				fs.readFileSync(FILE_TEST2, "utf8"),
+				"test files with pattern cannot be concatened"
+			);
+
 		});
 
 	});
@@ -162,6 +174,10 @@ describe("filesToFile", () => {
 				fs.filesToFile([]);
 			}, ReferenceError, "check missing \"target\" value does not throw an error");
 
+			assert.throws(() => {
+				fs.filesToFile([], "");
+			}, ReferenceError, "check missing \"callback\" value does not throw an error");
+
 		});
 
 		it("should check invalid value", () => {
@@ -174,13 +190,25 @@ describe("filesToFile", () => {
 				fs.filesToFile([], false);
 			}, TypeError, "check invalid \"target\" value does not throw an error");
 
+			assert.throws(() => {
+				fs.filesToFile([], __filename, false);
+			}, TypeError, "check invalid \"callback\" value does not throw an error");
+
 		});
 
 		it("should check empty value", () => {
 
 			assert.throws(() => {
-				fs.filesToFile([], "");
+				fs.filesToFile([], "", () => {
+					// nothing to do here
+				});
 			}, Error, "check empty \"files\" value does not throw an error");
+
+			assert.throws(() => {
+				fs.filesToFile([ FILE_TEST ], "", () => {
+					// nothing to do here
+				});
+			}, Error, "check empty \"target\" value does not throw an error");
 
 		});
 

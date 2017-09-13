@@ -130,12 +130,7 @@ function _rmdirp(directory, callback) {
 				} else {
 
 					_emptyDirectory(directory, function (err) {
-
-						if (err) {
-							callback(err);
-						} else {
-							rmdir(directory, callback);
-						}
+						return err ? callback(err) : rmdir(directory, callback);
 					});
 				}
 			});

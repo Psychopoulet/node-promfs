@@ -44,7 +44,7 @@ function _concatContentStream(writeStream, files, separator, callback) {
 				if (err) {
 					callback(err);
 				} else if (!exists) {
-					callback(null);
+					_concatContentStream(writeStream, files, separator, callback);
 				} else {
 
 					new Promise(function (resolve, reject) {
@@ -54,15 +54,8 @@ function _concatContentStream(writeStream, files, separator, callback) {
 						} else {
 
 							writeStream.write(separator.replace("{{filename}}", basename(file)), "utf8", function (_err) {
-
-								if (_err) {
-									reject(_err);
-								} else {
-									resolve();
-								}
+								return _err ? reject(_err) : resolve();
 							});
-
-							resolve();
 						}
 					}).then(function () {
 
@@ -89,12 +82,7 @@ function _concatContentStream(writeStream, files, separator, callback) {
 									} else {
 
 										writeStream.write(separator, "utf8", function (___err) {
-
-											if (___err) {
-												reject(___err);
-											} else {
-												_concatContentStream(writeStream, files, separator, callback);
-											}
+											return ___err ? reject(___err) : _concatContentStream(writeStream, files, separator, callback);
 										});
 									}
 								}
@@ -160,12 +148,7 @@ function _filesToFile(files, target, separator, callback) {
 						} else {
 
 							fs.unlink(_target, function (_err) {
-
-								if (err) {
-									reject(_err);
-								} else {
-									resolve();
-								}
+								return _err ? reject(_err) : resolve();
 							});
 						}
 					});
@@ -174,12 +157,7 @@ function _filesToFile(files, target, separator, callback) {
 					return new Promise(function (resolve, reject) {
 
 						fs.writeFile(_target, "", function (err) {
-
-							if (err) {
-								reject(err);
-							} else {
-								resolve();
-							}
+							return err ? reject(err) : resolve();
 						});
 					});
 				}).then(function () {
@@ -206,26 +184,29 @@ function _filesToFile(files, target, separator, callback) {
 							_concatContentStream(writeStream, files, "string" === typeof _separator ? _separator : " ", function (err) {
 
 								if (!ended) {
-
-									if (err) {
-										reject(err);
-									} else {
-										resolve();
-									}
+									return err ? reject(err) : resolve();
 								}
+
+								return null;
 							});
 						}).then(function () {
+
+							ended = true;
 							writeStream.end();
+
 							return Promise.resolve();
 						}).catch(function (err) {
+
+							ended = true;
 							writeStream.end();
+
 							return Promise.reject(err);
 						});
 					}
 				}).then(function () {
 					_callback(null);
 				}).catch(function (err) {
-					return Promise.reject(err);
+					_callback(err);
 				});
 			});
 		}

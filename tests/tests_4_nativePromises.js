@@ -73,6 +73,10 @@ describe("promisification", () => {
 
 			});
 
+			it("should check normal running with existing directory", () => {
+				return fs.mkdirProm(__dirname);
+			});
+
 			it("should check normal running", () => {
 
 				return fs.mkdirProm(DIR_TESTBASE).then(() => {
@@ -138,6 +142,10 @@ describe("promisification", () => {
 
 			});
 
+			it("should check normal running with non-existing directory", () => {
+				return fs.rmdirProm(path.join(__dirname, "tzgfzefvze"));
+			});
+
 			it("should check normal running", () => {
 
 				return fs.rmdirProm(DIR_TESTBASE).then(() => {
@@ -201,6 +209,10 @@ describe("promisification", () => {
 
 				});
 
+			});
+
+			it("should check normal running with non-existing file", () => {
+				return fs.unlinkProm(path.join(__dirname, "tzgfzefvze.js"));
 			});
 
 			it("should check normal running", () => {
@@ -336,7 +348,7 @@ describe("promisification", () => {
 
 			it("should check empty content value", (done) => {
 
-				fs.openProm("").then(() => {
+				fs.openProm("", "a").then(() => {
 					done("check empty content does not generate an error");
 				}).catch((err) => {
 
@@ -350,6 +362,20 @@ describe("promisification", () => {
 			});
 
 			it("should check normal running", () => {
+
+				return fs.openProm(FILE_TEST, "a").then((fd) => {
+
+					assert.doesNotThrow(() => {
+						fs.closeSync(fd);
+					}, "test file cannot be closed");
+
+					return Promise.resolve();
+
+				});
+
+			});
+
+			it("should check normal running with mode", () => {
 
 				return fs.openProm(FILE_TEST, "a", 755).then((fd) => {
 
@@ -426,6 +452,10 @@ describe("promisification", () => {
 			});
 
 			it("should check normal running", () => {
+				return fs.accessProm(__filename);
+			});
+
+			it("should check normal running with mode", () => {
 				return fs.accessProm(__filename, fs.F_OK);
 			});
 
@@ -433,10 +463,10 @@ describe("promisification", () => {
 
 		describe("appendFileProm", () => {
 
-			before(() => {
+			beforeEach(() => {
 				return fs.writeFileProm(FILE_TEST, "");
 			});
-			after(() => {
+			afterEach(() => {
 				return fs.unlinkProm(FILE_TEST);
 			});
 
@@ -464,7 +494,16 @@ describe("promisification", () => {
 					assert.strictEqual(true, err instanceof TypeError, "check type value does not generate a valid error");
 					assert.strictEqual("string", typeof err.message, "check type value does not generate a valid error");
 
-					done();
+					fs.appendFileProm(FILE_TEST, {}).then(() => {
+						done("check type value does not generate an error");
+					}).catch((_err) => {
+
+						assert.strictEqual(true, _err instanceof TypeError, "check type value does not generate a valid error");
+						assert.strictEqual("string", typeof _err.message, "check type value does not generate a valid error");
+
+						done();
+
+					});
 
 				});
 
@@ -486,6 +525,24 @@ describe("promisification", () => {
 			});
 
 			it("should check normal running", () => {
+
+				return fs.appendFileProm(FILE_TEST, "test").then(() => {
+					assert.strictEqual("test", fs.readFileSync(FILE_TEST, "utf8"), "test file content cannot be appended");
+					return Promise.resolve();
+				});
+
+			});
+
+			it("should check normal running with Buffer", () => {
+
+				return fs.appendFileProm(FILE_TEST, Buffer.from("test", "utf8")).then(() => {
+					assert.strictEqual("test", fs.readFileSync(FILE_TEST, "utf8"), "test file content cannot be appended");
+					return Promise.resolve();
+				});
+
+			});
+
+			it("should check normal running with options", () => {
 
 				return fs.appendFileProm(FILE_TEST, "test", "utf8").then(() => {
 					assert.strictEqual("test", fs.readFileSync(FILE_TEST, "utf8"), "test file content cannot be appended");
@@ -531,7 +588,7 @@ describe("promisification", () => {
 
 			it("should check type value", (done) => {
 
-				fs.chmodProm(false, 1).then(() => {
+				fs.chmodProm(false).then(() => {
 					done("check type value does not generate an error");
 				}).catch((err) => {
 
@@ -555,7 +612,7 @@ describe("promisification", () => {
 
 			it("should check empty content value", (done) => {
 
-				fs.chmodProm("", 1).then(() => {
+				fs.chmodProm("", 1, 1).then(() => {
 					done("check empty content does not generate an error");
 				}).catch((err) => {
 
@@ -651,7 +708,7 @@ describe("promisification", () => {
 
 			it("should check empty content value", (done) => {
 
-				fs.chownProm("").then(() => {
+				fs.chownProm("", 1, 1).then(() => {
 					done("check empty content does not generate an error");
 				}).catch((err) => {
 
@@ -761,7 +818,7 @@ describe("promisification", () => {
 
 			it("should check type value", (done) => {
 
-				fs.readFileProm(false).then(() => {
+				fs.readFileProm([]).then(() => {
 					done("check type value does not generate an error");
 				}).catch((err) => {
 
@@ -857,6 +914,15 @@ describe("promisification", () => {
 			it("should check normal running", () => {
 
 				return fs.realpathProm(__filename).then((content) => {
+					assert.strictEqual(__filename, content, "check normal running does not generate real path");
+					return Promise.resolve();
+				});
+
+			});
+
+			it("should check normal running with options", () => {
+
+				return fs.realpathProm(__filename, "utf8").then((content) => {
 					assert.strictEqual(__filename, content, "check normal running does not generate real path");
 					return Promise.resolve();
 				});
@@ -1106,10 +1172,10 @@ describe("promisification", () => {
 
 		describe("writeFileProm", () => {
 
-			before(() => {
+			beforeEach(() => {
 				return fs.unlinkProm(FILE_TEST, "");
 			});
-			after(() => {
+			afterEach(() => {
 				return fs.unlinkProm(FILE_TEST);
 			});
 
@@ -1179,6 +1245,15 @@ describe("promisification", () => {
 			it("should check normal running", () => {
 
 				return fs.writeFileProm(FILE_TEST, "test", "utf8").then(() => {
+					assert.strictEqual("test", fs.readFileSync(FILE_TEST, "utf8"), "normal running does not write in file");
+					return Promise.resolve();
+				});
+
+			});
+
+			it("should check normal running with Buffer", () => {
+
+				return fs.writeFileProm(FILE_TEST, Buffer.from("test", "utf8"), "utf8").then(() => {
 					assert.strictEqual("test", fs.readFileSync(FILE_TEST, "utf8"), "normal running does not write in file");
 					return Promise.resolve();
 				});
