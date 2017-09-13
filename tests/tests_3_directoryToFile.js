@@ -36,23 +36,9 @@ describe("directoryToFile", () => {
 
 	after(() => {
 
-		if (fs.isDirectorySync(DIR_TESTBASE2)) {
-			fs.rmdirSync(DIR_TESTBASE2);
-		}
-
-		if (fs.isDirectorySync(DIR_TESTBASE)) {
-
-			if (fs.isFileSync(FILE_TEST)) {
-				fs.unlinkSync(FILE_TEST);
-			}
-
-			if (fs.isFileSync(FILE_TEST2)) {
-				fs.unlinkSync(FILE_TEST2);
-			}
-
-			fs.rmdirSync(DIR_TESTBASE);
-
-		}
+		return fs.rmdirpProm(DIR_TESTBASE).then(() => {
+			return fs.rmdirpProm(DIR_TESTBASE2);
+		});
 
 	});
 
@@ -331,8 +317,14 @@ describe("directoryToFile", () => {
 		it("should concat test files directory into a file", () => {
 
 			return fs.directoryToFileProm(DIR_TESTBASE, FILE_TEST2).then(() => {
-				assert.strictEqual("test", fs.readFileSync(FILE_TEST2, "utf8"), "test files directory cannot be concatened");
-				return Promise.resolve();
+
+				return fs.readFileProm(FILE_TEST2, "utf8").then((content) => {
+
+					assert.strictEqual("test", content, "test files directory cannot be concatened");
+					return Promise.resolve();
+
+				});
+
 			});
 
 		});
@@ -340,8 +332,14 @@ describe("directoryToFile", () => {
 		it("should concat test files with pattern into a file", () => {
 
 			return fs.directoryToFileProm(DIR_TESTBASE, FILE_TEST2, " -- [{{filename}}] -- ").then(() => {
-				assert.strictEqual(" -- [test.txt] -- test", fs.readFileSync(FILE_TEST2, "utf8"), "test files with pattern cannot be concatened");
-				return Promise.resolve();
+
+				return fs.readFileProm(FILE_TEST2, "utf8").then((content) => {
+
+					assert.strictEqual(" -- [test.txt] -- test", content, "test files directory cannot be concatened");
+					return Promise.resolve();
+
+				});
+
 			});
 
 		});

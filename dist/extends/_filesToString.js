@@ -119,12 +119,7 @@ module.exports = {
 		return new Promise(function (resolve, reject) {
 
 			_filesToString(files, encoding, separator, function (err, content) {
-
-				if (err) {
-					reject(err);
-				} else {
-					resolve(content);
-				}
+				return err ? reject(err) : resolve(content);
 			});
 		});
 	},
