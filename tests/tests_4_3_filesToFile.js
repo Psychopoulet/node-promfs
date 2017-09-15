@@ -20,49 +20,23 @@ describe("filesToFile", () => {
 
 	before(() => {
 
-		if (!fs.isDirectorySync(DIR_TESTBASE)) {
-			fs.mkdirSync(DIR_TESTBASE);
-		}
-
-			if (!fs.isFileSync(FILE_TEST)) {
-				fs.writeFileSync(FILE_TEST, "test", "utf8");
-			}
+		return fs.mkdirProm(DIR_TESTBASE).then(() => {
+			return fs.writeFileProm(FILE_TEST, "test", "utf8");
+		});
 
 	});
 
 	after(() => {
-
-		if (fs.isDirectorySync(DIR_TESTBASE)) {
-
-			if (fs.isFileSync(FILE_TEST)) {
-				fs.unlinkSync(FILE_TEST);
-			}
-
-			if (fs.isFileSync(FILE_TEST2)) {
-				fs.unlinkSync(FILE_TEST2);
-			}
-
-			if (fs.isFileSync(FILE_TEST3)) {
-				fs.unlinkSync(FILE_TEST3);
-			}
-
-			fs.rmdirSync(DIR_TESTBASE);
-
-		}
-
+		return fs.rmdirpProm(DIR_TESTBASE);
 	});
 
 	describe("sync", () => {
 
 		afterEach(() => {
 
-			if (fs.isFileSync(FILE_TEST2)) {
-				fs.unlinkSync(FILE_TEST2);
-			}
-
-			if (fs.isFileSync(FILE_TEST3)) {
-				fs.unlinkSync(FILE_TEST3);
-			}
+			return fs.unlinkProm(FILE_TEST2).then(() => {
+				return fs.unlinkProm(FILE_TEST3);
+			});
 
 		});
 
@@ -121,7 +95,7 @@ describe("filesToFile", () => {
 		it("should concat test files with pattern into a file", () => {
 
 			assert.doesNotThrow(() => {
-				fs.writeFileSync(FILE_TEST3, "test3", "utf8");
+				fs.writeFileSync(FILE_TEST3, "test3");
 			}, Error, "test files with pattern cannot be concatened");
 
 			assert.doesNotThrow(() => {
@@ -152,15 +126,11 @@ describe("filesToFile", () => {
 
 	describe("async", () => {
 
-		after(() => {
+		afterEach(() => {
 
-			if (!fs.isFileSync(FILE_TEST2)) {
-				fs.unlinkSync(FILE_TEST2);
-			}
-
-			if (fs.isFileSync(FILE_TEST3)) {
-				fs.unlinkSync(FILE_TEST3);
-			}
+			return fs.unlinkProm(FILE_TEST2).then(() => {
+				return fs.unlinkProm(FILE_TEST3);
+			});
 
 		});
 
@@ -217,16 +187,37 @@ describe("filesToFile", () => {
 			fs.filesToFile([], FILE_TEST2, (err) => {
 
 				assert.strictEqual(null, err, "empty array cannot be concatened");
-				assert.strictEqual("", fs.readFileSync(FILE_TEST2, "utf8"), "empty array cannot be concatened");
 
-				done();
+				fs.readFile(FILE_TEST2, "utf8", (_err, content) => {
+
+					assert.strictEqual(null, _err, "empty array cannot be concatened");
+					assert.strictEqual("", content, "empty array cannot be concatened");
+
+					done();
+
+				});
 
 			});
 
 		});
 
 		it("should concat wrong file", (done) => {
-			fs.filesToFile([ FILE_TEST + "t" ], FILE_TEST2, done);
+
+			fs.filesToFile([ FILE_TEST + "t" ], FILE_TEST2, (err) => {
+
+				assert.strictEqual(null, err, "wrong file cannot be concatened");
+
+				fs.readFile(FILE_TEST2, "utf8", (_err, content) => {
+
+					assert.strictEqual(null, _err, "wrong file cannot be concatened");
+					assert.strictEqual("", content, "wrong file cannot be concatened");
+
+					done();
+
+				});
+
+			});
+
 		});
 
 		it("should concat test files into a file", (done) => {
@@ -234,9 +225,15 @@ describe("filesToFile", () => {
 			fs.filesToFile([ FILE_TEST, FILE_TEST, FILE_TEST ], FILE_TEST2, (err) => {
 
 				assert.strictEqual(null, err, "test files cannot be concatened");
-				assert.strictEqual("test test test", fs.readFileSync(FILE_TEST2, "utf8"), "test files cannot be concatened");
 
-				done();
+				fs.readFile(FILE_TEST2, "utf8", (_err, content) => {
+
+					assert.strictEqual(null, _err, "test files cannot be concatened");
+					assert.strictEqual("test test test", content, "test files cannot be concatened");
+
+					done();
+
+				});
 
 			});
 
@@ -244,7 +241,7 @@ describe("filesToFile", () => {
 
 		it("should concat test files with pattern into a file", (done) => {
 
-			fs.writeFile(FILE_TEST3, "test3", "utf8", (err) => {
+			fs.writeFile(FILE_TEST3, "test3", (err) => {
 
 				assert.strictEqual(null, err, "test files with pattern cannot be concatened");
 
@@ -252,13 +249,18 @@ describe("filesToFile", () => {
 
 					assert.strictEqual(null, _err, "test files with pattern cannot be concatened");
 
-					assert.strictEqual(
-						" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
-						fs.readFileSync(FILE_TEST2, "utf8"),
-						"test files with pattern cannot be concatened"
-					);
+					fs.readFile(FILE_TEST2, "utf8", (__err, content) => {
 
-					done();
+						assert.strictEqual(null, __err, "test files cannot be concatened");
+						assert.strictEqual(
+							" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
+							content,
+							"test files with pattern cannot be concatened"
+						);
+
+						done();
+
+					});
 
 				});
 
@@ -270,15 +272,11 @@ describe("filesToFile", () => {
 
 	describe("promise", () => {
 
-		after(() => {
+		afterEach(() => {
 
-			if (!fs.isFileSync(FILE_TEST2)) {
-				fs.unlinkSync(FILE_TEST2);
-			}
-
-			if (fs.isFileSync(FILE_TEST3)) {
-				fs.unlinkSync(FILE_TEST3);
-			}
+			return fs.unlinkProm(FILE_TEST2).then(() => {
+				return fs.unlinkProm(FILE_TEST3);
+			});
 
 		});
 
@@ -333,7 +331,9 @@ describe("filesToFile", () => {
 		it("should concat nothing", () => {
 
 			return fs.filesToFileProm([], FILE_TEST2).then(() => {
-				assert.strictEqual("", fs.readFileSync(FILE_TEST2, "utf8"), "empty array cannot be concatened");
+				return fs.readFileProm(FILE_TEST2, "utf8");
+			}).then((content) => {
+				assert.strictEqual("", content, "empty array cannot be concatened");
 				return Promise.resolve();
 			});
 
@@ -342,29 +342,29 @@ describe("filesToFile", () => {
 		it("should concat test files into a file", () => {
 
 			return fs.filesToFileProm([ FILE_TEST, FILE_TEST, FILE_TEST ], FILE_TEST2).then(() => {
-				assert.strictEqual("test test test", fs.readFileSync(FILE_TEST2, "utf8"), "test files cannot be concatened");
+				return fs.readFileProm(FILE_TEST2, "utf8");
+			}).then((content) => {
+				assert.strictEqual("test test test", content, "test files cannot be concatened");
 				return Promise.resolve();
 			});
 
 		});
 
-		it("should concat test files with pattern into a file", (done) => {
+		it("should concat test files with pattern into a file", () => {
 
-			fs.writeFile(FILE_TEST3, "test3", "utf8", (err) => {
+			return fs.writeFileProm(FILE_TEST3, "test3", "utf8").then(() => {
+				return fs.filesToFileProm([ FILE_TEST, FILE_TEST, FILE_TEST3 ], FILE_TEST2, " -- [{{filename}}] -- ");
+			}).then(() => {
+				return fs.readFileProm(FILE_TEST2, "utf8");
+			}).then((content) => {
 
-				assert.strictEqual(null, err, "concat test files with pattern into a file throws an error");
+				assert.strictEqual(
+					" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
+					content,
+					"test files with pattern cannot be concatened"
+				);
 
-				fs.filesToFileProm([ FILE_TEST, FILE_TEST, FILE_TEST3 ], FILE_TEST2, " -- [{{filename}}] -- ").then(() => {
-
-					assert.strictEqual(
-						" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
-						fs.readFileSync(FILE_TEST2, "utf8"),
-						"test files with pattern cannot be concatened"
-					);
-
-					done();
-
-				}).catch(done);
+				return Promise.resolve();
 
 			});
 

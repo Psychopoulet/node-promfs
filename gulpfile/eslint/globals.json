@@ -5,6 +5,7 @@
 	"before",
 	"beforeEach",
 	"Buffer",
+	"clearTimeout",
 	"console",
 	"describe",
 	"it",
@@ -13,6 +14,7 @@
 	"module",
 	"process",
 	"require",
+	"setTimeout",
 	"__dirname",
 	"__filename"
 ]

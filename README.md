@@ -27,45 +27,27 @@ $ npm install node-promfs
 
 > in "separator" parameter, you can use "{{filename}}" pattern, it will be replaced by the file's basename (ex : separator = "\r\n\r\n--- {{filename}} ---\r\n\r\n")
 
-  [copyFile] : copy a file with streams (copy then control with isFile)
-   * ``` copyFile(string origin, string origin, function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` copyFileSync(string origin, string origin [, options ]) : void ``` options : for fs.createReadStream & fs.createWriteStream
-   * ``` copyFileProm(string origin, string origin [, options ]) : Promise ``` options : for fs.createReadStream & fs.createWriteStream
-
-   [directoryToFile] : concat directory's files content in a file (extractFiles && filesToFile)
-   * ``` directoryToFile(string directory, string file [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` directoryToFileSync(string directory, string file [ , string separator = " " ]) : void ```
-   * ``` directoryToFileProm(string directory, string file [ , string separator = " " ]) : Promise ```
-
-   [directoryToString] : concat directory's files content in a string (extractFilesSync && filesToStringSync)
-   * ``` directoryToString(string directory [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
-   * ``` directoryToStringSync(string directory [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
-   * ``` directoryToStringProm(string directory [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
-
-   [extractFiles] : return only files from a directory
-   * ``` extractFiles(string directory, function callback) ``` callback(ReferenceError|TypeError|Error|null err, array files)
-   * ``` extractFilesSync(string directory) : array ```
-   * ``` extractFilesProm(string directory) : Promise ``` then(array files)
-
-   [filesToFile] : concat files content in a file with streams
-   * ``` filesToFile(array files, string targetPath [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` filesToFileSync(array files, string targetPath [ , string separator = " " ]) : void ```
-   * ``` filesToFileProm(array files, string targetPath [ , string separator = " " ]) : Promise ```
-
-   [filesToString] : concat files content in a string
-   * ``` filesToString(array files [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
-   * ``` filesToStringSync(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
-   * ``` filesToStringProm(array files [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
+   [isFile] : does the file exists and is a regular file ?
+   * ``` isFile(string path) ``` callback(ReferenceError|TypeError|Error|null err, bool exists)
+   * ``` isFileSync(string path) : bool ```
+   * ``` isFileProm(string path) : Promise ``` then(bool exists)
 
    [isDirectory] : does the file exists and is a directory ?
    * ``` isDirectory(string path) ``` callback(ReferenceError|TypeError|Error|null err, bool exists)
    * ``` isDirectorySync(string path) : bool ```
    * ``` isDirectoryProm(string path) : Promise ``` then(bool exists)
 
-   [isFile] : does the file exists and is a regular file ?
-   * ``` isFile(string path) ``` callback(ReferenceError|TypeError|Error|null err, bool exists)
-   * ``` isFileSync(string path) : bool ```
-   * ``` isFileProm(string path) : Promise ``` then(bool exists)
+
+  [copyFile] : copy a file with streams (copy then control with isFile)
+   * ``` copyFile(string origin, string origin, function callback) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` copyFileSync(string origin, string origin [, options ]) : void ``` options : for fs.createReadStream & fs.createWriteStream
+   * ``` copyFileProm(string origin, string origin [, options ]) : Promise ``` options : for fs.createReadStream & fs.createWriteStream
+
+   [extractFiles] : return only files from a directory
+   * ``` extractFiles(string directory, function callback) ``` callback(ReferenceError|TypeError|Error|null err, array files)
+   * ``` extractFilesSync(string directory) : array ```
+   * ``` extractFilesProm(string directory) : Promise ``` then(array files)
+
 
    [mkdirp] : recursively create a directory
    * The arguments are the same as [the official documentation's ones for mkdir & mkdirSync](https://nodejs.org/api/fs.html#fs_fs_mkdir_path_mode_callback)
@@ -77,6 +59,37 @@ $ npm install node-promfs
    * ``` rmdirp(string path) ``` callback(ReferenceError|TypeError|Error|null err)
    * ``` rmdirpSync(string path) : void ```
    * ``` rmdirpProm(string path) : Promise ```
+
+
+   [filesToStream] : converge files content in a Readable stream
+   * ``` filesToStream(array files [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, Transform stream)
+   * ``` filesToStreamProm(array files [ , string separator = " " ]) : Promise ``` then(Transform stream)
+
+   [filesToString] : concat files content in a string
+   * ``` filesToString(array files [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
+   * ``` filesToStringSync(array files [ , string separator = " " ]) : string ```
+   * ``` filesToStringProm(array files [ , string separator = " " ]) : Promise ``` then(string content)
+
+   [filesToFile] : concat files content in a file with streams
+   * ``` filesToFile(array files, string targetPath [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` filesToFileSync(array files, string targetPath [ , string separator = " " ]) : void ```
+   * ``` filesToFileProm(array files, string targetPath [ , string separator = " " ]) : Promise ```
+
+
+   [directoryToStream] : converge directory's files content in a Readable stream
+   * ``` directoryToStream(string directory [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content, Transform stream)
+   * ``` directoryToStreamProm(string directory [ , string separator = " " ]) : Promise ``` then(Transform stream)
+
+   [directoryToString] : concat directory's files content in a string
+   * ``` directoryToString(string directory [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
+   * ``` directoryToStringSync(string directory [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
+   * ``` directoryToStringProm(string directory [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
+
+   [directoryToFile] : concat directory's files content in a file
+   * ``` directoryToFile(string directory, string file [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` directoryToFileSync(string directory, string file [ , string separator = " " ]) : void ```
+   * ``` directoryToFileProm(string directory, string file [ , string separator = " " ]) : Promise ```
+
 
 ### -- Classical --
 
