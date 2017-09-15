@@ -25,13 +25,7 @@ function _directoryToStream(callback) {
 
 		process.nextTick(function () {
 
-			var stream = new Duplex();
-
-			stream.once("error", function (_err) {
-				callback(_err);
-			}).once("readable", function () {
-				callback(stream);
-			});
+			callback(new Duplex());
 		});
 	}
 }
