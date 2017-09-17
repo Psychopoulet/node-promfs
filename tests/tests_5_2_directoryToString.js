@@ -80,7 +80,7 @@ describe("directoryToString", () => {
 		it("should check inexistant directory", () => {
 
 			assert.throws(() => {
-				fs.directoryToStringSync("rgvservseqrvserv");
+				fs.directoryToStringSync(join(__dirname, "rgvservseqrvserv"));
 			}, "wrong \"directory\" does not throw an error");
 
 		});
@@ -142,7 +142,7 @@ describe("directoryToString", () => {
 		it("should check inexistant directory", () => {
 
 			assert.throws(() => {
-				fs.directoryToString("rgvservseqrvserv");
+				fs.directoryToString(join(__dirname, "rgvservseqrvserv"));
 			}, "wrong \"directory\" does not throw an error");
 
 		});
@@ -245,6 +245,21 @@ describe("directoryToString", () => {
 
 				assert.strictEqual(true, err instanceof Error, "check empty \"path\" value does not generate a valid error");
 				assert.strictEqual("string", typeof err.message, "check empty \"path\" value does not generate a valid error");
+
+				done();
+
+			});
+
+		});
+
+		it("should check inexistant directory", (done) => {
+
+			fs.directoryToStringProm(join(__dirname, "rgvservseqrvserv")).then(() => {
+				done("wrong \"directory\" does not throw an error");
+			}).catch((err) => {
+
+				assert.strictEqual(true, err instanceof Error, "\"wrong \"directory\" does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "\"wrong \"directory\" does not generate a valid error");
 
 				done();
 

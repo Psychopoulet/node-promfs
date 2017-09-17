@@ -88,6 +88,14 @@ describe("directoryToFile", () => {
 
 		});
 
+		it("should check inexistant directory", () => {
+
+			assert.throws(() => {
+				fs.directoryToFileSync(join(__dirname, "rgvservseqrvserv"));
+			}, "wrong \"directory\" does not throw an error");
+
+		});
+
 		it("should concat nothing", () => {
 
 			assert.doesNotThrow(() => {
@@ -179,6 +187,19 @@ describe("directoryToFile", () => {
 					// nothing to do here
 				});
 			}, Error, "check empty \"file\" value does not throw an error");
+
+		});
+
+		it("should check inexistant directory", (done) => {
+
+			fs.directoryToFile(join(__dirname, "rgvservseqrvserv"), __filename, (err) => {
+
+				assert.strictEqual(true, err instanceof Error, "check wrong \"directory\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check wrong \"directory\" value does not generate a valid error");
+
+				done();
+
+			});
 
 		});
 
@@ -300,6 +321,21 @@ describe("directoryToFile", () => {
 					done();
 
 				});
+
+			});
+
+		});
+
+		it("should check inexistant directory", (done) => {
+
+			fs.directoryToFileProm(join(__dirname, "rgvservseqrvserv"), __filename).then(() => {
+				done("wrong \"directory\" does not throw an error");
+			}).catch((err) => {
+
+				assert.strictEqual(true, err instanceof Error, "\"wrong \"directory\" does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "\"wrong \"directory\" does not generate a valid error");
+
+				done();
 
 			});
 

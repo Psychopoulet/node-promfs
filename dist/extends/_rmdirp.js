@@ -119,21 +119,18 @@ function _rmdirp(directory, callback) {
 		throw new TypeError("\"callback\" argument is not a function");
 	} else {
 
-		process.nextTick(function () {
+		isDirectory(directory, function (errIsDirectory, existsIsDirectory) {
 
-			isDirectory(directory, function (errIsDirectory, existsIsDirectory) {
+			if (errIsDirectory) {
+				callback(errIsDirectory);
+			} else if (!existsIsDirectory) {
+				callback(null);
+			} else {
 
-				if (errIsDirectory) {
-					callback(errIsDirectory);
-				} else if (!existsIsDirectory) {
-					callback(null);
-				} else {
-
-					_emptyDirectory(directory, function (err) {
-						return err ? callback(err) : rmdir(directory, callback);
-					});
-				}
-			});
+				_emptyDirectory(directory, function (err) {
+					return err ? callback(err) : rmdir(directory, callback);
+				});
+			}
 		});
 	}
 }
