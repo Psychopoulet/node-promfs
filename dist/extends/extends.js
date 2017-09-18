@@ -80,7 +80,7 @@ fs.filesToFileProm = filesToFile.filesToFileProm;
 
 // directoryToStream
 
-fs.directoryToStreamString = directoryToStream.directoryToStream;
+fs.directoryToStream = directoryToStream.directoryToStream;
 fs.directoryToStreamProm = directoryToStream.directoryToStreamProm;
 
 // directoryToString
