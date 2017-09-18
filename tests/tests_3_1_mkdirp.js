@@ -178,7 +178,7 @@ describe("mkdirp", () => {
 
 		it("should create real new directory with option", (done) => {
 
-			fs.mkdirp(DIR_TESTLVL3_WITHOPTIONS, 0x755, (err) => {
+			fs.mkdirp(DIR_TESTLVL3_WITHOPTIONS, 0x777, (err) => {
 
 				assert.strictEqual(null, err, "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" cannot be created");
 
@@ -249,7 +249,7 @@ describe("mkdirp", () => {
 		});
 
 		it("should create real new directory with option", () => {
-			return fs.mkdirpProm(__dirname, 0x755);
+			return fs.mkdirpProm(__dirname, 0x777);
 		});
 
 		it("should create real new directory", () => {
@@ -264,7 +264,7 @@ describe("mkdirp", () => {
 
 		it("should create real new directory with option", () => {
 
-			return fs.mkdirpProm(DIR_TESTLVL3_WITHOPTIONS, 0x755).then(() => {
+			return fs.mkdirpProm(DIR_TESTLVL3_WITHOPTIONS, 0x777).then(() => {
 				return fs.isDirectoryProm(DIR_TESTLVL3_WITHOPTIONS);
 			}).then((exists) => {
 				return exists ? Promise.resolve() : Promise.reject(new Error("real new directory is not generated"));
