@@ -16,7 +16,7 @@ var _require3 = require("fs"),
     createReadStream = _require3.createReadStream;
 
 var _require4 = require(join(__dirname, "_isFile.js")),
-    isFile = _require4.isFile;
+    isFileProm = _require4.isFileProm;
 
 // private
 
@@ -33,80 +33,59 @@ var _require4 = require(join(__dirname, "_isFile.js")),
 
 function _readContent(files, writeStream, separator) {
 
-	process.nextTick(function () {
+	return 0 >= files.length ? Promise.resolve() : Promise.resolve().then(function () {
 
-		if (0 >= files.length) {
-			writeStream.end();
-			writeStream.emit("close");
-		} else {
+		var file = files.shift().trim();
 
-			var file = files.shift().trim();
+		return isFileProm(file).then(function (exists) {
 
-			isFile(file, function (err, exists) {
+			var isPattern = -1 < separator.indexOf("{{filename}}");
 
-				if (err) {
-					writeStream.emit("error", err);
-				} else if (!exists) {
-					_readContent(files, writeStream, separator);
-				} else {
+			return !exists ? _readContent(files, writeStream, separator) : Promise.resolve().then(function () {
 
-					var isPattern = -1 < separator.indexOf("{{filename}}");
+				return !isPattern ? Promise.resolve() : new Promise(function (resolve, reject) {
 
-					Promise.resolve().then(function () {
-
-						return !isPattern ? Promise.resolve() : new Promise(function (resolve, reject) {
-
-							writeStream.write(separator.replace("{{filename}}", basename(file)), function (_err) {
-								return _err ? reject(_err) : resolve();
-							});
-						});
-					}).then(function () {
-
-						return new Promise(function (resolve, reject) {
-
-							var readStream = createReadStream(file);
-							var error = false;
-
-							readStream.once("error", function (_err) {
-
-								error = true;
-
-								readStream.close();
-								reject(_err);
-							}).once("open", function () {
-								readStream.pipe(writeStream, { "end": false });
-							}).once("close", function () {
-
-								if (!error) {
-									resolve();
-								}
-							});
-						});
-					}).then(function () {
-
-						if (0 >= files.length) {
-							writeStream.end();
-							writeStream.emit("close");
-						} else {
-
-							Promise.resolve().then(function () {
-
-								return isPattern ? Promise.resolve() : new Promise(function (resolve, reject) {
-
-									writeStream.write(separator, function (_err) {
-										return _err ? reject(_err) : resolve();
-									});
-								});
-							}).then(function () {
-								_readContent(files, writeStream, separator);
-							});
-						}
-					}).catch(function (_err) {
-						writeStream.emit("error", _err);
+					writeStream.write(separator.replace("{{filename}}", basename(file)), function (err) {
+						return err ? reject(err) : resolve();
 					});
-				}
+				});
+			}).then(function () {
+
+				return new Promise(function (resolve, reject) {
+
+					var readStream = createReadStream(file);
+					var error = false;
+
+					readStream.once("error", function (err) {
+
+						error = true;
+
+						readStream.close();
+						reject(err);
+					}).once("open", function () {
+						readStream.pipe(writeStream, { "end": false });
+					}).once("close", function () {
+
+						if (!error) {
+							resolve();
+						}
+					});
+				});
+			}).then(function () {
+
+				return 0 >= files.length ? Promise.resolve() : Promise.resolve().then(function () {
+
+					return isPattern ? Promise.resolve() : new Promise(function (resolve, reject) {
+
+						writeStream.write(separator, function (err) {
+							return err ? reject(err) : resolve();
+						});
+					});
+				}).then(function () {
+					return _readContent(files, writeStream, separator);
+				});
 			});
-		}
+		});
 	});
 }
 
@@ -145,7 +124,12 @@ function _filesToStream(files, separator, callback) {
 			var _callback = "undefined" === typeof callback ? separator : callback;
 			_callback(null, writeStream);
 
-			_readContent(files, writeStream, "string" === typeof separator ? separator : " ");
+			_readContent(files, writeStream, "string" === typeof separator ? separator : " ").then(function () {
+				writeStream.end();
+				writeStream.emit("close");
+			}).catch(function (err) {
+				writeStream.emit("error", err);
+			});
 		});
 	}
 }

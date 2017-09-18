@@ -40,8 +40,8 @@ $ npm install node-promfs
 
   [copyFile] : copy a file with streams (copy then control with isFile)
    * ``` copyFile(string origin, string origin, function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` copyFileSync(string origin, string origin [, options ]) : void ``` options : for fs.createReadStream & fs.createWriteStream
-   * ``` copyFileProm(string origin, string origin [, options ]) : Promise ``` options : for fs.createReadStream & fs.createWriteStream
+   * ``` copyFileSync(string origin, string origin) : void ```
+   * ``` copyFileProm(string origin, string origin) : Promise ```
 
    [extractFiles] : return only files from a directory
    * ``` extractFiles(string directory, function callback) ``` callback(ReferenceError|TypeError|Error|null err, array files)

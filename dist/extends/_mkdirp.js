@@ -12,7 +12,7 @@ var _require2 = require("path"),
     join = _require2.join;
 
 var _require3 = require(join(__dirname, "_isDirectory.js")),
-    isDirectory = _require3.isDirectory,
+    isDirectoryProm = _require3.isDirectoryProm,
     isDirectorySync = _require3.isDirectorySync;
 
 // private
@@ -50,46 +50,38 @@ function _mkdirp(directory, mode, callback) {
 		if ("undefined" === typeof _callback) {
 			_callback = mode;
 			_mode = 511;
-		} else {
-			_mode = _mode ? _mode : 511;
 		}
 
-		isDirectory(directory, function (err, exists) {
+		isDirectoryProm(directory).then(function (exists) {
 
-			if (err) {
-				_callback(err);
-			} else if (exists) {
-				_callback(null);
-			} else {
+			return exists ? Promise.resolve() : Promise.resolve().then(function () {
 
 				var SUB_DIRECTORY = dirname(directory);
 
-				isDirectory(SUB_DIRECTORY, function (_err, _exists) {
+				return isDirectoryProm(SUB_DIRECTORY).then(function (_exists) {
 
-					if (_err) {
-						_callback(_err);
-					} else if (_exists) {
+					return new Promise(function (resolve, reject) {
 
-						mkdir(directory, _mode, function (__err) {
-							_callback(__err ? __err : null);
-						});
-					} else {
+						if (_exists) {
 
-						_mkdirp(SUB_DIRECTORY, _mode, function (__err) {
+							mkdir(directory, _mode, function (err) {
+								return err ? reject(err) : resolve();
+							});
+						} else {
 
-							if (__err) {
-								_callback(__err);
-							} else {
+							_mkdirp(SUB_DIRECTORY, _mode, function (err) {
 
-								mkdir(directory, _mode, function (___err) {
-									_callback(___err ? ___err : null);
+								return err ? reject(err) : mkdir(directory, _mode, function (__err) {
+									return __err ? reject(__err) : resolve();
 								});
-							}
-						});
-					}
+							});
+						}
+					});
 				});
-			}
-		});
+			});
+		}).then(function () {
+			_callback(null);
+		}).catch(callback);
 	}
 }
 

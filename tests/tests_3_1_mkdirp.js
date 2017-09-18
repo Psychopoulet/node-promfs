@@ -12,48 +12,21 @@
 	const DIR_TESTBASE = join(__dirname, "testlvl1");
 		const DIR_TESTLVL2 = join(DIR_TESTBASE, "testlvl2");
 			const DIR_TESTLVL3 = join(DIR_TESTLVL2, "testlvl3");
-				const DIR_TESTLVL4 = join(DIR_TESTLVL3, "testlvl4");
-				const DIR_TESTLVL4_WITHOPTIONS = join(DIR_TESTLVL3, "testlvl4withOptions");
+			const DIR_TESTLVL3_WITHOPTIONS = join(DIR_TESTLVL2, "testlvl3withOptions");
 
 // tests
 
 describe("mkdirp", () => {
 
-	before(() => {
-
-		if (!fs.isDirectorySync(DIR_TESTBASE)) {
-			fs.mkdirSync(DIR_TESTBASE);
-		}
-
-	});
-
 	afterEach(() => {
 
-		if (fs.isDirectorySync(DIR_TESTBASE)) {
-
-			if (fs.isDirectorySync(DIR_TESTLVL2)) {
-
-				if (fs.isDirectorySync(DIR_TESTLVL3)) {
-
-					if (fs.isDirectorySync(DIR_TESTLVL4)) {
-						fs.rmdirSync(DIR_TESTLVL4);
-					}
-
-					if (fs.isDirectorySync(DIR_TESTLVL4_WITHOPTIONS)) {
-						fs.rmdirSync(DIR_TESTLVL4_WITHOPTIONS);
-					}
-
-					fs.rmdirSync(DIR_TESTLVL3);
-
-				}
-
-				fs.rmdirSync(DIR_TESTLVL2);
-
-			}
-
-			fs.rmdirSync(DIR_TESTBASE);
-
-		}
+		return fs.rmdirProm(DIR_TESTLVL3_WITHOPTIONS).then(() => {
+			return fs.rmdirProm(DIR_TESTLVL3);
+		}).then(() => {
+			return fs.rmdirProm(DIR_TESTLVL2);
+		}).then(() => {
+			return fs.rmdirProm(DIR_TESTBASE);
+		});
 
 	});
 
@@ -104,20 +77,20 @@ describe("mkdirp", () => {
 		it("should create real new directory", () => {
 
 			assert.doesNotThrow(() => {
-				fs.mkdirpSync(DIR_TESTLVL4);
-			}, "\"" + DIR_TESTLVL4 + "\" cannot be created");
+				fs.mkdirpSync(DIR_TESTLVL3);
+			}, "\"" + DIR_TESTLVL3 + "\" cannot be created");
 
-			assert.strictEqual(true, fs.isDirectorySync(DIR_TESTLVL4), "\"" + DIR_TESTLVL4 + "\" was not created");
+			assert.strictEqual(true, fs.isDirectorySync(DIR_TESTLVL3), "\"" + DIR_TESTLVL3 + "\" was not created");
 
 		});
 
 		it("should create real new directory with option", () => {
 
 			assert.doesNotThrow(() => {
-				fs.mkdirpSync(DIR_TESTLVL4_WITHOPTIONS, 0x755);
-			}, "\"" + DIR_TESTLVL4_WITHOPTIONS + "\" cannot be created");
+				fs.mkdirpSync(DIR_TESTLVL3_WITHOPTIONS, 0x755);
+			}, "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" cannot be created");
 
-			assert.strictEqual(true, fs.isDirectorySync(DIR_TESTLVL4_WITHOPTIONS), "\"" + DIR_TESTLVL4_WITHOPTIONS + "\" was not created");
+			assert.strictEqual(true, fs.isDirectorySync(DIR_TESTLVL3_WITHOPTIONS), "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" was not created");
 
 		});
 
@@ -186,14 +159,14 @@ describe("mkdirp", () => {
 
 		it("should create real new directory", (done) => {
 
-			fs.mkdirp(DIR_TESTLVL4, (err) => {
+			fs.mkdirp(DIR_TESTLVL3, (err) => {
 
-				assert.strictEqual(null, err, "\"" + DIR_TESTLVL4 + "\" cannot be created");
+				assert.strictEqual(null, err, "\"" + DIR_TESTLVL3 + "\" cannot be created");
 
-				fs.isDirectory(DIR_TESTLVL4, (_err, exists) => {
+				fs.isDirectory(DIR_TESTLVL3, (_err, exists) => {
 
-					assert.strictEqual(null, _err, "\"" + DIR_TESTLVL4 + "\" cannot be created");
-					assert.strictEqual(true, exists, "\"" + DIR_TESTLVL4 + "\" was not created");
+					assert.strictEqual(null, _err, "\"" + DIR_TESTLVL3 + "\" cannot be created");
+					assert.strictEqual(true, exists, "\"" + DIR_TESTLVL3 + "\" was not created");
 
 					done();
 
@@ -205,14 +178,14 @@ describe("mkdirp", () => {
 
 		it("should create real new directory with option", (done) => {
 
-			fs.mkdirp(DIR_TESTLVL4_WITHOPTIONS, 0x755, (err) => {
+			fs.mkdirp(DIR_TESTLVL3_WITHOPTIONS, 0x755, (err) => {
 
-				assert.strictEqual(null, err, "\"" + DIR_TESTLVL4_WITHOPTIONS + "\" cannot be created");
+				assert.strictEqual(null, err, "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" cannot be created");
 
-				fs.isDirectory(DIR_TESTLVL4_WITHOPTIONS, (_err, exists) => {
+				fs.isDirectory(DIR_TESTLVL3_WITHOPTIONS, (_err, exists) => {
 
-					assert.strictEqual(null, _err, "\"" + DIR_TESTLVL4_WITHOPTIONS + "\" cannot be created");
-					assert.strictEqual(true, exists, "\"" + DIR_TESTLVL4_WITHOPTIONS + "\" was not created");
+					assert.strictEqual(null, _err, "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" cannot be created");
+					assert.strictEqual(true, exists, "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" was not created");
 
 					done();
 
@@ -281,46 +254,20 @@ describe("mkdirp", () => {
 
 		it("should create real new directory", () => {
 
-			return fs.mkdirpProm(DIR_TESTLVL4).then(() => {
-
-				return new Promise((resolve, reject) => {
-
-					fs.isDirectory(DIR_TESTLVL4, (err) => {
-
-						if (err) {
-							reject(err);
-						}
-						else {
-							resolve();
-						}
-
-					});
-
-				});
-
+			return fs.mkdirpProm(DIR_TESTLVL3).then(() => {
+				return fs.isDirectoryProm(DIR_TESTLVL3);
+			}).then((exists) => {
+				return exists ? Promise.resolve() : Promise.reject(new Error("real new directory is not generated"));
 			});
 
 		});
 
 		it("should create real new directory with option", () => {
 
-			return fs.mkdirpProm(DIR_TESTLVL4_WITHOPTIONS, 0x755).then(() => {
-
-				return new Promise((resolve, reject) => {
-
-					fs.isDirectory(DIR_TESTLVL4_WITHOPTIONS, (err) => {
-
-						if (err) {
-							reject(err);
-						}
-						else {
-							resolve();
-						}
-
-					});
-
-				});
-
+			return fs.mkdirpProm(DIR_TESTLVL3_WITHOPTIONS, 0x755).then(() => {
+				return fs.isDirectoryProm(DIR_TESTLVL3_WITHOPTIONS);
+			}).then((exists) => {
+				return exists ? Promise.resolve() : Promise.reject(new Error("real new directory is not generated"));
 			});
 
 		});

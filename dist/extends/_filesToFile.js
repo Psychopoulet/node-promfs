@@ -156,12 +156,13 @@ module.exports = {
 					var _file = file.trim();
 					var _separator = "string" === typeof separator ? separator : " ";
 
-					if (!isFileSync(_file)) {
-						throw new Error("\"" + _file + "\" does not exist");
-					} else if (-1 < _separator.indexOf("{{filename}}")) {
-						fs.appendFileSync(_target, _separator.replace("{{filename}}", basename(_file)) + fs.readFileSync(_file));
-					} else {
-						fs.appendFileSync(_target, 0 < key ? _separator + fs.readFileSync(_file) : fs.readFileSync(_file));
+					if (isFileSync(_file)) {
+
+						if (-1 < _separator.indexOf("{{filename}}")) {
+							fs.appendFileSync(_target, _separator.replace("{{filename}}", basename(_file)) + fs.readFileSync(_file));
+						} else {
+							fs.appendFileSync(_target, 0 < key ? _separator + fs.readFileSync(_file) : fs.readFileSync(_file));
+						}
 					}
 				});
 			}

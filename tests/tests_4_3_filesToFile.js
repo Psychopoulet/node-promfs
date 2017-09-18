@@ -126,12 +126,8 @@ describe("filesToFile", () => {
 
 	describe("async", () => {
 
-		afterEach(() => {
-
-			return fs.unlinkProm(FILE_TEST2).then(() => {
-				return fs.unlinkProm(FILE_TEST3);
-			});
-
+		after(() => {
+			return fs.unlinkProm(FILE_TEST3);
 		});
 
 		it("should check missing value", () => {

@@ -15,7 +15,7 @@ var _require2 = require("path"),
     join = _require2.join;
 
 var _require3 = require(join(__dirname, "_isDirectory.js")),
-    isDirectory = _require3.isDirectory,
+    isDirectoryProm = _require3.isDirectoryProm,
     isDirectorySync = _require3.isDirectorySync;
 
 // private
@@ -25,75 +25,55 @@ var _require3 = require(join(__dirname, "_isDirectory.js")),
 /**
 * Async empty directory
 * @param {string} directory : directory path
-* @param {function|null} callback : operation's result
 * @returns {void}
 */
 
 
-function _emptyDirectory(directory, callback) {
+function _emptyDirectoryProm(directory) {
 
-	process.nextTick(function () {
+	return new Promise(function (resolve, reject) {
 
 		readdir(directory, function (err, files) {
+			return err ? reject(err) : resolve(files);
+		});
+	}).then(function (files) {
 
-			if (err) {
-				callback(err);
-			} else if (!files.length) {
-				callback(null);
-			} else {
+		return !files.length ? Promise.resolve() : new Promise(function (resolve, reject) {
 
-				var countFilesDeleted = 0;
+			var countFilesDeleted = 0;
 
-				files.forEach(function (_file) {
+			var _loop = function _loop(i) {
 
-					var file = join(directory, _file);
+				var file = join(directory, files[i]);
 
-					isDirectory(file, function (_err, exists) {
+				isDirectoryProm(file).then(function (exists) {
 
-						if (countFilesDeleted >= files.length) {
-							// nothing to do here
-						} else if (_err) {
-							countFilesDeleted = files.length;
-							callback(_err);
-						} else if (exists) {
+					return exists ? new Promise(function (resolveRemove, rejectRemove) {
 
-							_rmdirp(file, function (__err) {
+						_rmdirp(file, function (err) {
+							return err ? rejectRemove(err) : resolveRemove();
+						});
+					}) : new Promise(function (resolveRemove, rejectRemove) {
 
-								if (countFilesDeleted >= files.length) {
-									// nothing to do here
-								} else if (__err) {
-									countFilesDeleted = files.length;
-									callback(__err);
-								} else {
-
-									++countFilesDeleted;
-
-									if (countFilesDeleted >= files.length) {
-										callback(null);
-									}
-								}
-							});
-						} else {
-
-							unlink(file, function (__err) {
-
-								if (countFilesDeleted >= files.length) {
-									// nothing to do here
-								} else if (__err) {
-									countFilesDeleted = files.length;
-									callback(__err);
-								} else {
-
-									++countFilesDeleted;
-
-									if (countFilesDeleted >= files.length) {
-										callback(null);
-									}
-								}
-							});
-						}
+						unlink(file, function (err) {
+							return err ? rejectRemove(err) : resolveRemove();
+						});
 					});
+				}).then(function () {
+
+					++countFilesDeleted;
+
+					if (countFilesDeleted >= files.length) {
+						resolve();
+					}
+				}).catch(function (err) {
+					countFilesDeleted = files.length;
+					reject(err);
 				});
+			};
+
+			for (var i = 0; i < files.length && countFilesDeleted < files.length; ++i) {
+				_loop(i);
 			}
 		});
 	});
@@ -119,19 +99,20 @@ function _rmdirp(directory, callback) {
 		throw new TypeError("\"callback\" argument is not a function");
 	} else {
 
-		isDirectory(directory, function (errIsDirectory, existsIsDirectory) {
+		isDirectoryProm(directory).then(function (exists) {
 
-			if (errIsDirectory) {
-				callback(errIsDirectory);
-			} else if (!existsIsDirectory) {
-				callback(null);
-			} else {
+			return !exists ? Promise.resolve() : _emptyDirectoryProm(directory).then(function () {
 
-				_emptyDirectory(directory, function (err) {
-					return err ? callback(err) : rmdir(directory, callback);
+				return new Promise(function (resolve, reject) {
+
+					rmdir(directory, function (err) {
+						return err ? reject(err) : resolve();
+					});
 				});
-			}
-		});
+			});
+		}).then(function () {
+			callback(null);
+		}).catch(callback);
 	}
 }
 

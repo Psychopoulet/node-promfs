@@ -10,7 +10,7 @@ var _require = require("fs"),
     readFileSync = _require.readFileSync;
 
 var _require2 = require(require("path").join(__dirname, "_isFile.js")),
-    isFile = _require2.isFile,
+    isFileProm = _require2.isFileProm,
     isFileSync = _require2.isFileSync;
 
 // private
@@ -21,13 +21,12 @@ var _require2 = require(require("path").join(__dirname, "_isFile.js")),
 * Async copyFile
 * @param {string} origin : file to copy
 * @param {string} target : file to copy in
-* @param {Object|null} options : options for fs.createReadStream & fs.createWriteStream
 * @param {function|null} callback : operation's result
 * @returns {void}
 */
 
 
-function _copyFile(origin, target, options, callback) {
+function _copyFile(origin, target, callback) {
 
 	if ("undefined" === typeof origin) {
 		throw new ReferenceError("Missing \"origin\" argument");
@@ -41,53 +40,35 @@ function _copyFile(origin, target, options, callback) {
 		throw new TypeError("\"target\" argument is not a string");
 	} else if ("" === target.trim()) {
 		throw new Error("\"target\" argument is empty");
-	} else if ("undefined" === typeof callback && "undefined" === typeof options) {
+	} else if ("undefined" === typeof callback) {
 		throw new ReferenceError("Missing \"callback\" argument");
-	} else if ("function" !== typeof callback && "function" !== typeof options) {
+	} else if ("function" !== typeof callback) {
 		throw new TypeError("\"callback\" argument is not a function");
 	} else {
 
-		var _callback = callback;
-		var _options = options;
+		isFileProm(origin).then(function (exists) {
+			return exists ? Promise.resolve() : Promise.reject(new Error("There is no origin file \"" + origin + "\""));
+		}).then(function () {
 
-		if ("undefined" === typeof _callback) {
-			_callback = options;
-			_options = {};
-		} else {
-			_options = _options ? _options : {};
-		}
+			var error = false;
 
-		isFile(origin, function (err, exists) {
+			var writeStream = createWriteStream(target).once("error", function (_err) {
 
-			if (err) {
-				_callback(err);
-			} else if (!exists) {
-				_callback(new Error("There is no origin file \"" + origin + "\""));
-			} else {
+				error = true;
+				writeStream.close();
 
-				var error = false;
+				callback(_err);
+			}).once("close", function () {
 
-				var readStream = createReadStream(origin, _options).once("error", function (_err) {
-					error = true;
-					_callback(_err);
-				});
+				if (!error) {
+					callback(null);
+				}
+			});
 
-				var writeStream = createWriteStream(target, _options).once("error", function (_err) {
-
-					error = true;
-					writeStream.close();
-
-					_callback(_err);
-				}).once("close", function () {
-
-					if (!error) {
-						_callback(null);
-					}
-				});
-
-				readStream.pipe(writeStream);
-			}
-		});
+			createReadStream(origin).once("error", function (_err) {
+				error = true;callback(_err);
+			}).pipe(writeStream);
+		}).catch(callback);
 	}
 }
 
@@ -101,11 +82,11 @@ module.exports = {
 
 	// promise version
 
-	"copyFileProm": function copyFileProm(origin, target, options) {
+	"copyFileProm": function copyFileProm(origin, target) {
 
 		return new Promise(function (resolve, reject) {
 
-			_copyFile(origin, target, options, function (err) {
+			_copyFile(origin, target, function (err) {
 				return err ? reject(err) : resolve();
 			});
 		});
@@ -113,7 +94,7 @@ module.exports = {
 
 	// sync version
 
-	"copyFileSync": function copyFileSync(origin, target, options) {
+	"copyFileSync": function copyFileSync(origin, target) {
 
 		if ("undefined" === typeof origin) {
 			throw new ReferenceError("Missing \"origin\" argument");
@@ -131,7 +112,7 @@ module.exports = {
 			throw new Error("There is no origin file \"" + origin + "\"");
 		} else {
 
-			writeFileSync(target.trim(), readFileSync(origin.trim(), options ? options : null), options ? options : null);
+			writeFileSync(target.trim(), readFileSync(origin.trim()));
 		}
 	}
 
