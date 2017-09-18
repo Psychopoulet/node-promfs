@@ -57,39 +57,36 @@ function _copyFile(origin, target, options, callback) {
 			_options = _options ? _options : {};
 		}
 
-		process.nextTick(function () {
+		isFile(origin, function (err, exists) {
 
-			isFile(origin, function (err, exists) {
+			if (err) {
+				_callback(err);
+			} else if (!exists) {
+				_callback(new Error("There is no origin file \"" + origin + "\""));
+			} else {
 
-				if (err) {
-					_callback(err);
-				} else if (!exists) {
-					_callback(new Error("There is no origin file \"" + origin + "\""));
-				} else {
+				var error = false;
 
-					var error = false;
+				var readStream = createReadStream(origin, _options).once("error", function (_err) {
+					error = true;
+					_callback(_err);
+				});
 
-					var readStream = createReadStream(origin, _options).once("error", function (_err) {
-						error = true;
-						_callback(_err);
-					});
+				var writeStream = createWriteStream(target, _options).once("error", function (_err) {
 
-					var writeStream = createWriteStream(target, _options).once("error", function (_err) {
+					error = true;
+					writeStream.close();
 
-						error = true;
-						writeStream.close();
+					_callback(_err);
+				}).once("close", function () {
 
-						_callback(_err);
-					}).once("close", function () {
+					if (!error) {
+						_callback(null);
+					}
+				});
 
-						if (!error) {
-							_callback(null);
-						}
-					});
-
-					readStream.pipe(writeStream);
-				}
-			});
+				readStream.pipe(writeStream);
+			}
 		});
 	}
 }

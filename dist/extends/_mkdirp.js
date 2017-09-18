@@ -54,44 +54,41 @@ function _mkdirp(directory, mode, callback) {
 			_mode = _mode ? _mode : 511;
 		}
 
-		process.nextTick(function () {
+		isDirectory(directory, function (err, exists) {
 
-			isDirectory(directory, function (err, exists) {
+			if (err) {
+				_callback(err);
+			} else if (exists) {
+				_callback(null);
+			} else {
 
-				if (err) {
-					_callback(err);
-				} else if (exists) {
-					_callback(null);
-				} else {
+				var SUB_DIRECTORY = dirname(directory);
 
-					var SUB_DIRECTORY = dirname(directory);
+				isDirectory(SUB_DIRECTORY, function (_err, _exists) {
 
-					isDirectory(SUB_DIRECTORY, function (_err, _exists) {
+					if (_err) {
+						_callback(_err);
+					} else if (_exists) {
 
-						if (_err) {
-							_callback(_err);
-						} else if (_exists) {
+						mkdir(directory, _mode, function (__err) {
+							_callback(__err ? __err : null);
+						});
+					} else {
 
-							mkdir(directory, _mode, function (__err) {
-								_callback(__err ? __err : null);
-							});
-						} else {
+						_mkdirp(SUB_DIRECTORY, _mode, function (__err) {
 
-							_mkdirp(SUB_DIRECTORY, _mode, function (__err) {
+							if (__err) {
+								_callback(__err);
+							} else {
 
-								if (__err) {
-									_callback(__err);
-								} else {
-
-									mkdir(directory, _mode, function (___err) {
-										_callback(___err ? ___err : null);
-									});
-								}
-							});
-						}
-					});
-				}
-			});
+								mkdir(directory, _mode, function (___err) {
+									_callback(___err ? ___err : null);
+								});
+							}
+						});
+					}
+				});
+			}
 		});
 	}
 }

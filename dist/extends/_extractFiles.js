@@ -34,29 +34,26 @@ var _require4 = require(join(__dirname, "_isDirectory.js")),
 
 function _extractRealFiles(dir, givenFiles, realFiles, callback) {
 
-	process.nextTick(function () {
+	if (0 >= givenFiles.length) {
+		callback(null, realFiles);
+	} else {
 
-		if (0 >= givenFiles.length) {
-			callback(null, realFiles);
-		} else {
+		var file = join(dir, givenFiles.shift()).trim();
 
-			var file = join(dir, givenFiles.shift()).trim();
+		isFile(file, function (err, exists) {
 
-			isFile(file, function (err, exists) {
+			if (err) {
+				callback(err);
+			} else {
 
-				if (err) {
-					callback(err);
-				} else {
-
-					if (exists) {
-						realFiles.push(file);
-					}
-
-					_extractRealFiles(dir, givenFiles, realFiles, callback);
+				if (exists) {
+					realFiles.push(file);
 				}
-			});
-		}
-	});
+
+				_extractRealFiles(dir, givenFiles, realFiles, callback);
+			}
+		});
+	}
 }
 
 /**
@@ -81,26 +78,23 @@ function _extractFiles(dir, callback) {
 
 		var _dir = dir.trim();
 
-		process.nextTick(function () {
+		isDirectory(_dir, function (err, exists) {
 
-			isDirectory(_dir, function (err, exists) {
+			if (err) {
+				callback(err);
+			} else if (!exists) {
+				callback(new Error("\"" + _dir + "\" is not a valid directory"));
+			} else {
 
-				if (err) {
-					callback(err);
-				} else if (!exists) {
-					callback(new Error("\"" + _dir + "\" is not a valid directory"));
-				} else {
+				readdir(_dir, function (_err, files) {
 
-					readdir(_dir, function (_err, files) {
-
-						if (_err) {
-							callback(_err);
-						} else {
-							_extractRealFiles(_dir, files, [], callback);
-						}
-					});
-				}
-			});
+					if (_err) {
+						callback(_err);
+					} else {
+						_extractRealFiles(_dir, files, [], callback);
+					}
+				});
+			}
 		});
 	}
 }
