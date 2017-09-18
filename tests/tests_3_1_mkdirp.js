@@ -176,19 +176,19 @@ describe("mkdirp", () => {
 
 		});
 
-		it("should create real new directory with option", (done) => {
+		it("should create real new directory with option", () => {
 
-			fs.mkdirp(DIR_TESTLVL3_WITHOPTIONS, 0x777, (err) => {
+			return new Promise((resolve, reject) => {
 
-				assert.strictEqual(null, err, "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" cannot be created");
+				fs.mkdirp(DIR_TESTLVL3_WITHOPTIONS, 0x777, (err) => {
+					return err ? reject(err) : resolve();
+				});
 
-				fs.isDirectory(DIR_TESTLVL3_WITHOPTIONS, (_err, exists) => {
+			}).then(() => {
 
-					assert.strictEqual(null, _err, "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" cannot be created");
+				return fs.isDirectoryProm(DIR_TESTLVL3_WITHOPTIONS).then((exists) => {
 					assert.strictEqual(true, exists, "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" was not created");
-
-					done();
-
+					return Promise.resolve();
 				});
 
 			});

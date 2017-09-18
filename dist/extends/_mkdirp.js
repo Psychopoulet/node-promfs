@@ -60,22 +60,19 @@ function _mkdirp(directory, mode, callback) {
 
 				return isDirectoryProm(SUB_DIRECTORY).then(function (_exists) {
 
-					return new Promise(function (resolve, reject) {
+					return _exists ? new Promise(function (resolve, reject) {
 
-						if (_exists) {
+						mkdir(directory, _mode, function (err) {
+							return err ? reject(err) : resolve();
+						});
+					}) : new Promise(function (resolve, reject) {
 
-							mkdir(directory, _mode, function (err) {
-								return err ? reject(err) : resolve();
+						_mkdirp(SUB_DIRECTORY, _mode, function (err) {
+
+							return err ? reject(err) : mkdir(directory, _mode, function (_err) {
+								return _err ? reject(_err) : resolve();
 							});
-						} else {
-
-							_mkdirp(SUB_DIRECTORY, _mode, function (err) {
-
-								return err ? reject(err) : mkdir(directory, _mode, function (__err) {
-									return __err ? reject(__err) : resolve();
-								});
-							});
-						}
+						});
 					});
 				});
 			});
