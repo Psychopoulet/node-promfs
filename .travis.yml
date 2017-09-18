@@ -2,5 +2,5 @@ language: node_js
 node_js:
   - "8"
   - "6"
-script: "npm run-script test-travis"
-sudo: false
+script: "sudo npm run-script test-travis"
+sudo: true
