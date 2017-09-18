@@ -731,7 +731,11 @@ describe("promisification", () => {
 			});
 
 			it("should check normal running", () => {
-				return fs.chownProm(FILE_TEST, 0, 0);
+
+				return fs.lstatProm(FILE_TEST).then((stat) => {
+					return fs.chownProm(FILE_TEST, stat.uid, stat.gid);
+				});
+
 			});
 
 		});
