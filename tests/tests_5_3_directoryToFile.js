@@ -234,9 +234,15 @@ describe("directoryToFile", () => {
 			fs.directoryToFile(DIR_TESTBASE, FILE_TEST2, " -- [{{filename}}] -- ", (err) => {
 
 				assert.strictEqual(null, err, "test files with pattern cannot be concatened");
-				assert.strictEqual(" -- [test.txt] -- test", fs.readFileSync(FILE_TEST2, "utf8"), "test files with pattern cannot be concatened");
 
-				done();
+				fs.readFile(FILE_TEST2, "utf8", (_err, content) => {
+
+					assert.strictEqual(null, _err, "test files with pattern cannot be concatened");
+					assert.strictEqual(" -- [test.txt] -- test", content, "test files with pattern cannot be concatened");
+
+					done();
+
+				});
 
 			});
 

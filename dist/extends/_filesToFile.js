@@ -12,7 +12,7 @@ var _require = require("path"),
     join = _require.join;
 
 var _require2 = require(join(__dirname, "_filesToStream.js")),
-    filesToStream = _require2.filesToStream;
+    filesToStreamProm = _require2.filesToStreamProm;
 
 var _require3 = require(join(__dirname, "_isFile.js")),
     isFileProm = _require3.isFileProm,
@@ -54,6 +54,8 @@ function _filesToFile(files, target, separator, callback) {
 			throw new Error("\"target\" argument is empty");
 		} else {
 
+			var _callback = "undefined" === typeof callback ? separator : callback;
+
 			Promise.resolve().then(function () {
 				return isFileProm(_target);
 			}).then(function (exists) {
@@ -67,24 +69,36 @@ function _filesToFile(files, target, separator, callback) {
 			}).then(function () {
 
 				if (!files.length) {
-					fs.writeFile(_target, "", "undefined" === typeof callback ? separator : callback);
+
+					return new Promise(function (resolve, reject) {
+
+						fs.writeFile(_target, "", function (err) {
+							return err ? reject(err) : resolve();
+						});
+					});
 				} else {
 
-					filesToStream(files, "string" === typeof separator ? separator : " ", function (err, stream) {
+					return filesToStreamProm(files, "string" === typeof separator ? separator : " ").then(function (readStream) {
 
-						var _callback = "undefined" === typeof callback ? separator : callback;
+						return new Promise(function (resolve, reject) {
 
-						if (err) {
-							_callback(err);
-						} else {
+							var error = false;
+							readStream.once("error", function (_err) {
+								error = true;reject(_err);
+							}).pipe(fs.createWriteStream(_target, { "flags": "a" }).once("error", function (_err) {
+								error = true;reject(_err);
+							}).once("close", function () {
 
-							stream.once("error", _callback).once("close", function () {
-								_callback(null);
-							}).pipe(fs.createWriteStream(_target, { "flags": "a" }));
-						}
+								if (!error) {
+									resolve();
+								}
+							}));
+						});
 					});
 				}
-			});
+			}).then(function () {
+				_callback(null);
+			}).catch(_callback);
 		}
 	}
 }

@@ -12,7 +12,7 @@ var _require = require("path"),
     join = _require.join;
 
 var _require2 = require(join(__dirname, "_filesToStream.js")),
-    filesToStream = _require2.filesToStream;
+    filesToStreamProm = _require2.filesToStreamProm;
 
 var _require3 = require(join(__dirname, "_isFile.js")),
     isFileSync = _require3.isFileSync;
@@ -43,31 +43,40 @@ function _filesToString(files, encoding, separator, callback) {
 		throw new TypeError("\"callback\" argument is not a function");
 	} else {
 
-		filesToStream(files, "string" === typeof separator ? separator : " ", function (err, stream) {
+		var _callback = callback;
 
-			var _callback = callback;
+		if ("undefined" === typeof _callback) {
 
-			if ("undefined" === typeof _callback) {
-
-				if ("undefined" === typeof separator) {
-					_callback = encoding;
-				} else {
-					_callback = separator;
-				}
-			}
-
-			if (err) {
-				_callback(err);
+			if ("undefined" === typeof separator) {
+				_callback = encoding;
 			} else {
+				_callback = separator;
+			}
+		}
+
+		filesToStreamProm(files, "string" === typeof separator ? separator : " ").then(function (readStream) {
+
+			return new Promise(function (resolve, reject) {
 
 				var data = "";
-				stream.once("error", _callback).on("data", function (chunk) {
+				var error = false;
+
+				readStream.once("error", function (_err) {
+
+					error = true;
+					reject(_err);
+				}).on("data", function (chunk) {
 					data += chunk.toString("string" === typeof encoding ? encoding : "utf8");
-				}).once("close", function () {
-					_callback(null, data);
+				}).once("end", function () {
+
+					if (!error) {
+						resolve(data);
+					}
 				});
-			}
-		});
+			});
+		}).then(function (data) {
+			_callback(null, data);
+		}).catch(_callback);
 	}
 }
 
