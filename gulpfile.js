@@ -8,7 +8,6 @@
 	// gulp
 	const gulp = require("gulp");
 	const plumber = require("gulp-plumber");
-	const isCI = require("is-ci");
 
 	// tests
 	const eslint = require("gulp-eslint");
@@ -60,10 +59,9 @@
 
 	gulp.task("coveralls", [ "istanbul" ], () => {
 
-		return !isCI ? Promise.resolve() :
-			gulp.src(path.join(__dirname, "coverage", "lcov.info"))
-				.pipe(plumber())
-				.pipe(coveralls());
+		return gulp.src(path.join(__dirname, "coverage", "lcov.info"))
+			.pipe(plumber())
+			.pipe(coveralls());
 
 	});
 

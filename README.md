@@ -1,9 +1,9 @@
 # node-promfs
 'fs' object extensions & promisifications
 
-[![Build Status](https://api.travis-ci.org/Psychopoulet/node-promfs.svg)](https://travis-ci.org/Psychopoulet/node-promfs)
-[![Coverage Status](https://coveralls.io/repos/github/Psychopoulet/node-promfs/badge.svg)](https://coveralls.io/github/Psychopoulet/node-promfs)
-[![Dependency Status](https://img.shields.io/david/Psychopoulet/node-promfs/master.svg)](https://github.com/Psychopoulet/node-promfs)
+[![Build Status](https://api.travis-ci.org/Psychopoulet/node-promfs.svg?branch=develop)](https://travis-ci.org/Psychopoulet/node-promfs)
+[![Coverage Status](https://coveralls.io/repos/github/Psychopoulet/node-promfs/badge.svg?branch=develop)](https://coveralls.io/github/Psychopoulet/node-promfs)
+[![Dependency Status](https://img.shields.io/david/Psychopoulet/node-promfs/develop.svg)](https://github.com/Psychopoulet/node-promfs)
 
 ## Installation
 
