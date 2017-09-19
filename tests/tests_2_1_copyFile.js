@@ -19,42 +19,26 @@ describe("copyFile", () => {
 
 	before(() => {
 
-		if (!fs.isDirectorySync(DIR_TESTBASE)) {
-			fs.mkdirSync(DIR_TESTBASE);
-		}
-
-			if (!fs.isFileSync(FILE_TEST)) {
-				fs.writeFileSync(FILE_TEST, "test", "utf8");
-			}
+		return fs.mkdirProm(DIR_TESTBASE).then(() => {
+			return fs.isFileProm(FILE_TEST);
+		}).then((exists) => {
+			return exists ? Promise.resolve() : fs.writeFileProm(FILE_TEST, "testé", "utf8");
+		});
 
 	});
 
 	after(() => {
 
-		if (fs.isDirectorySync(DIR_TESTBASE)) {
-
-			if (fs.isFileSync(FILE_TEST)) {
-				fs.unlinkSync(FILE_TEST);
-			}
-
-			if (fs.isFileSync(FILE_TEST2)) {
-				fs.unlinkSync(FILE_TEST2);
-			}
-
-			fs.rmdirSync(DIR_TESTBASE);
-
-		}
+		return fs.unlinkProm(FILE_TEST).then(() => {
+			return fs.rmdirProm(DIR_TESTBASE);
+		});
 
 	});
 
 	describe("sync", () => {
 
 		after(() => {
-
-			if (fs.isFileSync(FILE_TEST2)) {
-				fs.unlinkSync(FILE_TEST2);
-			}
-
+			return fs.unlinkProm(FILE_TEST2);
 		});
 
 		it("should check missing value", () => {
@@ -107,7 +91,7 @@ describe("copyFile", () => {
 				fs.copyFileSync(FILE_TEST, FILE_TEST2);
 			}, "test file cannot be copied");
 
-			assert.strictEqual("test", fs.readFileSync(FILE_TEST2, "utf8"), "copied file has not the right value");
+			assert.strictEqual("testé", fs.readFileSync(FILE_TEST2, "utf8"), "copied file has not the right value");
 
 		});
 
@@ -115,12 +99,8 @@ describe("copyFile", () => {
 
 	describe("async", () => {
 
-		after(() => {
-
-			if (fs.isFileSync(FILE_TEST2)) {
-				fs.unlinkSync(FILE_TEST2);
-			}
-
+		afterEach(() => {
+			return fs.unlinkProm(FILE_TEST2);
 		});
 
 		it("should check missing value", () => {
@@ -192,7 +172,7 @@ describe("copyFile", () => {
 				fs.readFile(FILE_TEST2, "utf8", (_err, content) => {
 
 					assert.strictEqual(null, _err, "copied file cannot be read");
-					assert.strictEqual("test", content, "copied file has not the right value");
+					assert.strictEqual("testé", content, "copied file has not the right value");
 
 					done();
 
@@ -207,11 +187,7 @@ describe("copyFile", () => {
 	describe("promise", () => {
 
 		after(() => {
-
-			if (fs.isFileSync(FILE_TEST2)) {
-				fs.unlinkSync(FILE_TEST2);
-			}
-
+			return fs.unlinkProm(FILE_TEST2);
 		});
 
 		it("should check missing value", (done) => {
@@ -305,16 +281,10 @@ describe("copyFile", () => {
 
 			return fs.copyFileProm(FILE_TEST, FILE_TEST2).then(() => {
 
-				return new Promise((resolve) => {
+				return fs.readFileProm(FILE_TEST2, "utf8").then((content) => {
 
-					fs.readFile(FILE_TEST2, "utf8", (err, content) => {
-
-						assert.strictEqual(null, err, "copied file cannot be read");
-						assert.strictEqual("test", content, "copied file has not the right value");
-
-						resolve();
-
-					});
+					assert.strictEqual("testé", content, "copied file has not the right value");
+					return Promise.resolve();
 
 				});
 

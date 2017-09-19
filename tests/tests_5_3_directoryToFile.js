@@ -88,6 +88,14 @@ describe("directoryToFile", () => {
 
 		});
 
+		it("should check inexistant directory", () => {
+
+			assert.throws(() => {
+				fs.directoryToFileSync(join(__dirname, "rgvservseqrvserv"));
+			}, "wrong \"directory\" does not throw an error");
+
+		});
+
 		it("should concat nothing", () => {
 
 			assert.doesNotThrow(() => {
@@ -182,6 +190,19 @@ describe("directoryToFile", () => {
 
 		});
 
+		it("should check inexistant directory", (done) => {
+
+			fs.directoryToFile(join(__dirname, "rgvservseqrvserv"), __filename, (err) => {
+
+				assert.strictEqual(true, err instanceof Error, "check wrong \"directory\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check wrong \"directory\" value does not generate a valid error");
+
+				done();
+
+			});
+
+		});
+
 		it("should concat nothing", (done) => {
 
 			fs.directoryToFile(DIR_TESTBASE2, FILE_TEST2, (err) => {
@@ -213,9 +234,15 @@ describe("directoryToFile", () => {
 			fs.directoryToFile(DIR_TESTBASE, FILE_TEST2, " -- [{{filename}}] -- ", (err) => {
 
 				assert.strictEqual(null, err, "test files with pattern cannot be concatened");
-				assert.strictEqual(" -- [test.txt] -- test", fs.readFileSync(FILE_TEST2, "utf8"), "test files with pattern cannot be concatened");
 
-				done();
+				fs.readFile(FILE_TEST2, "utf8", (_err, content) => {
+
+					assert.strictEqual(null, _err, "test files with pattern cannot be concatened");
+					assert.strictEqual(" -- [test.txt] -- test", content, "test files with pattern cannot be concatened");
+
+					done();
+
+				});
 
 			});
 
@@ -300,6 +327,21 @@ describe("directoryToFile", () => {
 					done();
 
 				});
+
+			});
+
+		});
+
+		it("should check inexistant directory", (done) => {
+
+			fs.directoryToFileProm(join(__dirname, "rgvservseqrvserv"), __filename).then(() => {
+				done("wrong \"directory\" does not throw an error");
+			}).catch((err) => {
+
+				assert.strictEqual(true, err instanceof Error, "\"wrong \"directory\" does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "\"wrong \"directory\" does not generate a valid error");
+
+				done();
 
 			});
 

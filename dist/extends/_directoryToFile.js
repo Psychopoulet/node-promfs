@@ -56,19 +56,8 @@ function _directoryToFile(directory, target, separator, callback) {
 			_separator = " ";
 		}
 
-		process.nextTick(function () {
-
-			extractFiles(directory, function (err, files) {
-
-				if (err) {
-					_callback(err);
-				} else {
-
-					filesToFile(files, target, _separator, function (_err) {
-						_callback(_err ? _err : null);
-					});
-				}
-			});
+		extractFiles(directory, function (err, files) {
+			return err ? _callback(err) : filesToFile(files, target, _separator, _callback);
 		});
 	}
 }
@@ -112,7 +101,6 @@ module.exports = {
 			if ("" === _target) {
 				throw new Error("\"target\" argument is empty");
 			} else {
-
 				return filesToFileSync(extractFilesSync(directory), _target, separator);
 			}
 		}

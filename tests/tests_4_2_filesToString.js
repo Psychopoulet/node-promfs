@@ -18,28 +18,14 @@ describe("filesToString", () => {
 
 	before(() => {
 
-		if (!fs.isDirectorySync(DIR_TESTBASE)) {
-			fs.mkdirSync(DIR_TESTBASE);
-		}
-
-			if (!fs.isFileSync(FILE_TEST)) {
-				fs.writeFileSync(FILE_TEST, "test", "utf8");
-			}
+		return fs.mkdirProm(DIR_TESTBASE).then(() => {
+			return fs.writeFileProm(FILE_TEST, "test", "utf8");
+		});
 
 	});
 
 	after(() => {
-
-		if (fs.isDirectorySync(DIR_TESTBASE)) {
-
-			if (fs.isFileSync(FILE_TEST)) {
-				fs.unlinkSync(FILE_TEST);
-			}
-
-			fs.rmdirSync(DIR_TESTBASE);
-
-		}
-
+		return fs.rmdirpProm(DIR_TESTBASE);
 	});
 
 	describe("sync", () => {
@@ -65,7 +51,7 @@ describe("filesToString", () => {
 		});
 
 		it("should concat wrong file", () => {
-			assert.strictEqual("", fs.filesToStringSync([ FILE_TEST + "t" ]), "concat wrong file does not throw an error");
+			assert.strictEqual("", fs.filesToStringSync([ FILE_TEST + "t" ]), "concat wrong file has content");
 		});
 
 		it("should concat test files", () => {
@@ -137,10 +123,10 @@ describe("filesToString", () => {
 
 		it("should concat wrong file", (done) => {
 
-			fs.filesToString([ FILE_TEST + "t" ], (err) => {
+			fs.filesToString([ FILE_TEST + "t" ], (err, data) => {
 
-				assert.strictEqual(true, err instanceof Error, "concat wrong file does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "concat wrong file does not generate a valid error");
+				assert.strictEqual(null, err, "concat wrong file generate an error");
+				assert.strictEqual("", data, "wrong file cannot be concatened");
 
 				done();
 
@@ -234,17 +220,11 @@ describe("filesToString", () => {
 
 		});
 
-		it("should concat wrong file", (done) => {
+		it("should concat wrong file", () => {
 
-			fs.filesToStringProm([ FILE_TEST + "t" ]).then(() => {
-				done("concat wrong file does not generate an error");
-			}).catch((err) => {
-
-				assert.strictEqual(true, err instanceof Error, "concat wrong file does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "concat wrong file value does not generate a valid error");
-
-				done();
-
+			return fs.filesToStringProm([ FILE_TEST + "t" ]).then((data) => {
+				assert.strictEqual("", data, "wrong file cannot be concatened");
+				return Promise.resolve();
 			});
 
 		});

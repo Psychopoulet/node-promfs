@@ -53,19 +53,8 @@ function _directoryToString(directory, encoding, separator, callback) {
 			}
 		}
 
-		process.nextTick(function () {
-
-			extractFiles(directory, function (err, files) {
-
-				if (err) {
-					_callback(err);
-				} else {
-
-					filesToString(files, encoding, separator, function (_err, content) {
-						_callback(_err ? _err : null, _err ? null : content);
-					});
-				}
-			});
+		extractFiles(directory, function (err, files) {
+			return err ? _callback(err) : filesToString(files, encoding, separator, _callback);
 		});
 	}
 }

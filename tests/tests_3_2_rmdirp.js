@@ -22,49 +22,23 @@ describe("rmdirp", () => {
 
 	beforeEach(() => {
 
-		if (!fs.isDirectorySync(DIR_TESTBASE)) {
-			fs.mkdirSync(DIR_TESTBASE);
-		}
-
-			if (!fs.isDirectorySync(DIR_TESTLVL2)) {
-				fs.mkdirSync(DIR_TESTLVL2);
-			}
-
-				if (!fs.isDirectorySync(DIR_TESTLVL3)) {
-					fs.mkdirSync(DIR_TESTLVL3);
-				}
-
-					if (!fs.isDirectorySync(DIR_TESTLVL4)) {
-						fs.mkdirSync(DIR_TESTLVL4);
-					}
-
-						if (!fs.isFileSync(FILE_TESTLVL4)) {
-							fs.writeFileSync(FILE_TESTLVL4, "utf8", "");
-						}
+		return fs.mkdirpProm(DIR_TESTLVL4).then(() => {
+			return fs.writeFileProm(FILE_TESTLVL4, "utf8", "");
+		});
 
 	});
 
 	afterEach(() => {
 
-		if (fs.isFileSync(FILE_TESTLVL4)) {
-			fs.unlinkSync(FILE_TESTLVL4);
-		}
-
-		if (fs.isDirectorySync(DIR_TESTLVL4)) {
-			fs.rmdirSync(DIR_TESTLVL4);
-		}
-
-			if (fs.isDirectorySync(DIR_TESTLVL3)) {
-				fs.rmdirSync(DIR_TESTLVL3);
-			}
-
-				if (fs.isDirectorySync(DIR_TESTLVL2)) {
-					fs.rmdirSync(DIR_TESTLVL2);
-				}
-
-					if (fs.isDirectorySync(DIR_TESTBASE)) {
-						fs.rmdirSync(DIR_TESTBASE);
-					}
+		return fs.unlinkProm(FILE_TESTLVL4).then(() => {
+			return fs.rmdirProm(DIR_TESTLVL4);
+		}).then(() => {
+			return fs.rmdirProm(DIR_TESTLVL3);
+		}).then(() => {
+			return fs.rmdirProm(DIR_TESTLVL2);
+		}).then(() => {
+			return fs.rmdirProm(DIR_TESTBASE);
+		});
 
 	});
 
@@ -215,22 +189,9 @@ describe("rmdirp", () => {
 		it("should remove real new directory", () => {
 
 			return fs.rmdirpProm(DIR_TESTLVL4).then(() => {
-
-				return new Promise((resolve, reject) => {
-
-					fs.isDirectory(DIR_TESTLVL4, (err) => {
-
-						if (err) {
-							reject(err);
-						}
-						else {
-							resolve();
-						}
-
-					});
-
-				});
-
+				return fs.isDirectoryProm(DIR_TESTLVL4);
+			}).then((exists) => {
+				return !exists ? Promise.resolve() : Promise.reject(new Error("real new directory is not removed"));
 			});
 
 		});

@@ -12,7 +12,7 @@ var _require2 = require("path"),
     join = _require2.join;
 
 var _require3 = require(join(__dirname, "_isDirectory.js")),
-    isDirectory = _require3.isDirectory,
+    isDirectoryProm = _require3.isDirectoryProm,
     isDirectorySync = _require3.isDirectorySync;
 
 // private
@@ -50,49 +50,35 @@ function _mkdirp(directory, mode, callback) {
 		if ("undefined" === typeof _callback) {
 			_callback = mode;
 			_mode = 511;
-		} else {
-			_mode = _mode ? _mode : 511;
 		}
 
-		process.nextTick(function () {
+		isDirectoryProm(directory).then(function (exists) {
 
-			isDirectory(directory, function (err, exists) {
+			return exists ? Promise.resolve() : Promise.resolve().then(function () {
 
-				if (err) {
-					_callback(err);
-				} else if (exists) {
-					_callback(null);
-				} else {
+				var SUB_DIRECTORY = dirname(directory);
 
-					var SUB_DIRECTORY = dirname(directory);
+				return isDirectoryProm(SUB_DIRECTORY).then(function (_exists) {
 
-					isDirectory(SUB_DIRECTORY, function (_err, _exists) {
+					return _exists ? new Promise(function (resolve, reject) {
 
-						if (_err) {
-							_callback(_err);
-						} else if (_exists) {
+						mkdir(directory, _mode, function (err) {
+							return err ? reject(err) : resolve();
+						});
+					}) : new Promise(function (resolve, reject) {
 
-							mkdir(directory, _mode, function (__err) {
-								_callback(__err ? __err : null);
+						_mkdirp(SUB_DIRECTORY, _mode, function (err) {
+
+							return err ? reject(err) : mkdir(directory, _mode, function (_err) {
+								return _err ? reject(_err) : resolve();
 							});
-						} else {
-
-							_mkdirp(SUB_DIRECTORY, _mode, function (__err) {
-
-								if (__err) {
-									_callback(__err);
-								} else {
-
-									mkdir(directory, _mode, function (___err) {
-										_callback(___err ? ___err : null);
-									});
-								}
-							});
-						}
+						});
 					});
-				}
+				});
 			});
-		});
+		}).then(function () {
+			_callback(null);
+		}).catch(callback);
 	}
 }
 

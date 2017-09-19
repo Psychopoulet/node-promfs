@@ -1,11 +1,10 @@
 {
   "name": "node-promfs",
-  "version": "2.1.4",
+  "version": "3.0.0",
   "description": "'fs' object extensions & promisifications",
   "main": "dist/main.js",
   "scripts": {
-    "test": "gulp babel",
-    "test-travis": "gulp mocha"
+    "test": "gulp mocha"
   },
   "pre-commit": [
     "test"

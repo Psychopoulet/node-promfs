@@ -11,11 +11,11 @@ var _require2 = require("path"),
     join = _require2.join;
 
 var _require3 = require(join(__dirname, "_isFile.js")),
-    isFile = _require3.isFile,
+    isFileProm = _require3.isFileProm,
     isFileSync = _require3.isFileSync;
 
 var _require4 = require(join(__dirname, "_isDirectory.js")),
-    isDirectory = _require4.isDirectory,
+    isDirectoryProm = _require4.isDirectoryProm,
     isDirectorySync = _require4.isDirectorySync;
 
 // private
@@ -34,29 +34,21 @@ var _require4 = require(join(__dirname, "_isDirectory.js")),
 
 function _extractRealFiles(dir, givenFiles, realFiles, callback) {
 
-	process.nextTick(function () {
+	if (0 >= givenFiles.length) {
+		callback(null, realFiles);
+	} else {
 
-		if (0 >= givenFiles.length) {
-			callback(null, realFiles);
-		} else {
+		var file = join(dir, givenFiles.shift()).trim();
 
-			var file = join(dir, givenFiles.shift()).trim();
+		isFileProm(file).then(function (exists) {
 
-			isFile(file, function (err, exists) {
+			if (exists) {
+				realFiles.push(file);
+			}
 
-				if (err) {
-					callback(err);
-				} else {
-
-					if (exists) {
-						realFiles.push(file);
-					}
-
-					_extractRealFiles(dir, givenFiles, realFiles, callback);
-				}
-			});
-		}
-	});
+			_extractRealFiles(dir, givenFiles, realFiles, callback);
+		}).catch(callback);
+	}
 }
 
 /**
@@ -81,27 +73,14 @@ function _extractFiles(dir, callback) {
 
 		var _dir = dir.trim();
 
-		process.nextTick(function () {
+		isDirectoryProm(_dir).then(function (exists) {
+			return exists ? Promise.resolve() : Promise.reject(new Error("\"" + _dir + "\" is not a valid directory"));
+		}).then(function () {
 
-			isDirectory(_dir, function (err, exists) {
-
-				if (err) {
-					callback(err);
-				} else if (!exists) {
-					callback(new Error("\"" + _dir + "\" is not a valid directory"));
-				} else {
-
-					readdir(_dir, function (_err, files) {
-
-						if (_err) {
-							callback(_err);
-						} else {
-							_extractRealFiles(_dir, files, [], callback);
-						}
-					});
-				}
+			readdir(_dir, function (_err, files) {
+				return _err ? callback(_err) : _extractRealFiles(_dir, files, [], callback);
 			});
-		});
+		}).catch(callback);
 	}
 }
 
@@ -120,12 +99,7 @@ module.exports = {
 		return new Promise(function (resolve, reject) {
 
 			_extractFiles(dir, function (err, result) {
-
-				if (err) {
-					reject(err);
-				} else {
-					resolve(result);
-				}
+				return err ? reject(err) : resolve(result);
 			});
 		});
 	},

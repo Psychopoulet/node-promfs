@@ -479,7 +479,16 @@ describe("promisification", () => {
 					assert.strictEqual(true, err instanceof ReferenceError, "check missing value does not generate a valid error");
 					assert.strictEqual("string", typeof err.message, "check missing value does not generate a valid error");
 
-					done();
+					fs.appendFileProm(FILE_TEST).then(() => {
+						done("check missing value does not generate an error");
+					}).catch((_err) => {
+
+						assert.strictEqual(true, _err instanceof ReferenceError, "check missing value does not generate a valid error");
+						assert.strictEqual("string", typeof _err.message, "check missing value does not generate a valid error");
+
+						done();
+
+					});
 
 				});
 
@@ -511,7 +520,7 @@ describe("promisification", () => {
 
 			it("should check empty content value", (done) => {
 
-				fs.appendFileProm("").then(() => {
+				fs.appendFileProm("", "test").then(() => {
 					done("check empty content does not generate an error");
 				}).catch((err) => {
 
@@ -722,7 +731,11 @@ describe("promisification", () => {
 			});
 
 			it("should check normal running", () => {
-				return fs.chownProm(FILE_TEST, 0, 0);
+
+				return fs.lstatProm(FILE_TEST).then((stat) => {
+					return fs.chownProm(FILE_TEST, stat.uid, stat.gid);
+				});
+
 			});
 
 		});
@@ -1205,21 +1218,30 @@ describe("promisification", () => {
 
 			it("should check type value", (done) => {
 
-				fs.writeFileProm(false, "test").then(() => {
+				fs.writeFileProm(false).then(() => {
 					done("check type value does not generate an error");
 				}).catch((err) => {
 
 					assert.strictEqual(true, err instanceof TypeError, "check type value does not generate a valid error");
 					assert.strictEqual("string", typeof err.message, "check type value does not generate a valid error");
 
-					fs.writeFileProm(FILE_TEST, false).then(() => {
+					fs.writeFileProm({}).then(() => {
 						done("check type value does not generate an error");
 					}).catch((_err) => {
 
 						assert.strictEqual(true, _err instanceof TypeError, "check type value does not generate a valid error");
 						assert.strictEqual("string", typeof _err.message, "check type value does not generate a valid error");
 
-						done();
+						fs.writeFileProm(FILE_TEST, false).then(() => {
+							done("check type value does not generate an error");
+						}).catch((__err) => {
+
+							assert.strictEqual(true, __err instanceof TypeError, "check type value does not generate a valid error");
+							assert.strictEqual("string", typeof __err.message, "check type value does not generate a valid error");
+
+							done();
+
+						});
 
 					});
 

@@ -11,91 +11,16 @@ var _require = require("path"),
     basename = _require.basename,
     join = _require.join;
 
-var _require2 = require(join(__dirname, "_isFile.js")),
-    isFile = _require2.isFile,
-    isFileSync = _require2.isFileSync;
+var _require2 = require(join(__dirname, "_filesToStream.js")),
+    filesToStreamProm = _require2.filesToStreamProm;
+
+var _require3 = require(join(__dirname, "_isFile.js")),
+    isFileProm = _require3.isFileProm,
+    isFileSync = _require3.isFileSync;
 
 // private
 
 // methods
-
-/**
-* Specific to "filesToFile" method, concat results of reading streams
-* @param {stream.Writable} writeStream : targeted file's stream for content
-* @param {Array} files : files to read
-* @param {string} separator : used to separate content (can be "")
-* @param {callback} callback : operation's result
-* @returns {void} Operation's result
-*/
-
-
-function _concatContentStream(writeStream, files, separator, callback) {
-
-	process.nextTick(function () {
-
-		if (0 >= files.length) {
-			callback(null);
-		} else {
-
-			var file = files.shift().trim();
-
-			isFile(file, function (err, exists) {
-
-				if (err) {
-					callback(err);
-				} else if (!exists) {
-					_concatContentStream(writeStream, files, separator, callback);
-				} else {
-
-					new Promise(function (resolve, reject) {
-
-						if (-1 >= separator.indexOf("{{filename}}")) {
-							resolve();
-						} else {
-
-							writeStream.write(separator.replace("{{filename}}", basename(file)), "utf8", function (_err) {
-								return _err ? reject(_err) : resolve();
-							});
-						}
-					}).then(function () {
-
-						return new Promise(function (resolve, reject) {
-
-							var readStream = fs.createReadStream(file);
-							var error = false;
-
-							readStream.once("error", function (__err) {
-
-								error = true;
-								readStream.close();
-								reject(__err);
-							}).once("open", function () {
-								readStream.pipe(writeStream, { "end": false });
-							}).once("close", function () {
-
-								if (!error) {
-
-									if (0 >= files.length) {
-										resolve();
-									} else if (-1 < separator.indexOf("{{filename}}")) {
-										_concatContentStream(writeStream, files, separator, callback);
-									} else {
-
-										writeStream.write(separator, "utf8", function (___err) {
-											return ___err ? reject(___err) : _concatContentStream(writeStream, files, separator, callback);
-										});
-									}
-								}
-							});
-						});
-					}).then(function () {
-						callback(null);
-					}).catch(callback);
-				}
-			});
-		}
-	});
-}
 
 /**
 * Async filesToFile
@@ -105,6 +30,8 @@ function _concatContentStream(writeStream, files, separator, callback) {
 * @param {function|null} callback : operation's result
 * @returns {void}
 */
+
+
 function _filesToFile(files, target, separator, callback) {
 
 	if ("undefined" === typeof files) {
@@ -127,32 +54,21 @@ function _filesToFile(files, target, separator, callback) {
 			throw new Error("\"target\" argument is empty");
 		} else {
 
-			var _callback = callback;
-			var _separator = separator;
+			var _callback = "undefined" === typeof callback ? separator : callback;
 
-			if ("undefined" === typeof _callback) {
-				_callback = separator;
-				_separator = " ";
-			}
+			Promise.resolve().then(function () {
+				return isFileProm(_target);
+			}).then(function (exists) {
 
-			process.nextTick(function () {
+				return !exists ? Promise.resolve() : new Promise(function (resolve, reject) {
 
-				new Promise(function (resolve, reject) {
-
-					isFile(_target, function (err, exists) {
-
-						if (err) {
-							reject(err);
-						} else if (!exists) {
-							resolve();
-						} else {
-
-							fs.unlink(_target, function (_err) {
-								return _err ? reject(_err) : resolve();
-							});
-						}
+					fs.unlink(_target, function (err) {
+						return err ? reject(err) : resolve();
 					});
-				}).then(function () {
+				});
+			}).then(function () {
+
+				if (!files.length) {
 
 					return new Promise(function (resolve, reject) {
 
@@ -160,55 +76,29 @@ function _filesToFile(files, target, separator, callback) {
 							return err ? reject(err) : resolve();
 						});
 					});
-				}).then(function () {
+				} else {
 
-					if (!files.length) {
-						return Promise.resolve();
-					} else {
-
-						var writeStream = fs.createWriteStream(_target, { "flags": "a" });
-						var ended = false;
+					return filesToStreamProm(files, "string" === typeof separator ? separator : " ").then(function (readStream) {
 
 						return new Promise(function (resolve, reject) {
 
-							writeStream.once("error", function (err) {
+							var error = false;
+							readStream.once("error", function (_err) {
+								error = true;reject(_err);
+							}).pipe(fs.createWriteStream(_target, { "flags": "a" }).once("error", function (_err) {
+								error = true;reject(_err);
+							}).once("close", function () {
 
-								if (!ended) {
-
-									ended = true;
-									writeStream.close();
-									reject(err);
+								if (!error) {
+									resolve();
 								}
-							});
-
-							_concatContentStream(writeStream, files, "string" === typeof _separator ? _separator : " ", function (err) {
-
-								if (!ended) {
-									return err ? reject(err) : resolve();
-								}
-
-								return null;
-							});
-						}).then(function () {
-
-							ended = true;
-							writeStream.end();
-
-							return Promise.resolve();
-						}).catch(function (err) {
-
-							ended = true;
-							writeStream.end();
-
-							return Promise.reject(err);
+							}));
 						});
-					}
-				}).then(function () {
-					_callback(null);
-				}).catch(function (err) {
-					_callback(err);
-				});
-			});
+					});
+				}
+			}).then(function () {
+				_callback(null);
+			}).catch(_callback);
 		}
 	}
 }
@@ -253,24 +143,26 @@ module.exports = {
 				throw new Error("\"target\" argument is empty");
 			} else {
 
-				var _separator = "string" === typeof separator ? separator : " ";
-
 				if (isFileSync(_target)) {
 					fs.unlinkSync(_target);
 				}
 
-				fs.writeFileSync(_target, "");
+				if (!files.length) {
+					fs.writeFileSync(_target, "");
+				}
 
 				files.forEach(function (file, key) {
 
 					var _file = file.trim();
+					var _separator = "string" === typeof separator ? separator : " ";
 
-					if (!isFileSync(_file)) {
-						throw new Error("\"" + _file + "\" does not exist");
-					} else if (-1 < _separator.indexOf("{{filename}}")) {
-						fs.appendFileSync(_target, _separator.replace("{{filename}}", basename(_file)) + fs.readFileSync(_file));
-					} else {
-						fs.appendFileSync(_target, 0 < key ? _separator + fs.readFileSync(_file) : fs.readFileSync(_file));
+					if (isFileSync(_file)) {
+
+						if (-1 < _separator.indexOf("{{filename}}")) {
+							fs.appendFileSync(_target, _separator.replace("{{filename}}", basename(_file)) + fs.readFileSync(_file));
+						} else {
+							fs.appendFileSync(_target, 0 < key ? _separator + fs.readFileSync(_file) : fs.readFileSync(_file));
+						}
 					}
 				});
 			}
