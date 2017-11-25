@@ -48,6 +48,11 @@ $ npm install node-promfs
    * ``` extractFilesSync(string directory) : array ```
    * ``` extractFilesProm(string directory) : Promise ``` then(array files)
 
+   [readJSONFile] : readFile and parse JSON
+   * ``` readJSONFile(string path) ``` callback(object|array|null)
+   * ``` readJSONFileSync(string path) : object|array|null ```
+   * ``` readJSONFileProm(string path) : Promise ``` then(object|array|null)
+
 
    [mkdirp] : recursively create a directory
    * The arguments are the same as [the official documentation's ones for mkdir & mkdirSync](https://nodejs.org/api/fs.html#fs_fs_mkdir_path_mode_callback)
