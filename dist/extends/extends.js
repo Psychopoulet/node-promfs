@@ -11,6 +11,8 @@ var isDirectory = require(path.join(__dirname, "_isDirectory.js"));
 
 var copyFile = require(path.join(__dirname, "_copyFile.js"));
 var extractFiles = require(path.join(__dirname, "_extractFiles.js"));
+var readJSONFile = require(path.join(__dirname, "_readJSONFile.js"));
+var writeJSONFile = require(path.join(__dirname, "_writeJSONFile.js"));
 
 var mkdirp = require(path.join(__dirname, "_mkdirp.js"));
 var rmdirp = require(path.join(__dirname, "_rmdirp.js"));
@@ -48,6 +50,18 @@ fs.copyFileProm = copyFile.copyFileProm;
 fs.extractFilesSync = extractFiles.extractFilesSync;
 fs.extractFiles = extractFiles.extractFiles;
 fs.extractFilesProm = extractFiles.extractFilesProm;
+
+// readJSONFile
+
+fs.readJSONFileSync = readJSONFile.readJSONFileSync;
+fs.readJSONFile = readJSONFile.readJSONFile;
+fs.readJSONFileProm = readJSONFile.readJSONFileProm;
+
+// readJSONFile
+
+fs.writeJSONFileSync = writeJSONFile.writeJSONFileSync;
+fs.writeJSONFile = writeJSONFile.writeJSONFile;
+fs.writeJSONFileProm = writeJSONFile.writeJSONFileProm;
 
 // mkdirp
 
