@@ -48,8 +48,13 @@ $ npm install node-promfs
    * ``` extractFilesSync(string directory) : array ```
    * ``` extractFilesProm(string directory) : Promise ``` then(array files)
 
+   [writeJSONFile] : stringify JSON and writeFile
+   * ``` writeJSONFile(string path) ``` callback(ReferenceError|TypeError|Error|null err)
+   * ``` writeJSONFileSync(string path) : void```
+   * ``` writeJSONFileProm(string path) : Promise ```
+
    [readJSONFile] : readFile and parse JSON
-   * ``` readJSONFile(string path) ``` callback(object|array|null)
+   * ``` readJSONFile(string path) ``` callback(ReferenceError|TypeError|Error|null err, object|array|null)
    * ``` readJSONFileSync(string path) : object|array|null ```
    * ``` readJSONFileProm(string path) : Promise ``` then(object|array|null)
 
