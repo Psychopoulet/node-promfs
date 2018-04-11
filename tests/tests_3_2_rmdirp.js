@@ -1,3 +1,7 @@
+/*
+	eslint no-sync: 0
+*/
+
 "use strict";
 
 // deps
