@@ -17,15 +17,16 @@
 	const istanbul = require("gulp-istanbul");
 	const coveralls = require("gulp-coveralls");
 
-	// compilation
-	const babel = require("gulp-babel");
-
 // consts
 
-	const APP_FILES = [ path.join(__dirname, "lib", "**", "*.js") ];
-	const UNITTESTS_FILES = [ path.join(__dirname, "tests", "*.js") ];
+	const ISTRAVIS = (0, process).env.TRAVIS || false;
 
-	const ALL_FILES = [ path.join(__dirname, "gulpfile.js") ].concat(APP_FILES).concat(UNITTESTS_FILES);
+	const APP_FILES = [ path.join(__dirname, "lib", "*.js") ];
+	const UNITTESTS_FILES = [ path.join(__dirname, "tests", "**", "*.js") ];
+
+	const ALL_FILES = [ path.join(__dirname, "gulpfile.js") ]
+		.concat(APP_FILES)
+		.concat(UNITTESTS_FILES);
 
 // tasks
 
@@ -41,7 +42,6 @@
 				},
 				// http://eslint.org/docs/rules/
 				"rules": require(path.join(__dirname, "gulpfile", "eslint", "rules.json"))
-
 			}))
 			.pipe(eslint.format())
 			.pipe(eslint.failAfterError());
@@ -50,32 +50,14 @@
 
 	gulp.task("istanbul", [ "eslint" ], () => {
 
-		return gulp.src(APP_FILES.concat([ "!" + path.join(__dirname, "lib", "main.js") ]))
+		return gulp.src(APP_FILES)
 			.pipe(plumber())
 			.pipe(istanbul({ "includeUntested": true }))
 			.pipe(istanbul.hookRequire());
 
 	});
 
-	gulp.task("coveralls", [ "istanbul" ], () => {
-
-		return gulp.src(path.join(__dirname, "coverage", "lcov.info"))
-			.pipe(plumber())
-			.pipe(coveralls());
-
-	});
-
-	gulp.task("babel", () => {
-
-		return gulp.src(APP_FILES)
-			.pipe(babel({
-				"presets": [ "es2015" ]
-			}))
-			.pipe(gulp.dest(path.join(__dirname, "dist")));
-
-	});
-
-	gulp.task("mocha", [ "coveralls", "babel" ], () => {
+	gulp.task("mocha", [ "istanbul" ], () => {
 
 		return gulp.src(UNITTESTS_FILES)
 			.pipe(plumber())
@@ -84,6 +66,16 @@
 			.pipe(istanbul.enforceThresholds({ "thresholds": { "global": 85 } }));
 
 	});
+
+	gulp.task("coveralls", [ "mocha" ], () => {
+
+		return gulp.src(path.join(__dirname, "coverage", "lcov.info"))
+			.pipe(plumber())
+			.pipe(coveralls());
+
+	});
+
+	gulp.task("tests", [ ISTRAVIS ? "coveralls" : "mocha" ]);
 
 // watcher
 
