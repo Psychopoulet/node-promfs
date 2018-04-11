@@ -4,7 +4,7 @@
   "description": "'fs' object extensions & promisifications",
   "main": "dist/main.js",
   "scripts": {
-    "test": "gulp mocha"
+    "tests": "gulp tests"
   },
   "pre-commit": [
     "test"
