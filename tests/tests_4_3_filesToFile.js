@@ -1,3 +1,7 @@
+/*
+	eslint no-sync: 0
+*/
+
 "use strict";
 
 // deps
@@ -235,30 +239,41 @@ describe("filesToFile", () => {
 
 		});
 
-		it("should concat test files with pattern into a file", (done) => {
+		it("should concat test files with pattern into a file", () => {
 
-			fs.writeFile(FILE_TEST3, "test3", (err) => {
+			return new Promise((resolve, reject) => {
 
-				assert.strictEqual(null, err, "test files with pattern cannot be concatened");
+				fs.writeFile(FILE_TEST3, "test3", (err) => {
+					return err ? reject(err) : resolve();
+				});
 
-				fs.filesToFile([ FILE_TEST, FILE_TEST, FILE_TEST3 ], FILE_TEST2, " -- [{{filename}}] -- ", (_err) => {
+			}).then(() => {
 
-					assert.strictEqual(null, _err, "test files with pattern cannot be concatened");
+				return new Promise((resolve, reject) => {
 
-					fs.readFile(FILE_TEST2, "utf8", (__err, content) => {
-
-						assert.strictEqual(null, __err, "test files cannot be concatened");
-						assert.strictEqual(
-							" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
-							content,
-							"test files with pattern cannot be concatened"
-						);
-
-						done();
-
+					fs.filesToFile([ FILE_TEST, FILE_TEST, FILE_TEST3 ], FILE_TEST2, " -- [{{filename}}] -- ", (err) => {
+						return err ? reject(err) : resolve();
 					});
 
 				});
+
+			}).then(() => {
+
+				return new Promise((resolve, reject) => {
+
+					fs.readFile(FILE_TEST2, "utf8", (err, content) => {
+						return err ? reject(err) : resolve(content);
+					});
+
+				});
+
+			}).then((content) => {
+
+				assert.strictEqual(
+					" -- [test.txt] -- test -- [test.txt] -- test -- [test3.txt] -- test3",
+					content,
+					"test files with pattern cannot be concatened"
+				);
 
 			});
 
