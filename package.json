@@ -1,13 +1,14 @@
 {
   "name": "node-promfs",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "'fs' object extensions & promisifications",
   "main": "lib/main.js",
+  "typings": "lib/index.d.ts",
   "scripts": {
     "tests": "gulp tests"
   },
-  "pre-commit": [
-    "test"
+  "pre-push": [
+    "tests"
   ],
   "repository": {
     "type": "git",
@@ -39,13 +40,14 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "gulp": "3.9.1",
-    "gulp-plumber": "1.1.0",
-    "gulp-eslint": "4.0.0",
-    "gulp-mocha": "3.0.1",
-    "gulp-istanbul": "1.1.2",
+    "@types/node": "9.6.7",
+    "gulp": "4.0.0",
     "gulp-coveralls": "0.1.4",
-    "pre-commit": "1.2.2"
+    "gulp-eslint": "4.0.2",
+    "gulp-istanbul": "1.1.3",
+    "gulp-mocha": "3.0.1",
+    "gulp-plumber": "1.2.0",
+    "pre-push": "0.1.1"
   },
   "homepage": "https://github.com/Psychopoulet/node-promfs#readme",
   "engines": {

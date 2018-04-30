@@ -1,5 +1,5 @@
 /*
-	eslint max-nested-callbacks: 0
+	eslint max-nested-callbacks: 0, no-sync: 0
 */
 
 "use strict";
@@ -31,6 +31,52 @@ describe("filesToStream", () => {
 
 	after(() => {
 		return fs.rmdirpProm(DIR_TESTBASE);
+	});
+
+	describe("sync", () => {
+
+		it("should check missing value", () => {
+
+			assert.throws(() => {
+				fs.filesToStreamSync();
+			}, ReferenceError, "check missing \"files\" value does not throw an error");
+
+		});
+
+		it("should check invalid value", () => {
+
+			assert.throws(() => {
+				fs.filesToStreamSync(false);
+			}, TypeError, "check invalid \"files\" value does not throw an error");
+
+		});
+
+		it("should concat files", (done) => {
+
+			const r = fs.filesToStreamSync([ FILE_TEST ]);
+
+			assert.strictEqual(typeof r, "object", "files cannot be concatened");
+			assert.strictEqual(r instanceof Transform, true, "files cannot be concatened");
+
+			r.on("close", () => {
+				done();
+			});
+
+		});
+
+		it("should concat files with pattern", (done) => {
+
+			const r = fs.filesToStreamSync([ FILE_TEST, " -- [{{filename}}] -- " ]);
+
+			assert.strictEqual(typeof r, "object", "files cannot be concatened");
+			assert.strictEqual(r instanceof Transform, true, "files cannot be concatened");
+
+			r.on("close", () => {
+				done();
+			});
+
+		});
+
 	});
 
 	describe("async", () => {

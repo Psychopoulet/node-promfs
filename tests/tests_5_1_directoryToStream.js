@@ -1,3 +1,7 @@
+/*
+	eslint no-sync: 0
+*/
+
 "use strict";
 
 // deps
@@ -30,6 +34,68 @@ describe("directoryToStream", () => {
 
 	after(() => {
 		return fs.rmdirpProm(DIR_TESTBASE);
+	});
+
+	describe("sync", () => {
+
+		it("should check missing value", () => {
+
+			assert.throws(() => {
+				fs.directoryToStreamSync();
+			}, ReferenceError, "check missing \"directory\" value does not throw an error");
+
+		});
+
+		it("should check invalid value", () => {
+
+			assert.throws(() => {
+				fs.directoryToStreamSync(false);
+			}, TypeError, "check invalid \"directory\" value does not throw an error");
+
+		});
+
+		it("should concat empty directory", () => {
+
+			assert.throws(() => {
+				fs.directoryToStreamSync("");
+			}, Error, "check empty \"directory\" value does not throw an error");
+
+		});
+
+		it("should concat wrong directory", () => {
+
+			assert.throws(() => {
+				fs.directoryToStreamSync(DIR_TESTBASE + "t");
+			}, Error, "check invalid \"files\" value does not throw an error");
+
+		});
+
+		it("should concat directory", (done) => {
+
+			const r = fs.directoryToStreamSync(DIR_TESTBASE);
+
+			assert.strictEqual(typeof r, "object", "directory cannot be concatened");
+			assert.strictEqual(r instanceof Transform, true, "directory cannot be concatened");
+
+			r.on("close", () => {
+				done();
+			});
+
+		});
+
+		it("should concat directory with pattern", (done) => {
+
+			const r = fs.directoryToStreamSync(DIR_TESTBASE, " -- [{{filename}}] -- ");
+
+			assert.strictEqual(typeof r, "object", "directory cannot be concatened");
+			assert.strictEqual(r instanceof Transform, true, "directory cannot be concatened");
+
+			r.on("close", () => {
+				done();
+			});
+
+		});
+
 	});
 
 	describe("async", () => {
