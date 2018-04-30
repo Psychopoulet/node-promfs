@@ -1,9 +1,10 @@
 # node-promfs
 'fs' object extensions & promisifications
 
-[![Build Status](https://api.travis-ci.org/Psychopoulet/node-promfs.svg?branch=develop)](https://travis-ci.org/Psychopoulet/node-promfs)
-[![Coverage Status](https://coveralls.io/repos/github/Psychopoulet/node-promfs/badge.svg?branch=develop)](https://coveralls.io/github/Psychopoulet/node-promfs)
-[![Dependency Status](https://img.shields.io/david/Psychopoulet/node-promfs/develop.svg)](https://github.com/Psychopoulet/node-promfs)
+[![Build Status](https://api.travis-ci.org/Psychopoulet/node-promfs.svg?branch=master)](https://travis-ci.org/Psychopoulet/node-promfs)
+[![Coverage Status](https://coveralls.io/repos/github/Psychopoulet/node-promfs/badge.svg?branch=master)](https://coveralls.io/github/Psychopoulet/node-promfs)
+[![Dependency Status](https://david-dm.org/Psychopoulet/node-promfs/status.svg)](https://david-dm.org/Psychopoulet/node-promfs)
+[![Dev dependency Status](https://david-dm.org/Psychopoulet/node-promfs/dev-status.svg)](https://david-dm.org/Psychopoulet/node-promfs?type=dev)
 
 ## Installation
 
@@ -23,82 +24,95 @@ $ npm install node-promfs
 
 ## Doc
 
+```typescript
+type iError = ReferenceError|TypeError|Error|null;
+```
+
 ### -- Extended --
 
 > in "separator" parameter, you can use "{{filename}}" pattern, it will be replaced by the file's basename (ex : separator = "\r\n\r\n--- {{filename}} ---\r\n\r\n")
 
    [isFile] : does the file exists and is a regular file ?
-   * ``` isFile(string path) ``` callback(ReferenceError|TypeError|Error|null err, bool exists)
-   * ``` isFileSync(string path) : bool ```
-   * ``` isFileProm(string path) : Promise ``` then(bool exists)
+   * ``` isFile(file: string, callback: (err: iError, exists: boolean) => void): void ```
+   * ``` isFileSync(file: string): boolean ```
+   * ``` isFileProm(file: string) : Promise<boolean> ```
 
    [isDirectory] : does the file exists and is a directory ?
-   * ``` isDirectory(string path) ``` callback(ReferenceError|TypeError|Error|null err, bool exists)
-   * ``` isDirectorySync(string path) : bool ```
-   * ``` isDirectoryProm(string path) : Promise ``` then(bool exists)
+   * ``` isDirectory(dir: string, callback: (err: iError, exists: boolean) => void): void ```
+   * ``` isDirectorySync(dir: string): boolean ```
+   * ``` isDirectoryProm(dir: string) : Promise<boolean> ```
 
 
   [copyFile] : copy a file with streams (copy then control with isFile)
-   * ``` copyFile(string origin, string origin, function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` copyFileSync(string origin, string origin) : void ```
-   * ``` copyFileProm(string origin, string origin) : Promise ```
+   * ``` copyFile(origin: string, target: string, callback: (err: iError) => void): void ```
+   * ``` copyFileSync(origin: string, target: string): void ```
+   * ``` copyFileProm(origin: string, target: string) : Promise<void> ```
 
    [extractFiles] : return only files from a directory
-   * ``` extractFiles(string directory, function callback) ``` callback(ReferenceError|TypeError|Error|null err, array files)
-   * ``` extractFilesSync(string directory) : array ```
-   * ``` extractFilesProm(string directory) : Promise ``` then(array files)
+   * ``` extractFiles(dir: string, callback: (err: iError,  files: Array<string>) => void): void ```
+   * ``` extractFilesSync(dir: string): Array<string> ```
+   * ``` extractFilesProm(dir: string) : Promise<Array<string>> ```
 
    [writeJSONFile] : stringify JSON and writeFile
-   * ``` writeJSONFile(string path) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` writeJSONFileSync(string path) : void```
-   * ``` writeJSONFileProm(string path) : Promise ```
+   * ``` writeJSONFile(file: string, data: any, callback: (err: iError) => void): void ```
+   * ``` writeJSONFileSync(file: string, data: any): void ```
+   * ``` writeJSONFileProm(file: string, data: any) : Promise<void> ```
 
    [readJSONFile] : readFile and parse JSON
-   * ``` readJSONFile(string path) ``` callback(ReferenceError|TypeError|Error|null err, object|array|null)
-   * ``` readJSONFileSync(string path) : object|array|null ```
-   * ``` readJSONFileProm(string path) : Promise ``` then(object|array|null)
+   * ``` readJSONFile(file: string, callback: (err: iError, data: any) => void): void ```
+   * ``` readJSONFileSync(file: string): any ```
+   * ``` readJSONFileProm(file: string) : Promise<any> ```
 
 
    [mkdirp] : recursively create a directory
    * The arguments are the same as [the official documentation's ones for mkdir & mkdirSync](https://nodejs.org/api/fs.html#fs_fs_mkdir_path_mode_callback)
-   * ``` mkdirp(string path [, int mode], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` mkdirpSync(string path [, int mode]) : void ```
-   * ``` mkdirpProm(string path [, int mode]) : Promise ```
+   * ``` mkdirp(path: string, callback: (err: iError, data: any) => void): void ```
+   * ``` mkdirp(path: string, mode: number, callback: (err: iError, data: any) => void): void ```
+   * ``` mkdirpSync(path: string, mode?: number): void ```
+   * ``` mkdirpProm(path: string, mode?: number): Promise<void> ```
 
    [rmdirp] : recursively delete a directory
-   * ``` rmdirp(string path) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` rmdirpSync(string path) : void ```
-   * ``` rmdirpProm(string path) : Promise ```
+   * ``` rmdirp(path: string, callback: (err: iError) => void): void ```
+   * ``` rmdirpSync(path: string): void ```
+   * ``` rmdirpProm(path: string): Promise<void> ```
 
 
    [filesToStream] : converge files content in a Readable stream
-   * ``` filesToStream(array files [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, Transform stream)
-   * ``` filesToStreamProm(array files [ , string separator = " " ]) : Promise ``` then(Transform stream)
+   * ``` filesToStream(files: Array<string>, callback: (err: iError, Transform) => void): void ```
+   * ``` filesToStream(files: Array<string>, separator: string, callback: (err: iError, data: Transform) => void): void ```
+   * ``` filesToStreamSync(path: string, separator?: string): Transform ```
+   * ``` filesToStreamProm(path: string, separator?: string): Promise<Transform> ```
 
    [filesToString] : concat files content in a string
-   * ``` filesToString(array files [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
-   * ``` filesToStringSync(array files [ , string separator = " " ]) : string ```
-   * ``` filesToStringProm(array files [ , string separator = " " ]) : Promise ``` then(string content)
+   * ``` filesToString(files: Array<string>, callback: (err: iError, data: string) => void): void ```
+   * ``` filesToString(files: Array<string>, separator: string, callback: (err: iError, data: string) => void): void ```
+   * ``` filesToStringSync(files: Array<string>, separator?: string): string ```
+   * ``` filesToStringProm(files: Array<string>, separator?: string): Promise<string> ```
 
    [filesToFile] : concat files content in a file with streams
-   * ``` filesToFile(array files, string targetPath [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` filesToFileSync(array files, string targetPath [ , string separator = " " ]) : void ```
-   * ``` filesToFileProm(array files, string targetPath [ , string separator = " " ]) : Promise ```
+   * ``` filesToFile(files: Array<string>, file: string, callback: (err: iError) => void): void ```
+   * ``` filesToFile(files: Array<string>, file: string, separator: string, callback: (err: iError) => void): void ```
+   * ``` filesToFileSync(files: Array<string>, file: string, separator?: string): void ```
+   * ``` filesToFileProm(files: Array<string>, file: string, separator?: string): Promise<void> ```
 
 
    [directoryToStream] : converge directory's files content in a Readable stream
-   * ``` directoryToStream(string directory [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content, Transform stream)
-   * ``` directoryToStreamProm(string directory [ , string separator = " " ]) : Promise ``` then(Transform stream)
+   * ``` directoryToStream(directory: string, file: string, callback: (err: iError, data: Transform) => void): void ```
+   * ``` directoryToStream(directory: string, separator: string, callback: (err: iError, data: Transform) => void): void ```
+   * ``` directoryToStreamSync(directory: string, file: string, separator?: string): Transform ```
+   * ``` directoryToStreamProm(directory: string, file: string, separator?: string): Promise<Transform> ```
 
    [directoryToString] : concat directory's files content in a string
-   * ``` directoryToString(string directory [ , string encoding = "utf8" [ , string separator = " " ] ], function callback) ``` callback(ReferenceError|TypeError|Error|null err, string content)
-   * ``` directoryToStringSync(string directory [ , string encoding = "utf8" [ , string separator = " " ] ]) : string ```
-   * ``` directoryToStringProm(string directory [ , string encoding = "utf8" [ , string separator = " " ] ]) : Promise ``` then(string content)
+   * ``` directoryToString(directory: string, callback: (err: iError, data: Transform) => void): void ```
+   * ``` directoryToString(directory: string, separator: string, callback: (err: iError, data: Transform) => void): void ```
+   * ``` directoryToStringSync(directory: string, separator?: string): Transform ```
+   * ``` directoryToStringProm(directory: string, separator?: string): Promise<Transform> ```
 
    [directoryToFile] : concat directory's files content in a file
-   * ``` directoryToFile(string directory, string file [ , string separator = " " ], function callback) ``` callback(ReferenceError|TypeError|Error|null err)
-   * ``` directoryToFileSync(string directory, string file [ , string separator = " " ]) : void ```
-   * ``` directoryToFileProm(string directory, string file [ , string separator = " " ]) : Promise ```
+   * ``` directoryToFile(directory: string, file: string, callback: (err: iError) => void): void ```
+   * ``` directoryToFile(directory: string, file: string, separator: string, callback: (err: iError) => void) ```
+   * ``` directoryToFileSync(directory: string, file: string, separator?: string): void ```
+   * ``` directoryToFileProm(directory: string, file: string, separator?: string): Promise<void> ```
 
 
 ### -- Classical --
@@ -134,6 +148,22 @@ $ npm install node-promfs
   * ``` utimesProm() : Promise ```
   * ``` writeProm() : Promise ```
   * ``` writeFileProm() : Promise``` -> tested
+
+## Import
+
+### Native
+
+```javascript
+const fs = require("node-promfs");
+const { readJSONFileProm } = require("node-promfs");
+```
+
+### Typescript
+
+```typescript
+import * as fs from "node-promfs";
+import { readJSONFileProm } from "node-promfs";
+```
 
 ## Tests
 
