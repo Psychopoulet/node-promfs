@@ -161,8 +161,7 @@ const { readJSONFileProm } = require("node-promfs");
 ### Typescript
 
 ```typescript
-import * as fs from "node-promfs";
-import { readJSONFileProm } from "node-promfs";
+import fs = require("node-promfs");
 ```
 
 ## Tests
