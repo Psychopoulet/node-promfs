@@ -14,6 +14,8 @@
 
 // consts
 
+	const TEST_OPTION = 0o755;
+
 	const DIR_TESTBASE = join(homedir(), "testlvl1");
 		const DIR_TESTLVL2 = join(DIR_TESTBASE, "testlvl2");
 			const DIR_TESTLVL3 = join(DIR_TESTLVL2, "testlvl3");
@@ -74,7 +76,7 @@ describe("mkdirp", () => {
 			}, "\"" + CURRENT_DIRECTORY + "\" cannot be created");
 
 			assert.doesNotThrow(() => {
-				fs.mkdirpSync(CURRENT_DIRECTORY, 0x755);
+				fs.mkdirpSync(CURRENT_DIRECTORY, TEST_OPTION);
 			}, "\"" + CURRENT_DIRECTORY + "\" cannot be created");
 
 		});
@@ -92,7 +94,7 @@ describe("mkdirp", () => {
 		it("should create real new directory with option", () => {
 
 			assert.doesNotThrow(() => {
-				fs.mkdirpSync(DIR_TESTLVL3_WITHOPTIONS, 0x755);
+				fs.mkdirpSync(DIR_TESTLVL3_WITHOPTIONS, TEST_OPTION);
 			}, "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" cannot be created");
 
 			assert.strictEqual(true, fs.isDirectorySync(DIR_TESTLVL3_WITHOPTIONS), "\"" + DIR_TESTLVL3_WITHOPTIONS + "\" was not created");
@@ -153,7 +155,7 @@ describe("mkdirp", () => {
 
 				assert.strictEqual(null, err, "\"" + CURRENT_DIRECTORY + "\" cannot be created");
 
-				fs.mkdirp(__dirname, 0x755, (_err) => {
+				fs.mkdirp(__dirname, TEST_OPTION, (_err) => {
 					assert.strictEqual(null, _err, "\"" + CURRENT_DIRECTORY + "\" cannot be created");
 					done();
 				});
@@ -185,7 +187,7 @@ describe("mkdirp", () => {
 
 			return new Promise((resolve, reject) => {
 
-				fs.mkdirp(DIR_TESTLVL3_WITHOPTIONS, 0x777, (err) => {
+				fs.mkdirp(DIR_TESTLVL3_WITHOPTIONS, TEST_OPTION, (err) => {
 					return err ? reject(err) : resolve();
 				});
 
@@ -253,10 +255,6 @@ describe("mkdirp", () => {
 			return fs.mkdirpProm(__dirname);
 		});
 
-		it("should create real new directory with option", () => {
-			return fs.mkdirpProm(__dirname, 0x777);
-		});
-
 		it("should create real new directory", () => {
 
 			return fs.mkdirpProm(DIR_TESTLVL3).then(() => {
@@ -269,7 +267,7 @@ describe("mkdirp", () => {
 
 		it("should create real new directory with option", () => {
 
-			return fs.mkdirpProm(DIR_TESTLVL3_WITHOPTIONS, 0x777).then(() => {
+			return fs.mkdirpProm(DIR_TESTLVL3_WITHOPTIONS, TEST_OPTION).then(() => {
 				return fs.isDirectoryProm(DIR_TESTLVL3_WITHOPTIONS);
 			}).then((exists) => {
 				return exists ? Promise.resolve() : Promise.reject(new Error("real new directory is not generated"));
