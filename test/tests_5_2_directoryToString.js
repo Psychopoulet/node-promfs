@@ -8,14 +8,15 @@
 
 	const { join } = require("path");
 	const assert = require("assert");
+	const { homedir } = require("os");
 
 	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
 
-	const DIR_TESTBASE = join(__dirname, "testlvl1");
-	const DIR_TESTBASE2 = join(__dirname, "testlvl2");
-	const FILE_TEST = join(DIR_TESTBASE, "test.txt");
+	const DIR_TESTBASE = join(homedir(), "testlvl1");
+		const FILE_TEST = join(DIR_TESTBASE, "test.txt");
+	const DIR_TESTBASE2 = join(homedir(), "testlvl2");
 
 // tests
 

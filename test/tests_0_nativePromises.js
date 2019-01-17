@@ -1,21 +1,27 @@
 /*
 	eslint no-sync: 0
 */
+/*
+	eslint max-lines: 0
+*/
 
 "use strict";
 
 // deps
 
+	// natives
 	const { join } = require("path");
 	const assert = require("assert");
+	const { homedir } = require("os");
 
+	// locals
 	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
 
-	const DIR_TESTBASE = join(__dirname, "testlvl1");
-	const FILE_TEST = join(__dirname, "test.txt");
-	const FILE_TEST2 = join(__dirname, "test2.txt");
+	const DIR_TESTBASE = join(homedir(), "testlvl1");
+	const FILE_TEST = join(homedir(), "test.txt");
+	const FILE_TEST2 = join(homedir(), "test2.txt");
 
 // tests
 
