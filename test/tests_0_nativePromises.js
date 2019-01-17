@@ -1,14 +1,19 @@
 /*
 	eslint no-sync: 0
 */
+/*
+	eslint max-lines: 0
+*/
 
 "use strict";
 
 // deps
 
+	// natives
 	const { join } = require("path");
 	const assert = require("assert");
 
+	// locals
 	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts

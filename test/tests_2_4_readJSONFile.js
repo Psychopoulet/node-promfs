@@ -6,20 +6,22 @@
 
 // deps
 
+	// natives
 	const assert = require("assert");
 
+	// locals
 	const fs = require(require("path").join(__dirname, "..", "lib", "main.js"));
 
 // tests
 
-describe("isFile", () => {
+describe("readJSONFile", () => {
 
 	describe("sync", () => {
 
 		it("should check missing value", () => {
 
 			assert.throws(() => {
-				fs.isFileSync();
+				fs.readJSONFileSync();
 			}, ReferenceError, "check missing \"file\" value does not throw an error");
 
 		});
@@ -27,7 +29,7 @@ describe("isFile", () => {
 		it("should check invalid value", () => {
 
 			assert.throws(() => {
-				fs.isFileSync(false);
+				fs.readJSONFileSync(false);
 			}, TypeError, "check invalid \"file\" value does not throw an error");
 
 		});
@@ -35,28 +37,24 @@ describe("isFile", () => {
 		it("should check empty value", () => {
 
 			assert.throws(() => {
-				fs.isFileSync("");
+				fs.readJSONFileSync("");
 			}, Error, "check empty \"file\" value does not throw an error");
 
 		});
 
 		it("should check inexistant file", () => {
 
-			assert.doesNotThrow(() => {
-				fs.isFileSync("rgvservseqrvserv");
+			assert.throws(() => {
+				fs.readJSONFileSync("rgvservseqrvserv");
 			}, "file cannot be tested");
-
-			assert.strictEqual(false, fs.isFileSync("rgvservseqrvserv"), "wrong file test has not the right value");
 
 		});
 
-		it("should check real file existance", () => {
+		it("should check not JSON file", () => {
 
-			assert.doesNotThrow(() => {
-				fs.isFileSync(__filename);
-			}, "file cannot be tested");
-
-			assert.strictEqual(true, fs.isFileSync(__filename), "right file test has not the right value");
+			assert.throws(() => {
+				fs.readJSONFileSync(__filename);
+			}, "not JSON file cannot be tested");
 
 		});
 
@@ -67,11 +65,11 @@ describe("isFile", () => {
 		it("should check missing value", () => {
 
 			assert.throws(() => {
-				fs.isFile();
+				fs.readJSONFile();
 			}, ReferenceError, "check missing \"file\" value does not throw an error");
 
 			assert.throws(() => {
-				fs.isFile(__filename);
+				fs.readJSONFile(__filename);
 			}, ReferenceError, "check missing \"callback\" value does not throw an error");
 
 		});
@@ -79,13 +77,13 @@ describe("isFile", () => {
 		it("should check invalid value", () => {
 
 			assert.throws(() => {
-				fs.isFile(false, () => {
+				fs.readJSONFile(false, () => {
 					// nothing to do here
 				});
 			}, TypeError, "check invalid \"file\" value does not throw an error");
 
 			assert.throws(() => {
-				fs.isFile(__filename, false);
+				fs.readJSONFile(__filename, false);
 			}, TypeError, "check invalid \"callback\" value does not throw an error");
 
 		});
@@ -93,7 +91,7 @@ describe("isFile", () => {
 		it("should check empty value", () => {
 
 			assert.throws(() => {
-				fs.isFile("", __filename, () => {
+				fs.readJSONFile("", __filename, () => {
 					// nothing to do here
 				});
 			}, Error, "check empty \"file\" value does not throw an error");
@@ -102,10 +100,10 @@ describe("isFile", () => {
 
 		it("should check inexistant file", (done) => {
 
-			fs.isFile("rgvservseqrvserv", (err, exists) => {
+			fs.readJSONFile("rgvservseqrvserv", (err) => {
 
-				assert.strictEqual(null, err, "file cannot be tested");
-				assert.strictEqual(false, exists, "wrong file test has not the right value");
+				assert.strictEqual(true, err instanceof Error, "check inexistant \"file\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check inexistant \"file\" value does not generate a valid error");
 
 				done();
 
@@ -113,12 +111,12 @@ describe("isFile", () => {
 
 		});
 
-		it("should copy test files", (done) => {
+		it("should test not JSON file", (done) => {
 
-			fs.isFile(__filename, (err, exists) => {
+			fs.readJSONFile(__filename, (err) => {
 
-				assert.strictEqual(null, err, "file cannot be tested");
-				assert.strictEqual(true, exists, "right file test has not the right value");
+				assert.strictEqual(true, err instanceof Error, "check not JSON \"file\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check not JSON \"file\" value does not generate a valid error");
 
 				done();
 
@@ -132,7 +130,7 @@ describe("isFile", () => {
 
 		it("should check missing value", (done) => {
 
-			fs.isFileProm().then(() => {
+			fs.readJSONFileProm().then(() => {
 				done("check missing \"file\" value does not generate an error");
 			}).catch((err) => {
 
@@ -147,7 +145,7 @@ describe("isFile", () => {
 
 		it("should check invalid value", (done) => {
 
-			fs.isFileProm(false, __filename).then(() => {
+			fs.readJSONFileProm(false, __filename).then(() => {
 				done("check invalid \"file\" value does not generate an error");
 			}).catch((err) => {
 
@@ -162,7 +160,7 @@ describe("isFile", () => {
 
 		it("should check empty value", (done) => {
 
-			fs.isFileProm("", __filename).then(() => {
+			fs.readJSONFileProm("", __filename).then(() => {
 				done("check empty \"file\" value does not generate an error");
 			}).catch((err) => {
 
@@ -175,20 +173,32 @@ describe("isFile", () => {
 
 		});
 
-		it("should check inexistant file", () => {
+		it("should check inexistant file", (done) => {
 
-			return fs.isFileProm("rgvservseqrvserv").then((exists) => {
-				assert.strictEqual(false, exists, "wrong file test has not the right value");
-				return Promise.resolve();
+			fs.readJSONFileProm("rgvservseqrvserv").then(() => {
+				done("check inexistant \"file\" value does not generate an error");
+			}).catch((err) => {
+
+				assert.strictEqual(true, err instanceof Error, "check inexistant \"file\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check inexistant \"file\" value does not generate a valid error");
+
+				done();
+
 			});
 
 		});
 
-		it("should copy test files", () => {
+		it("should test not JSON file", (done) => {
 
-			return fs.isFileProm(__filename).then((exists) => {
-				assert.strictEqual(true, exists, "right file test has not the right value");
-				return Promise.resolve();
+			fs.readJSONFileProm(__filename).then(() => {
+				done("check not JSON \"file\" value does not generate an error");
+			}).catch((err) => {
+
+				assert.strictEqual(true, err instanceof Error, "check not JSON \"file\" value does not generate a valid error");
+				assert.strictEqual("string", typeof err.message, "check not JSON \"file\" value does not generate a valid error");
+
+				done();
+
 			});
 
 		});

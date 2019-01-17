@@ -6,28 +6,43 @@
 
 // deps
 
+	// natives
 	const assert = require("assert");
+	const { join } = require("path");
 
-	const fs = require(require("path").join(__dirname, "..", "lib", "main.js"));
+	// locals
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
+
+// consts
+
+	const TEST_FILE = join(__dirname, "test.json");
 
 // tests
 
-describe("readJSONFile", () => {
+describe("writeJSONFile", () => {
+
+	afterEach(() => {
+		return fs.unlinkProm(TEST_FILE);
+	});
 
 	describe("sync", () => {
 
 		it("should check missing value", () => {
 
 			assert.throws(() => {
-				fs.readJSONFileSync();
+				fs.writeJSONFileSync();
 			}, ReferenceError, "check missing \"file\" value does not throw an error");
+
+			assert.throws(() => {
+				fs.writeJSONFileSync("test");
+			}, ReferenceError, "check missing \"data\" value does not throw an error");
 
 		});
 
 		it("should check invalid value", () => {
 
 			assert.throws(() => {
-				fs.readJSONFileSync(false);
+				fs.writeJSONFileSync(false);
 			}, TypeError, "check invalid \"file\" value does not throw an error");
 
 		});
@@ -35,24 +50,23 @@ describe("readJSONFile", () => {
 		it("should check empty value", () => {
 
 			assert.throws(() => {
-				fs.readJSONFileSync("");
+				fs.writeJSONFileSync("");
 			}, Error, "check empty \"file\" value does not throw an error");
 
 		});
 
-		it("should check inexistant file", () => {
+		it("should check normal running", () => {
 
-			assert.throws(() => {
-				fs.readJSONFileSync("rgvservseqrvserv");
-			}, "file cannot be tested");
+			assert.doesNotThrow(() => {
 
-		});
+				fs.writeJSONFileSync(TEST_FILE, { "test": "" });
 
-		it("should check not JSON file", () => {
+				assert.deepStrictEqual({ "test": "" }, fs.readJSONFileSync(TEST_FILE), "normal running does not return valid data");
 
-			assert.throws(() => {
-				fs.readJSONFileSync(__filename);
-			}, "not JSON file cannot be tested");
+				// for code coverage
+				fs.writeJSONFileSync(TEST_FILE, { "test": "" });
+
+			}, Error, "check normal running throws an error");
 
 		});
 
@@ -63,11 +77,15 @@ describe("readJSONFile", () => {
 		it("should check missing value", () => {
 
 			assert.throws(() => {
-				fs.readJSONFile();
+				fs.writeJSONFile();
 			}, ReferenceError, "check missing \"file\" value does not throw an error");
 
 			assert.throws(() => {
-				fs.readJSONFile(__filename);
+				fs.writeJSONFile(__filename);
+			}, ReferenceError, "check missing \"data\" value does not throw an error");
+
+			assert.throws(() => {
+				fs.writeJSONFile(__filename, null);
 			}, ReferenceError, "check missing \"callback\" value does not throw an error");
 
 		});
@@ -75,13 +93,13 @@ describe("readJSONFile", () => {
 		it("should check invalid value", () => {
 
 			assert.throws(() => {
-				fs.readJSONFile(false, () => {
+				fs.writeJSONFile(false, () => {
 					// nothing to do here
 				});
 			}, TypeError, "check invalid \"file\" value does not throw an error");
 
 			assert.throws(() => {
-				fs.readJSONFile(__filename, false);
+				fs.writeJSONFile(__filename, null, false);
 			}, TypeError, "check invalid \"callback\" value does not throw an error");
 
 		});
@@ -89,34 +107,28 @@ describe("readJSONFile", () => {
 		it("should check empty value", () => {
 
 			assert.throws(() => {
-				fs.readJSONFile("", __filename, () => {
+				fs.writeJSONFile("", null, () => {
 					// nothing to do here
 				});
 			}, Error, "check empty \"file\" value does not throw an error");
 
 		});
 
-		it("should check inexistant file", (done) => {
+		it("should check normal running", (done) => {
 
-			fs.readJSONFile("rgvservseqrvserv", (err) => {
+			fs.writeJSONFile(TEST_FILE, { "test": "" }, (err) => {
 
-				assert.strictEqual(true, err instanceof Error, "check inexistant \"file\" value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check inexistant \"file\" value does not generate a valid error");
+				assert.strictEqual(null, err, "check normal running generate an error");
 
-				done();
+				fs.readJSONFile(TEST_FILE, (_err, data) => {
 
-			});
+					assert.strictEqual(null, _err, "check normal running generate an error");
+					assert.deepStrictEqual({ "test": "" }, data, "normal running does not return valid data");
 
-		});
+					// for code coverage
+					fs.writeJSONFile(TEST_FILE, { "test": "" }, done);
 
-		it("should test not JSON file", (done) => {
-
-			fs.readJSONFile(__filename, (err) => {
-
-				assert.strictEqual(true, err instanceof Error, "check not JSON \"file\" value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check not JSON \"file\" value does not generate a valid error");
-
-				done();
+				});
 
 			});
 
@@ -128,7 +140,7 @@ describe("readJSONFile", () => {
 
 		it("should check missing value", (done) => {
 
-			fs.readJSONFileProm().then(() => {
+			fs.writeJSONFileProm().then(() => {
 				done("check missing \"file\" value does not generate an error");
 			}).catch((err) => {
 
@@ -143,7 +155,7 @@ describe("readJSONFile", () => {
 
 		it("should check invalid value", (done) => {
 
-			fs.readJSONFileProm(false, __filename).then(() => {
+			fs.writeJSONFileProm(false, null).then(() => {
 				done("check invalid \"file\" value does not generate an error");
 			}).catch((err) => {
 
@@ -158,7 +170,7 @@ describe("readJSONFile", () => {
 
 		it("should check empty value", (done) => {
 
-			fs.readJSONFileProm("", __filename).then(() => {
+			fs.writeJSONFileProm("", null).then(() => {
 				done("check empty \"file\" value does not generate an error");
 			}).catch((err) => {
 
@@ -171,31 +183,17 @@ describe("readJSONFile", () => {
 
 		});
 
-		it("should check inexistant file", (done) => {
+		it("should check normal running", () => {
 
-			fs.readJSONFileProm("rgvservseqrvserv").then(() => {
-				done("check inexistant \"file\" value does not generate an error");
-			}).catch((err) => {
+			return fs.writeJSONFileProm(TEST_FILE, { "test": "" }).then(() => {
 
-				assert.strictEqual(true, err instanceof Error, "check inexistant \"file\" value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check inexistant \"file\" value does not generate a valid error");
+				return fs.readJSONFileProm(TEST_FILE).then((data) => {
 
-				done();
+					assert.deepStrictEqual({ "test": "" }, data, "normal running does not return valid data");
 
-			});
+					return Promise.resolve();
 
-		});
-
-		it("should test not JSON file", (done) => {
-
-			fs.readJSONFileProm(__filename).then(() => {
-				done("check not JSON \"file\" value does not generate an error");
-			}).catch((err) => {
-
-				assert.strictEqual(true, err instanceof Error, "check not JSON \"file\" value does not generate a valid error");
-				assert.strictEqual("string", typeof err.message, "check not JSON \"file\" value does not generate a valid error");
-
-				done();
+				});
 
 			});
 

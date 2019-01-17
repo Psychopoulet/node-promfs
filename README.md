@@ -1,10 +1,12 @@
 # node-promfs
 'fs' object extensions & promisifications
 
-[![Build Status](https://api.travis-ci.org/Psychopoulet/node-promfs.svg?branch=master)](https://travis-ci.org/Psychopoulet/node-promfs)
-[![Coverage Status](https://coveralls.io/repos/github/Psychopoulet/node-promfs/badge.svg?branch=master)](https://coveralls.io/github/Psychopoulet/node-promfs)
-[![Dependency Status](https://david-dm.org/Psychopoulet/node-promfs/status.svg)](https://david-dm.org/Psychopoulet/node-promfs)
-[![Dev dependency Status](https://david-dm.org/Psychopoulet/node-promfs/dev-status.svg)](https://david-dm.org/Psychopoulet/node-promfs?type=dev)
+[![Build status](https://api.travis-ci.org/Psychopoulet/node-promfs.svg?branch=master)](https://travis-ci.org/Psychopoulet/node-promfs)
+[![Coverage status](https://coveralls.io/repos/github/Psychopoulet/node-promfs/badge.svg?branch=master)](https://coveralls.io/github/Psychopoulet/node-promfs)
+[![Dependency status](https://david-dm.org/Psychopoulet/node-promfs/status.svg)](https://david-dm.org/Psychopoulet/node-promfs)
+[![Dev dependency status](https://david-dm.org/Psychopoulet/node-promfs/dev-status.svg)](https://david-dm.org/Psychopoulet/node-promfs?type=dev)
+[![Issues](https://img.shields.io/github/issues/Psychopoulet/node-promfs.svg)](https://github.com/Psychopoulet/node-promfs/issues)
+[![Pull requests](https://img.shields.io/github/issues-pr/Psychopoulet/node-promfs.svg)](https://github.com/Psychopoulet/node-promfs/pulls)
 
 ## Installation
 
@@ -167,7 +169,7 @@ import fs = require("node-promfs");
 ## Tests
 
 ```bash
-$ gulp
+$ npm run-script tests
 ```
 
 ## License
