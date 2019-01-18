@@ -1,3 +1,7 @@
+/*
+	eslint no-unreachable: 0
+*/
+
 "use strict";
 
 // deps
@@ -43,7 +47,7 @@ module.exports = (showDetails, cmd, args) => {
 
 		break;
 
-		case "chown":
+		case "chown": {
 
 			const uid = parseInt(args[1], 10);
 			const gid = parseInt(args[2], 10);
@@ -52,11 +56,11 @@ module.exports = (showDetails, cmd, args) => {
 				(0, console).log(getFormatedTime(), cmd, "\"" + args[0] + "\"", uid, gid);
 			}
 
-			return method(args[0], mode, uid, gid);
+			return method(args[0], uid, gid);
 
-		break;
+		} break;
 
-		case "chmod":
+		case "chmod": {
 
 			const mode = parseInt(args[1], 10);
 
@@ -66,7 +70,7 @@ module.exports = (showDetails, cmd, args) => {
 
 			return method(args[0], mode);
 
-		break;
+		} break;
 
 		case "files-to-string":
 
@@ -88,7 +92,7 @@ module.exports = (showDetails, cmd, args) => {
 
 		break;
 
-		default :
+		default:
 
 			if (showDetails) {
 				(0, console).log(getFormatedTime(), cmd, "\"" + args.join("\" \"") + "\"");

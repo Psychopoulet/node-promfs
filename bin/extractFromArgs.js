@@ -1,3 +1,7 @@
+/*
+	eslint no-undefined: 0
+*/
+
 "use strict";
 
 // deps
@@ -145,7 +149,7 @@ module.exports = (args) => {
 
 				cmds.push({
 					"cmd": args[firstCmdAt],
-					"options": options
+					options
 				});
 
 				args.splice(firstCmdAt, 1 + options.length);
