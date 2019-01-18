@@ -66,8 +66,14 @@
 
 				execute(args[firstCmdAt], CMDS.find((element) => {
 					return args[firstCmdAt] === element.cmd;
-				}).method, args.slice(1, endCmdAt)).then(() => {
+				}).method, args.slice(1, endCmdAt)).then((...data) => {
+
+					if (data.length && data[0]) {
+						(0, console).log(getFormatedTime(), "=>", ...data);
+					}
+
 					_extractFromArgs(args.slice(endCmdAt, args.length));
+
 				}).catch((err) => {
 
 					(0, console).error(getFormatedTime(), "=>", err.toString());
