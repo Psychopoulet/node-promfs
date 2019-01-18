@@ -6,79 +6,86 @@
 	const { join } = require("path");
 
 	// locals
-	const fs = require(join(__dirname, "..", "lib", "main.js"));
-	const execute = require(join(__dirname, "execute.js"));
 	const getFormatedTime = require(join(__dirname, "getFormatedTime.js"));
+	const execute = require(join(__dirname, "execute.js"));
 
 // consts
 
-	const CMDS = Object.keys(fs).filter((cmd) => {
-		return "function" === typeof fs[cmd] && "Prom" === cmd.slice(cmd.length - 4, cmd.length);
-	}).map((cmd) => {
-
-		return {
-			"cmd": cmd.replace("Prom", "").replace("JSON", "-json").replace(/([A-Z])/g, (correspondance, p1, decalage) => {
-				return (0 < decalage ? "-" : "") + p1.toLowerCase();
-			}),
-			"method": fs[cmd]
-		};
-
-	}).sort((a, b) => {
-
-		if (a.cmd < b.cmd) {
-			return -1;
-		}
-		else if (a.cmd > b.cmd) {
-			return 1;
-		}
-		else {
-			return 0;
-		}
-
-	});
-
-	const CMDS_KEYS = CMDS.map((cmd) => {
-		return cmd.cmd;
-	});
+	const ALLOWED = [
+		"access",
+		"append-file",
+		"chmod",
+		"chown",
+		"copy-file",
+		"directory-to-file",
+		"directory-to-string",
+		"extract-files",
+		"files-to-file",
+		"files-to-string",
+		"is-directory",
+		"is-file",
+		"link",
+		"lstat",
+		"mkdir",
+		"mkdirp",
+		"mkdtemp",
+		"read-file",
+		"readdir",
+		"realpath",
+		"rename",
+		"rmdir",
+		"rmdirp",
+		"stat",
+		"truncate",
+		"unlink",
+		"utimes",
+		"write-file"
+	];
 
 // private
 
 	// methods
 
 		/**
-		* Extract arguments and execute linked method
-		* @param {Array} args : all arguments
+		* Synchronously execute commands
+		* @param {boolean} showDetails : show execution's details in console
+		* @param {Array} cmds : all commands to execute
 		* @returns {void}
 		*/
-		function _extractFromArgs (args) {
+		function _executeCommands (showDetails, cmds) {
 
-			const firstCmdAt = args.findIndex((element) => {
-				return CMDS_KEYS.includes(element);
-			});
+			if (cmds.length) {
 
-			if (0 <= firstCmdAt) {
+				const cmd = cmds.shift();
 
-				const nextCmdAt = args.slice(firstCmdAt + 1, args.length).findIndex((element) => {
-					return CMDS_KEYS.includes(element);
-				}) + 1;
+				execute(showDetails, cmd.cmd, cmd.options).then((...data) => {
 
-				const endCmdAt = firstCmdAt < nextCmdAt ? nextCmdAt : args.length;
+					if (data.length && undefined !== data[0]) {
 
-				execute(args[firstCmdAt], CMDS.find((element) => {
-					return args[firstCmdAt] === element.cmd;
-				}).method, args.slice(1, endCmdAt)).then((...data) => {
+						if (1 === data.length && "boolean" === typeof data[0]) {
 
-					if (data.length && data[0]) {
-						(0, console).log(getFormatedTime(), "=>", ...data);
+							if (showDetails) {
+								(0, console).log(getFormatedTime(), "=>", data[0]);
+							}
+							else {
+								(0, console).log(data[0] ? "1" : "0");
+							}
+
+						}
+						else if (showDetails) {
+							(0, console).log(getFormatedTime(), "=>", ...data);
+						}
+						else {
+							(0, console).log(...data);
+						}
+
 					}
 
-					_extractFromArgs(args.slice(endCmdAt, args.length));
+					_executeCommands(showDetails, cmds);
 
 				}).catch((err) => {
-
-					(0, console).error(getFormatedTime(), "=>", err.toString());
+					(0, console).error(err);
 					(0, process).exitCode = 1;
-
 				});
 
 			}
@@ -87,4 +94,69 @@
 
 // module
 
-module.exports = _extractFromArgs;
+module.exports = (args) => {
+
+	if (args.includes("--help")) {
+
+		(0, console).log("[HELP]");
+
+		(0, console).log("");
+		(0, console).log("[options]");
+		(0, console).log("--help", "=>", "Show documentation (must be the first command)");
+		(0, console).log("--no-details", "=>", "Disable details printing in the terminal (must be the first command)");
+
+		(0, console).log("");
+		(0, console).log("[allowed methods]");
+		ALLOWED.forEach((allowed) => {
+			(0, console).log(allowed);
+		});
+
+	}
+	else {
+
+		// console options
+		const showDetails = !("--no-details" === args[0]);
+
+		if (!showDetails) {
+			args.splice(0, 1);
+		}
+		else {
+			(0, console).log("");
+		}
+
+		// extract commands
+		const cmds = [];
+		while (args.length) {
+
+			const firstCmdAt = args.findIndex((element) => {
+				return ALLOWED.includes(element);
+			});
+
+			if (-1 >= firstCmdAt) {
+				break;
+			}
+			else {
+
+				const nextCmdAt = args.slice(firstCmdAt + 1, args.length).findIndex((element) => {
+					return ALLOWED.includes(element);
+				}) + firstCmdAt + 1;
+
+				const options = args.slice(firstCmdAt + 1, firstCmdAt < nextCmdAt ? nextCmdAt : args.length);
+
+				cmds.push({
+					"cmd": args[firstCmdAt],
+					"options": options
+				});
+
+				args.splice(firstCmdAt, 1 + options.length);
+
+			}
+
+		}
+
+		// execute commands
+		_executeCommands(showDetails, cmds);
+
+	}
+
+};

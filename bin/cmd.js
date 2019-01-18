@@ -8,5 +8,4 @@
 
 // module
 
-(0, console).log("");
 extractFromArgs((0, process).argv.slice(2, (0, process).argv.length));
