@@ -1,15 +1,18 @@
 {
   "name": "node-promfs",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "'fs' object extensions & promisifications",
   "main": "lib/main.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "lint": "npx eslint ./lib/**/*.js ./test/**/*.js",
+    "lint": "npx eslint ./bin/*.js ./lib/**/*.js ./test/**/*.js",
     "check-updates": "npx check-version-modules",
     "unit-tests": "npx nyc --reporter=html --reporter=text mocha",
     "tests": "npm run-script lint && npm run-script check-updates && npm run-script unit-tests",
     "ci": "npm run-script tests && npx nyc report --reporter=text-lcov | coveralls"
+  },
+  "bin": {
+    "check-version-modules": "./bin/cmd.js"
   },
   "husky": {
     "hooks": {
