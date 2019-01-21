@@ -14,12 +14,19 @@
 
 // consts
 
+	const LIB_FILE = join(__dirname, "..", "lib", "main.js");
+
 	const DIR_TESTBASE = join(homedir(), "testlvl1");
+
 		const DIR_TESTLVL2 = join(DIR_TESTBASE, "testlvl2");
+
+			const FILE_TESTLVL2_1 = join(DIR_TESTLVL2, "test1.txt");
+
 			const DIR_TESTLVL3 = join(DIR_TESTLVL2, "testlvl3");
 				const DIR_TESTLVL4 = join(DIR_TESTLVL3, "testlvl4");
 
-					const FILE_TESTLVL4 = join(DIR_TESTLVL4, "test.txt");
+					const FILE_TESTLVL4_1 = join(DIR_TESTLVL4, "test1.txt");
+					const FILE_TESTLVL4_2 = join(DIR_TESTLVL4, "test2.txt");
 
 // tests
 
@@ -28,17 +35,25 @@ describe("rmdirp", () => {
 	beforeEach(() => {
 
 		return fs.mkdirpProm(DIR_TESTLVL4).then(() => {
-			return fs.writeFileProm(FILE_TESTLVL4, "utf8", "");
+			return fs.copyFileProm(LIB_FILE, FILE_TESTLVL2_1);
+		}).then(() => {
+			return fs.copyFileProm(LIB_FILE, FILE_TESTLVL4_1);
+		}).then(() => {
+			return fs.copyFileProm(LIB_FILE, FILE_TESTLVL4_2);
 		});
 
 	});
 
 	afterEach(() => {
 
-		return fs.unlinkProm(FILE_TESTLVL4).then(() => {
+		return fs.unlinkProm(FILE_TESTLVL4_1).then(() => {
+			return fs.unlinkProm(FILE_TESTLVL4_2);
+		}).then(() => {
 			return fs.rmdirProm(DIR_TESTLVL4);
 		}).then(() => {
 			return fs.rmdirProm(DIR_TESTLVL3);
+		}).then(() => {
+			return fs.unlinkProm(FILE_TESTLVL2_1);
 		}).then(() => {
 			return fs.rmdirProm(DIR_TESTLVL2);
 		}).then(() => {
