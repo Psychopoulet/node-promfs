@@ -460,7 +460,22 @@ describe("promisification", () => {
 				return fs.accessProm(__filename);
 			});
 
-			it("should check normal running with mode", () => {
+			it("should check normal running with wrong mode", (done) => {
+
+				fs.accessProm(__filename, "").then(() => {
+					done(new Error("check empty content does not generate an error"));
+				}).catch((err) => {
+
+					assert.strictEqual(true, err instanceof Error, "check empty content value does not generate a valid error");
+					assert.strictEqual("string", typeof err.message, "check empty content value does not generate a valid error");
+
+					done();
+
+				});
+
+			});
+
+			it("should check normal running with right mode", () => {
 				return fs.accessProm(__filename, fs.F_OK);
 			});
 
