@@ -1,6 +1,6 @@
 {
   "name": "node-promfs",
-  "version": "3.6.1",
+  "version": "3.6.2",
   "description": "'fs' object extensions & promisifications",
   "main": "lib/main.js",
   "typings": "lib/index.d.ts",
@@ -12,7 +12,7 @@
     "ci": "npm run-script tests && npx nyc report --reporter=text-lcov | coveralls"
   },
   "bin": {
-    "check-version-modules": "./bin/cmd.js"
+    "node-promfs": "./bin/cmd.js"
   },
   "husky": {
     "hooks": {
