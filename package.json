@@ -1,6 +1,6 @@
 {
   "name": "node-promfs",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "'fs' object extensions & promisifications",
   "main": "lib/main.js",
   "typings": "lib/index.d.ts",
