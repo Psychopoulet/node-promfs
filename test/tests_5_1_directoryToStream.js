@@ -6,11 +6,13 @@
 
 // deps
 
+	// natives
 	const { join } = require("path");
 	const assert = require("assert");
 	const { homedir } = require("os");
 	const { Transform } = require("stream");
 
+	// locals
 	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts

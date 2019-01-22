@@ -6,10 +6,12 @@
 
 // deps
 
-	const { join } = require("path");
+	// natives
 	const assert = require("assert");
 	const { homedir } = require("os");
+	const { join } = require("path");
 
+	// locals
 	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // consts
