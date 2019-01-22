@@ -26,6 +26,15 @@ $ npm install node-promfs
 
 ## Doc
 
+```bash
+$ npx node-promfs mkdirp <file: string> <?mode: number>
+
+$ npx node-promfs rmdirp <file: string>
+```
+
+> you can use following method by replacing uppercase by lowercase with "-" before (ex : directoryToFile => "directory-to-file")
+> Array arguments "files-to-file", "files-to-string", etc... is just list of strings (ex : [ "1", "2" ] => "1" "2")
+
 ```typescript
 type iError = ReferenceError|TypeError|Error|null;
 ```
