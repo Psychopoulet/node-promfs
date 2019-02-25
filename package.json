@@ -1,6 +1,6 @@
 {
   "name": "node-promfs",
-  "version": "3.6.2",
+  "version": "3.6.3",
   "description": "'fs' object extensions & promisifications",
   "main": "lib/main.js",
   "typings": "lib/index.d.ts",
@@ -50,13 +50,13 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "10.12.18",
+    "@types/node": "11.9.5",
     "check-version-modules": "1.1.1",
-    "coveralls": "3.0.2",
-    "eslint": "5.12.1",
-    "mocha": "5.2.0",
-    "nyc": "13.1.0",
-    "husky": "1.3.1"
+    "coveralls": "3.0.3",
+    "eslint": "5.14.1",
+    "husky": "1.3.1",
+    "mocha": "6.0.1",
+    "nyc": "13.3.0"
   },
   "homepage": "https://github.com/Psychopoulet/node-promfs#readme",
   "engines": {

@@ -46,33 +46,33 @@ type iError = ReferenceError|TypeError|Error|null;
    [isFile] : does the file exists and is a regular file ?
    * ``` isFile(file: string, callback: (err: iError, exists: boolean) => void): void ```
    * ``` isFileSync(file: string): boolean ```
-   * ``` isFileProm(file: string) : Promise<boolean> ```
+   * ``` isFileProm(file: string): Promise<boolean> ```
 
    [isDirectory] : does the file exists and is a directory ?
    * ``` isDirectory(dir: string, callback: (err: iError, exists: boolean) => void): void ```
    * ``` isDirectorySync(dir: string): boolean ```
-   * ``` isDirectoryProm(dir: string) : Promise<boolean> ```
+   * ``` isDirectoryProm(dir: string): Promise<boolean> ```
 
 
   [copyFile] : copy a file with streams (copy then control with isFile)
    * ``` copyFile(origin: string, target: string, callback: (err: iError) => void): void ```
    * ``` copyFileSync(origin: string, target: string): void ```
-   * ``` copyFileProm(origin: string, target: string) : Promise<void> ```
+   * ``` copyFileProm(origin: string, target: string): Promise<void> ```
 
    [extractFiles] : return only files from a directory
    * ``` extractFiles(dir: string, callback: (err: iError,  files: Array<string>) => void): void ```
    * ``` extractFilesSync(dir: string): Array<string> ```
-   * ``` extractFilesProm(dir: string) : Promise<Array<string>> ```
+   * ``` extractFilesProm(dir: string): Promise<Array<string>> ```
 
    [writeJSONFile] : stringify JSON and writeFile
-   * ``` writeJSONFile(file: string, data: any, callback: (err: iError) => void): void ```
-   * ``` writeJSONFileSync(file: string, data: any): void ```
-   * ``` writeJSONFileProm(file: string, data: any) : Promise<void> ```
+   * ``` writeJSONFile(file: string, data: any, callback: (err: iError) => void, replacer?: (k, v) => any, space?: string|number|null): void ```
+   * ``` writeJSONFileSync(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null): void ```
+   * ``` writeJSONFileProm(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null): Promise<void> ```
 
    [readJSONFile] : readFile and parse JSON
    * ``` readJSONFile(file: string, callback: (err: iError, data: any) => void): void ```
    * ``` readJSONFileSync(file: string): any ```
-   * ``` readJSONFileProm(file: string) : Promise<any> ```
+   * ``` readJSONFileProm(file: string): Promise<any> ```
 
 
    [mkdirp] : recursively create a directory
@@ -131,34 +131,34 @@ type iError = ReferenceError|TypeError|Error|null;
   * The arguments are the same as [the official documentation's ones](https://nodejs.org/api/fs.html)
   * "then" data are the same as the callbacks' ones
   * all the methods cannot be tested (too much arguments)
-  * ``` accessProm() : Promise ``` -> tested
-  * ``` appendFileProm() : Promise ``` -> tested
-  * ``` chmodProm() : Promise ``` -> tested
-  * ``` chownProm() : Promise ``` -> tested
-  * ``` closeProm() : Promise ``` -> tested
-  * ``` fchmodProm() : Promise ```
-  * ``` fchownProm() : Promise ```
-  * ``` fdatasyncProm() : Promise ```
-  * ``` fstatProm() : Promise ```
-  * ``` fsyncProm() : Promise ```
-  * ``` ftruncateProm() : Promise ```
-  * ``` futimesProm() : Promise ```
-  * ``` linkProm() : Promise ```
-  * ``` lstatProm() : Promise ```
-  * ``` mkdirProm() : Promise ``` -> tested
-  * ``` mkdtempProm() : Promise ```
-  * ``` openProm() : Promise ``` -> tested
-  * ``` readdirProm() : Promise ``` -> tested
-  * ``` readFileProm() : Promise ``` -> tested
-  * ``` realpathProm() : Promise ``` -> tested
-  * ``` renameProm() : Promise ``` -> tested
-  * ``` rmdirProm() : Promise ``` -> tested
-  * ``` statProm() : Promise ```
-  * ``` truncateProm() : Promise ```
-  * ``` unlinkProm() : Promise ``` -> tested
-  * ``` utimesProm() : Promise ```
-  * ``` writeProm() : Promise ```
-  * ``` writeFileProm() : Promise``` -> tested
+  * ``` accessProm(): Promise ``` -> tested
+  * ``` appendFileProm(): Promise ``` -> tested
+  * ``` chmodProm(): Promise ``` -> tested
+  * ``` chownProm(): Promise ``` -> tested
+  * ``` closeProm(): Promise ``` -> tested
+  * ``` fchmodProm(): Promise ```
+  * ``` fchownProm(): Promise ```
+  * ``` fdatasyncProm(): Promise ```
+  * ``` fstatProm(): Promise ```
+  * ``` fsyncProm(): Promise ```
+  * ``` ftruncateProm(): Promise ```
+  * ``` futimesProm(): Promise ```
+  * ``` linkProm(): Promise ```
+  * ``` lstatProm(): Promise ```
+  * ``` mkdirProm(): Promise ``` -> tested
+  * ``` mkdtempProm(): Promise ```
+  * ``` openProm(): Promise ``` -> tested
+  * ``` readdirProm(): Promise ``` -> tested
+  * ``` readFileProm(): Promise ``` -> tested
+  * ``` realpathProm(): Promise ``` -> tested
+  * ``` renameProm(): Promise ``` -> tested
+  * ``` rmdirProm(): Promise ``` -> tested
+  * ``` statProm(): Promise ```
+  * ``` truncateProm(): Promise ```
+  * ``` unlinkProm(): Promise ``` -> tested
+  * ``` utimesProm(): Promise ```
+  * ``` writeProm(): Promise ```
+  * ``` writeFileProm(): Promise``` -> tested
 
 ## Import
 
