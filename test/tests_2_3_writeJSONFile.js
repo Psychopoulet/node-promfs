@@ -62,10 +62,28 @@ describe("writeJSONFile", () => {
 
 				fs.writeJSONFileSync(TEST_FILE, { "test": "" });
 
-				assert.deepStrictEqual({ "test": "" }, fs.readJSONFileSync(TEST_FILE), "normal running does not return valid data");
+				const result = fs.readFileSync(TEST_FILE, "utf8");
 
-				// for code coverage
+				assert.deepStrictEqual("{\"test\":\"\"}", result, "normal running does not return valid data");
+				assert.deepStrictEqual({ "test": "" }, JSON.parse(result), "normal running does not return valid data");
+
+				// for code coverage isFileSync / unlinkSync
 				fs.writeJSONFileSync(TEST_FILE, { "test": "" });
+
+			}, Error, "check normal running throws an error");
+
+		});
+
+		it("should check normal running with space option", () => {
+
+			assert.doesNotThrow(() => {
+
+				fs.writeJSONFileSync(TEST_FILE, { "test": "" }, null, 2);
+
+				const result = fs.readFileSync(TEST_FILE, "utf8");
+
+				assert.deepStrictEqual("{\n  \"test\": \"\"\n}", result.replace(/\r/g, ""), "normal running does not return valid data");
+				assert.deepStrictEqual({ "test": "" }, JSON.parse(result), "normal running does not return valid data");
 
 			}, Error, "check normal running throws an error");
 
@@ -121,17 +139,36 @@ describe("writeJSONFile", () => {
 
 				assert.strictEqual(null, err, "check normal running generate an error");
 
-				fs.readJSONFile(TEST_FILE, (_err, data) => {
+				fs.readFile(TEST_FILE, "utf8", (_err, result) => {
 
-					assert.strictEqual(null, _err, "check normal running generate an error");
-					assert.deepStrictEqual({ "test": "" }, data, "normal running does not return valid data");
+					assert.deepStrictEqual("{\"test\":\"\"}", result, "normal running does not return valid data");
+					assert.deepStrictEqual({ "test": "" }, JSON.parse(result), "normal running does not return valid data");
 
-					// for code coverage
+					// for code coverage isFile / unlink
 					fs.writeJSONFile(TEST_FILE, { "test": "" }, done);
 
 				});
 
 			});
+
+		});
+
+		it("should check normal running with space option", (done) => {
+
+			fs.writeJSONFile(TEST_FILE, { "test": "" }, (err) => {
+
+				assert.strictEqual(null, err, "check normal running generate an error");
+
+				fs.readFile(TEST_FILE, "utf8", (_err, result) => {
+
+					assert.deepStrictEqual("{\n  \"test\": \"\"\n}", result.replace(/\r/g, ""), "normal running does not return valid data");
+					assert.deepStrictEqual({ "test": "" }, JSON.parse(result), "normal running does not return valid data");
+
+					done();
+
+				});
+
+			}, null, 2);
 
 		});
 
@@ -188,9 +225,27 @@ describe("writeJSONFile", () => {
 
 			return fs.writeJSONFileProm(TEST_FILE, { "test": "" }).then(() => {
 
-				return fs.readJSONFileProm(TEST_FILE).then((data) => {
+				return fs.readFileProm(TEST_FILE, "utf8").then((result) => {
 
-					assert.deepStrictEqual({ "test": "" }, data, "normal running does not return valid data");
+					assert.deepStrictEqual("{\"test\":\"\"}", result, "normal running does not return valid data");
+					assert.deepStrictEqual({ "test": "" }, JSON.parse(result), "normal running does not return valid data");
+
+					return Promise.resolve();
+
+				});
+
+			});
+
+		});
+
+		it("should check normal running", () => {
+
+			return fs.writeJSONFileProm(TEST_FILE, { "test": "" }, null, 2).then(() => {
+
+				return fs.readFileProm(TEST_FILE, "utf8").then((result) => {
+
+					assert.deepStrictEqual("{\n  \"test\": \"\"\n}", result.replace(/\r/g, ""), "normal running does not return valid data");
+					assert.deepStrictEqual({ "test": "" }, JSON.parse(result), "normal running does not return valid data");
 
 					return Promise.resolve();
 

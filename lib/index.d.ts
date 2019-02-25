@@ -25,9 +25,9 @@ declare module "node-promfs" {
 		public static extractFilesSync(dir: string): Array<string>;
 		public static extractFilesProm(dir: string) : Promise<Array<string>>;
 
-		public static writeJSONFile(file: string, data: any, callback: (err: iError) => void): void;
-		public static writeJSONFileSync(file: string, data: any): void;
-		public static writeJSONFileProm(file: string, data: any) : Promise<void>;
+		public static writeJSONFile(file: string, data: any, callback: (err: iError) => void, replacer?: (k, v) => any, space?: string|number|null) : void;
+		public static writeJSONFileSync(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null): void;
+		public static writeJSONFileProm(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null) : Promise<void>;
 
 		public static readJSONFile(file: string, callback: (err: iError, data: any) => void): void;
 		public static readJSONFileSync(file: string): any;
