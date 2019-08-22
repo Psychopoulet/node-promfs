@@ -1,6 +1,6 @@
 {
   "name": "node-promfs",
-  "version": "3.6.3",
+  "version": "3.6.4",
   "description": "'fs' object extensions & promisifications",
   "main": "lib/main.js",
   "typings": "lib/index.d.ts",
@@ -14,6 +14,10 @@
   "bin": {
     "node-promfs": "./bin/cmd.js"
   },
+  "files": [
+    "/bin",
+    "/lib"
+  ],
   "husky": {
     "hooks": {
       "pre-commit": "npm run-script lint",
@@ -50,13 +54,13 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "11.9.5",
-    "check-version-modules": "1.1.1",
-    "coveralls": "3.0.3",
-    "eslint": "5.14.1",
-    "husky": "1.3.1",
-    "mocha": "6.0.1",
-    "nyc": "13.3.0"
+    "@types/node": "12.7.2",
+    "check-version-modules": " 1.3.0",
+    "coveralls": "3.0.6",
+    "eslint": "6.2.1",
+    "husky": "3.0.4",
+    "mocha": "6.2.0",
+    "nyc": "14.1.1"
   },
   "homepage": "https://github.com/Psychopoulet/node-promfs#readme",
   "engines": {
