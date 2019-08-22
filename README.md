@@ -178,6 +178,9 @@ import fs = require("node-promfs");
 ## Tests
 
 ```bash
+$ git clone git://github.com/Psychopoulet/node-promfs.git
+$ cd ./node-promfs
+$ npm install
 $ npm run-script tests
 ```
 
