@@ -29,9 +29,9 @@ declare module "node-promfs" {
 		public static readFileProm(file: string, options) : Promise<string>;
 		public static writeFileProm(file: string, data: string, options) : Promise<void>;
 
-		public static readJSONFile(file: string, opts: tCallback | object | null, callback?: tCallback): void;
-		public static readJSONFileSync(file: string, opts?: object): any;
-		public static readJSONFileProm(file: string, opts?: object) : Promise<any>;
+		public static readJSONFile(file: string, opts: tCallback | object | string | null, callback?: tCallback): void;
+		public static readJSONFileSync(file: string, opts?: object | string): any;
+		public static readJSONFileProm(file: string, opts?: object | string) : Promise<any>;
 
 		public static writeJSONFile(file: string, data: any, callback: (err: tError) => void, replacer?: (k, v) => any, space?: string|number|null) : void;
 		public static writeJSONFileSync(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null): void;

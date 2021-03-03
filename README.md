@@ -71,9 +71,9 @@ type tCallback = (err: tError, data: any) => void;
    * ``` writeJSONFileProm(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null): Promise<void> ```
 
    [readJSONFile] : readFile and parse JSON
-   * ``` readJSONFile(file: string, opts: tCallback | object | null, callback?: tCallback): void ```
-   * ``` readJSONFileSync(file: string, opts?: object): any ```
-   * ``` readJSONFileProm(file: string, opts?: object) : Promise<any> ```
+   * ``` readJSONFile(file: string, opts: tCallback | object | string | null, callback?: tCallback): void ```
+   * ``` readJSONFileSync(file: string, opts?: object | string): any ```
+   * ``` readJSONFileProm(file: string, opts?: object | string) : Promise<any> ```
 
 
    [mkdirp] : recursively create a directory
