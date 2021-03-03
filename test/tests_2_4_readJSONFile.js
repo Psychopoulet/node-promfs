@@ -7,10 +7,11 @@
 // deps
 
 	// natives
+	const { join } = require("path");
 	const assert = require("assert");
 
 	// locals
-	const fs = require(require("path").join(__dirname, "..", "lib", "main.js"));
+	const fs = require(join(__dirname, "..", "lib", "main.js"));
 
 // tests
 
@@ -86,12 +87,16 @@ describe("readJSONFile", () => {
 				fs.readJSONFile(__filename, false);
 			}, TypeError, "check invalid \"callback\" value does not throw an error");
 
+			assert.throws(() => {
+				fs.readJSONFile(__filename, null, false);
+			}, TypeError, "check invalid \"callback\" value does not throw an error");
+
 		});
 
 		it("should check empty value", () => {
 
 			assert.throws(() => {
-				fs.readJSONFile("", __filename, () => {
+				fs.readJSONFile("", () => {
 					// nothing to do here
 				});
 			}, Error, "check empty \"file\" value does not throw an error");
@@ -200,6 +205,12 @@ describe("readJSONFile", () => {
 				done();
 
 			});
+
+		});
+
+		it("should test JSON file", () => {
+
+			return fs.readJSONFileProm(join(__dirname, "..", "package.json"));
 
 		});
 
