@@ -2,10 +2,32 @@
 
 declare module "node-promfs" {
 
-	import { Transform } from "stream";
+	// types & interfaces
 
-	type tError = ReferenceError|TypeError|Error|null;
-	type tCallback = (err: tError, data: any) => void;
+		// natives
+		import { Transform } from "stream";
+
+		// locals
+
+		type tError = ReferenceError|TypeError|Error|null;
+		type tCallback = (err: tError, data: any) => void;
+
+			// json
+
+			interface iReadJSONOptions {
+				"encoding"?: string;
+				"flag"?: string;
+				"signal"?: AbortSignal;
+			}
+
+			interface iWriteJSONOptions extends iReadJSONOptions {
+				"mode"?: number;
+				"replacer"?: (k, v) => any;
+				"space"?: string|number|null;
+			}
+
+			type tReadJSONOptions = string|iReadJSONOptions|null;
+			type tWriteJSONOptions = string|iWriteJSONOptions|null;
 
 	class PromFS extends require("fs") {
 
@@ -29,13 +51,13 @@ declare module "node-promfs" {
 		public static readFileProm(file: string, options) : Promise<string>;
 		public static writeFileProm(file: string, data: string, options) : Promise<void>;
 
-		public static readJSONFile(file: string, opts: tCallback | object | string | null, callback?: tCallback): void;
-		public static readJSONFileSync(file: string, opts?: object | string): any;
-		public static readJSONFileProm(file: string, opts?: object | string) : Promise<any>;
+		public static readJSONFile(file: string, opts: tCallback | tReadJSONOptions, callback?: tCallback): void;
+		public static readJSONFileSync(file: string, opts?: tReadJSONOptions): any;
+		public static readJSONFileProm(file: string, opts?: tReadJSONOptions) : Promise<any>;
 
-		public static writeJSONFile(file: string, data: any, callback: (err: tError) => void, replacer?: (k, v) => any, space?: string|number|null) : void;
-		public static writeJSONFileSync(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null): void;
-		public static writeJSONFileProm(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null) : Promise<void>;
+		public static writeJSONFile(file: string, data: any, options: tCallback | tWriteJSONOptions, callback?: tCallback) : void;
+		public static writeJSONFileSync(file: string, data: any, options?: tReadJSONOptions): void;
+		public static writeJSONFileProm(file: string, data: any, options?: tReadJSONOptions) : Promise<void>;
 
 		public static readJSONFile(file: string, callback: (err: tError, data: any) => void): void;
 		public static readJSONFileSync(file: string): any;
