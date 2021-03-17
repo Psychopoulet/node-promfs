@@ -214,6 +214,20 @@ describe("readJSONFile", () => {
 
 		});
 
+		it("should test JSON file with readFile string option", () => {
+
+			return fs.readJSONFileProm(join(__dirname, "..", "package.json"), "utf8");
+
+		});
+
+		it("should test JSON file with readFile object option", () => {
+
+			return fs.readJSONFileProm(join(__dirname, "..", "package.json"), {
+				"encoding": "utf8"
+			});
+
+		});
+
 	});
 
 });
