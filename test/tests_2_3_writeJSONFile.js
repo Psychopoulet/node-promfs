@@ -60,7 +60,7 @@ describe("writeJSONFile", () => {
 
 			assert.doesNotThrow(() => {
 
-				fs.writeJSONFileSync(TEST_FILE, { "test": "" });
+				fs.writeJSONFileSync(TEST_FILE, { "test": "" }, "utf8");
 
 				const result = fs.readFileSync(TEST_FILE, "utf8");
 
@@ -78,7 +78,10 @@ describe("writeJSONFile", () => {
 
 			assert.doesNotThrow(() => {
 
-				fs.writeJSONFileSync(TEST_FILE, { "test": "" }, null, 2);
+				fs.writeJSONFileSync(TEST_FILE, { "test": "" }, {
+					"encoding": "utf8",
+					"space": 2
+				});
 
 				const result = fs.readFileSync(TEST_FILE, "utf8");
 
@@ -121,6 +124,10 @@ describe("writeJSONFile", () => {
 				fs.writeJSONFile(__filename, null, false);
 			}, TypeError, "check invalid \"callback\" value does not throw an error");
 
+			assert.throws(() => {
+				fs.writeJSONFile(__filename, null, null, false);
+			}, TypeError, "check invalid \"callback\" value does not throw an error");
+
 		});
 
 		it("should check empty value", () => {
@@ -135,7 +142,7 @@ describe("writeJSONFile", () => {
 
 		it("should check normal running", (done) => {
 
-			fs.writeJSONFile(TEST_FILE, { "test": "" }, (err) => {
+			fs.writeJSONFile(TEST_FILE, { "test": "" }, "utf8", (err) => {
 
 				assert.strictEqual(null, err, "check normal running generate an error");
 
@@ -155,7 +162,10 @@ describe("writeJSONFile", () => {
 
 		it("should check normal running with space option", (done) => {
 
-			fs.writeJSONFile(TEST_FILE, { "test": "" }, (err) => {
+			fs.writeJSONFile(TEST_FILE, { "test": "" }, {
+				"encoding": "utf8",
+				"space": 2
+			}, (err) => {
 
 				assert.strictEqual(null, err, "check normal running generate an error");
 
@@ -168,7 +178,7 @@ describe("writeJSONFile", () => {
 
 				});
 
-			}, null, 2);
+			});
 
 		});
 
@@ -223,7 +233,7 @@ describe("writeJSONFile", () => {
 
 		it("should check normal running", () => {
 
-			return fs.writeJSONFileProm(TEST_FILE, { "test": "" }).then(() => {
+			return fs.writeJSONFileProm(TEST_FILE, { "test": "" }, "utf8").then(() => {
 
 				return fs.readFileProm(TEST_FILE, "utf8").then((result) => {
 
@@ -240,7 +250,10 @@ describe("writeJSONFile", () => {
 
 		it("should check normal running", () => {
 
-			return fs.writeJSONFileProm(TEST_FILE, { "test": "" }, null, 2).then(() => {
+			return fs.writeJSONFileProm(TEST_FILE, { "test": "" }, {
+				"encoding": "utf8",
+				"space": 2
+			}).then(() => {
 
 				return fs.readFileProm(TEST_FILE, "utf8").then((result) => {
 
