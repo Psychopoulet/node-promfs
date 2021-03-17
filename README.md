@@ -40,6 +40,23 @@ type tError = ReferenceError|TypeError|Error|null;
 type tCallback = (err: tError, data: any) => void;
 ```
 
+```typescript
+interface iReadJSONOptions {
+  "encoding"?: string;
+  "flag"?: string;
+  "signal"?: AbortSignal;
+}
+
+interface iWriteJSONOptions extends iReadJSONOptions {
+  "mode"?: number;
+  "replacer"?: (k, v) => any;
+  "space"?: string|number|null;
+}
+
+type tReadJSONOptions = string|iReadJSONOptions|null;
+type tWriteJSONOptions = string|iWriteJSONOptions|null;
+```
+
 ### -- Extended --
 
 > in "separator" parameter, you can use "{{filename}}" pattern, it will be replaced by the file's basename (ex : separator = "\r\n\r\n--- {{filename}} ---\r\n\r\n")
@@ -66,14 +83,14 @@ type tCallback = (err: tError, data: any) => void;
    * ``` extractFilesProm(dir: string): Promise<Array<string>> ```
 
    [writeJSONFile] : stringify JSON and writeFile
-   * ``` writeJSONFile(file: string, data: any, callback: (err: tError) => void, replacer?: (k, v) => any, space?: string|number|null): void ```
-   * ``` writeJSONFileSync(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null): void ```
-   * ``` writeJSONFileProm(file: string, data: any, replacer?: (k, v) => any, space?: string|number|null): Promise<void> ```
+   * ``` writeJSONFile(file: string, data: any, options: tCallback | tWriteJSONOptions, callback?: tCallback): void ```
+   * ``` writeJSONFileSync(file: string, data: any, options?: tReadJSONOptions): void ```
+   * ``` writeJSONFileProm(file: string, data: any, options?: tReadJSONOptions): Promise<void> ```
 
    [readJSONFile] : readFile and parse JSON
-   * ``` readJSONFile(file: string, opts: tCallback | object | string | null, callback?: tCallback): void ```
-   * ``` readJSONFileSync(file: string, opts?: object | string): any ```
-   * ``` readJSONFileProm(file: string, opts?: object | string) : Promise<any> ```
+   * ``` readJSONFile(file: string, opts: tCallback | tReadJSONOptions, callback?: tCallback): void ```
+   * ``` readJSONFileSync(file: string, opts?: tReadJSONOptions): any ```
+   * ``` readJSONFileProm(file: string, opts?: tReadJSONOptions) : Promise<any> ```
 
 
    [mkdirp] : recursively create a directory
